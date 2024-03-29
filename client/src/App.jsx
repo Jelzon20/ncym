@@ -13,6 +13,7 @@ import Workshops from './pages/Workshops'
 import Evaluations from './pages/Evaluations'
 import Host from './pages/Host'
 import ContactUs from './pages/ContactUs'
+import FooterCom from './components/Footer'
 
 export default function App() {
   return (
@@ -32,7 +33,7 @@ export default function App() {
         <Route path='/host' element={<Host />}/>
         <Route path='/contact-us' element={<ContactUs />}/>
       </Routes>
-   
+      <FooterCom />
    
    
     </BrowserRouter>
