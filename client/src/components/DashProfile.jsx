@@ -213,13 +213,20 @@ export default function DashProfile() {
         {imageFileUploadError && (
           <Alert color='failure'>{imageFileUploadError}</Alert>
         )}
-        {/* <TextInput
+        <TextInput
           type='text'
-          id='username'
-          placeholder='username'
-          defaultValue={currentUser.username}
+          id='firstname'
+          placeholder='firstname'
+          defaultValue={currentUser.firstname}
           onChange={handleChange}
-        /> */}
+        />
+        <TextInput
+          type='text'
+          id='lastname'
+          placeholder='lastname'
+          defaultValue={currentUser.lastname}
+          onChange={handleChange}
+        />
         <TextInput
           type='email'
           id='email'
