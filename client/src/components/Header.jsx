@@ -3,13 +3,30 @@ import { Avatar, Button, Dropdown, Navbar, TextInput } from 'flowbite-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
-// import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 // import { toggleTheme } from '../redux/theme/themeSlice';
 // import { signoutSuccess } from '../redux/user/userSlice';
 import { useEffect, useState } from 'react';
 
 export default function Header() {
   const path = useLocation().pathname;
+  const { currentUser } = useSelector((state) => state.user);
+
+  const handleSignout = async () => {
+    try {
+      const res = await fetch('/api/user/signout', {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   return (
 
     <Navbar className='border-b-2'>
@@ -47,7 +64,7 @@ export default function Header() {
           
            {theme === 'light' ? <FaSun /> : <FaMoon />} 
         </Button> */}
-        {/* {currentUser ? (
+        {currentUser ? (
           <Dropdown
             arrowIcon={false}
             inline
@@ -56,7 +73,7 @@ export default function Header() {
             }
           >
             <Dropdown.Header>
-              <span className='block text-sm'>@{currentUser.username}</span>
+              {/* <span className='block text-sm'>@{currentUser.username}</span> */}
               <span className='block text-sm font-medium truncate'>
                 {currentUser.email}
               </span>
@@ -73,34 +90,34 @@ export default function Header() {
               Sign In
             </Button>
           </Link>
-        )} */}
-        <Link to='/sign-in'>
+        )}
+        {/* <Link to='/sign-in'>
             <Button gradientDuoTone='purpleToBlue' outline>
               Sign In
             </Button>
-          </Link>
+          </Link> */}
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
-        <Navbar.Link active={path === '/'} as={'div'}>
+        <Navbar.Link className='font-semibold' active={path === '/'} as={'div'}>
           <Link to='/'>Home</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === '/primer'} as={'div'}>
+        <Navbar.Link className='font-semibold'  active={path === '/primer'} as={'div'}>
           <Link to='/primer'>Primer</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === '/program'} as={'div'}>
+        <Navbar.Link className='font-semibold' active={path === '/program'} as={'div'}>
           <Link to='/program'>Program</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === '/workshops'} as={'div'}>
+        <Navbar.Link className='font-semibold' active={path === '/workshops'} as={'div'}>
           <Link to='/workshops'>Workshops</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === '/evaluation'} as={'div'}>
+        <Navbar.Link className='font-semibold' active={path === '/evaluation'} as={'div'}>
           <Link to='/evaluation'>Evaluation</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === '/host'} as={'div'}>
+        <Navbar.Link className='font-semibold' active={path === '/host'} as={'div'}>
           <Link to='/host'>The Host</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === '/contact-us'} as={'div'}>
+        <Navbar.Link className='font-semibold' active={path === '/contact-us'} as={'div'}>
           <Link to='/contact-us'>Contact Us</Link>
         </Navbar.Link>
         {/* <Navbar.Link active={path === '/about'} as={'div'}>
