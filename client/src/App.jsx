@@ -1,5 +1,5 @@
 import React from 'react'
-import {BrowserRouter , Routes, Route} from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import About from './pages/About'
 import SignIn from './pages/SignIn'
@@ -15,30 +15,45 @@ import Host from './pages/Host'
 import ContactUs from './pages/ContactUs'
 import FooterCom from './components/Footer'
 import PrivateRoute from './components/PrivateRoutes'
+import { useSelector, useDispatch } from 'react-redux';
 
 export default function App() {
+
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.user);
+
+
   return (
     <BrowserRouter>
-      <Header />
+      {currentUser && (
+         <Header />
+      )
+      }
+     
       <Routes>
-        <Route path='/' element={<Home />}/>
-        <Route path='/about' element={<About />}/>
-        <Route path='/sign-in' element={<SignIn />}/>
-        <Route path='/sign-up' element={<SignUp />}/>
+        
+        <Route path='/about' element={<About />} />
+        <Route path='/sign-in' element={<SignIn />} />
+        <Route path='/sign-up' element={<SignUp />} />
         <Route element={<PrivateRoute />}>
+          <Route path='/' element={<Home />} />
           <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/projects' element={<Projects />} />
+          <Route path='/primer' element={<Primer />} />
+          <Route path='/program' element={<Program />} />
+          <Route path='/workshops' element={<Workshops />} />
+          <Route path='/evaluation' element={<Evaluations />} />
+          <Route path='/host' element={<Host />} />
+          <Route path='/contact-us' element={<ContactUs />} />
         </Route>
-        <Route path='/projects' element={<Projects />}/>
-        <Route path='/primer' element={<Primer />}/>
-        <Route path='/program' element={<Program />}/>
-        <Route path='/workshops' element={<Workshops />}/>
-        <Route path='/evaluation' element={<Evaluations />}/>
-        <Route path='/host' element={<Host />}/>
-        <Route path='/contact-us' element={<ContactUs />}/>
+        
       </Routes>
-      <FooterCom />
-   
-   
+      {currentUser && (
+         <FooterCom />
+      )
+      }
+
+
     </BrowserRouter>
   )
 }

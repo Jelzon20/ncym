@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 
 export default function Header() {
   const path = useLocation().pathname;
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
@@ -25,13 +26,14 @@ export default function Header() {
         console.log(data.message);
       } else {
         dispatch(signoutSuccess());
+        navigate('/sign-in');
       }
     } catch (error) {
       console.log(error.message);
     }
   };
   return (
-
+    
     <Navbar className='border-b-2'>
       <Link
         to='/'

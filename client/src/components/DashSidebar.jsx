@@ -8,13 +8,14 @@ import {
   HiChartPie,
 } from 'react-icons/hi';
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { signoutSuccess } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 
 export default function DashSidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
   const [tab, setTab] = useState('');
@@ -35,6 +36,7 @@ export default function DashSidebar() {
         console.log(data.message);
       } else {
         dispatch(signoutSuccess());
+        navigate('/sign-in');
       }
     } catch (error) {
       console.log(error.message);

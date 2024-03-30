@@ -49,9 +49,9 @@ export default function SignIn() {
         <div className='flex-1'>
           <Link to='/' className='font-bold dark:text-white text-4xl'>
             <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
-              Sahand's
+              NCYM
             </span>
-            Blog
+            2024
           </Link>
           <p className='text-sm mt-5'>
             This is a demo project. You can sign in with your email and password
@@ -63,7 +63,7 @@ export default function SignIn() {
         <div className='flex-1'>
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div>
-              <Label value='Your email' />
+              <Label value='Your email' className='font-semibold'/>
               <TextInput
                 type='email'
                 placeholder='name@company.com'
@@ -72,7 +72,7 @@ export default function SignIn() {
               />
             </div>
             <div>
-              <Label value='Your password' />
+              <Label value='Your password' className='font-semibold'/>
               <TextInput
                 type='password'
                 placeholder='**********'
