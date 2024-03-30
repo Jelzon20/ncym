@@ -10,15 +10,15 @@ import {
 import { app } from '../firebase';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-// import {
-//   updateStart,
-//   updateSuccess,
-//   updateFailure,
-//   deleteUserStart,
-//   deleteUserSuccess,
-//   deleteUserFailure,
-//   signoutSuccess,
-// } from '../redux/user/userSlice';
+import {
+  updateStart,
+  updateSuccess,
+  updateFailure,
+  // deleteUserStart,
+  // deleteUserSuccess,
+  // deleteUserFailure,
+  // signoutSuccess,
+} from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
@@ -29,7 +29,7 @@ export default function DashProfile() {
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
-  const [imageFileUploading, setImageFileUploading] = useState(false);
+  const [imageFileUploading, setImageFileUploading] = useState( false);
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
   const [showModal, setShowModal] = useState(false);
