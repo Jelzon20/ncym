@@ -1,37 +1,75 @@
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema(
+const registrationSchema = new mongoose.Schema(
   {
-    firstname: {
+    userId: {
       type: String,
       required: true,
     },
-    lastname: {
+    dioceseOrOrg: {
       type: String,
-      required: true,
+      
     },
-    email: {
+    parishOrLocalUnit: {
       type: String,
-      required: true,
-      unique: true,
+      
     },
-    password: {
+    title: {
       type: String,
-      required: true,
     },
-    profilePicture: {
+    nickname: {
       type: String,
-      default:
-        'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
     },
-    // isAdmin: {
-    //   type: Boolean,
-    //   default: false,
-    // },
+    birthday: {
+      type: String,
+      
+    },
+    contactNumber: {
+      type: String,
+      
+    },
+    shirtSize: {
+      type: String,
+    },
+
+    roleInMinistry: {
+      type: String,
+      
+    },
+    address: {
+      type: String,
+      
+    },
+    emerContactPerson: {
+      type: String,
+      
+    },
+    emerRelation: {
+      type: String,
+    },
+    emerContactNumber: {
+      type: String,
+     
+    },
+    allergies: {
+      type: String,
+      
+    },
+    medication: {
+      type: String,
+    },
+    dietaryRequirement: {
+      type: String,
+      
+    },
+    disability: {
+      type: String,
+      
+    },
   },
   { timestamps: true }
 );
 
-const User = mongoose.model('User', userSchema);
+const Registration = mongoose.model('Registration', registrationSchema);
 
-export default User;
+export default Registration;

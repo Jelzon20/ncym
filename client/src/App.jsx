@@ -16,6 +16,7 @@ import ContactUs from './pages/ContactUs'
 import FooterCom from './components/Footer'
 import PrivateRoute from './components/PrivateRoutes'
 import { useSelector, useDispatch } from 'react-redux';
+import Registration from './pages/Registration'
 
 export default function App() {
 
@@ -31,7 +32,7 @@ export default function App() {
       }
      
       <Routes>
-        
+      <Route path='/registration' element={<Registration />} />
         <Route path='/about' element={<About />} />
         <Route path='/sign-in' element={<SignIn />} />
         <Route path='/sign-up' element={<SignUp />} />
