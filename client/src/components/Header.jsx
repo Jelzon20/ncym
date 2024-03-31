@@ -15,6 +15,15 @@ export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
 
+  
+  const [registered, setRegistered] = useState();
+  
+  useEffect(() => {
+    setRegistered(currentUser.isRegistered)
+    
+  },[currentUser])
+  
+
 
   const handleSignout = async () => {
     try {
@@ -98,7 +107,8 @@ export default function Header() {
         )}
         <Navbar.Toggle />
       </div>
-      <Navbar.Collapse>
+  
+      {currentUser.isRegistered && (<Navbar.Collapse>
         <Navbar.Link className='font-semibold' active={path === '/'} as={'div'}>
           <Link to='/'>Home</Link>
         </Navbar.Link>
@@ -126,7 +136,8 @@ export default function Header() {
         <Navbar.Link active={path === '/projects'} as={'div'}>
           <Link to='/projects'>Projects</Link>
         </Navbar.Link> */}
-      </Navbar.Collapse>
+      </Navbar.Collapse>)}
+      
     </Navbar>
   )
 }

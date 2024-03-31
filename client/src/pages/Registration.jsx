@@ -3,8 +3,9 @@ import { Button, Checkbox, Label, Select, TextInput, Radio, Datepicker } from "f
 
 export default function Registration() {
     return (
-        <>
-            <div className="max-w-7xl mx-auto grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
+        <form action="">
+            <div className="max-w-max mx-auto grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
+                
                 <div className="mb-4 col-span-full xl:mb-2">
                     <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
                         Registration
@@ -20,13 +21,13 @@ export default function Registration() {
                         </h3>
                         <div className="mb-4">
                             <Label
-                                for="settings-language"
+                                htmlFor="settings-language"
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 value='Diocese/Organization' />
                             <Select
                                 id="dioceseOrOrg"
                                 name="dioceseOrOrg"
-                                className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             >
                                 <option>Select here</option>
                                 <option>Diocese 1</option>
@@ -35,13 +36,13 @@ export default function Registration() {
                         </div>
                         <div className="mb-6">
                             <label
-                                for="parishOrLocalUnit"
+                                htmlFor="parishOrLocalUnit"
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                             >Parish/Local Unit</label>
                             <Select
                                 id="parishOrLocalUnit"
                                 name="countries"
-                                className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             >
                                 <option>Select here</option>
                                 <option>Parish 1</option>
@@ -56,7 +57,7 @@ export default function Registration() {
                             <h3 className="text-xl font-semibold dark:text-white">Contact Person (In case of emergency)</h3>
                             <div className="mb-4">
                                 <Label
-                                    for="settings-language"
+                                    htmlFor="settings-language"
                                     className="block my-4 mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     value='Contact Person' />
                                 <TextInput
@@ -70,7 +71,7 @@ export default function Registration() {
                             </div>
                             <div className="mb-4">
                                 <Label
-                                    for="settings-language"
+                                    htmlFor="settings-language"
                                     className="block my-4 mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     value='Contact Person' />
                                 <TextInput
@@ -84,7 +85,7 @@ export default function Registration() {
                             </div>
                             <div className="mb-4">
                                 <Label
-                                    for="settings-language"
+                                    htmlFor="settings-language"
                                     className="block my-4 mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     value='Contact Person' />
                                 <TextInput
@@ -112,7 +113,7 @@ export default function Registration() {
                         <div className="grid grid-cols-6 gap-6">
                             <div className="col-span-6 sm:col-span-3">
                                 <Label
-                                    for="title"
+                                    htmlFor="title"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     value='Title' />
                                 <Select
@@ -127,7 +128,7 @@ export default function Registration() {
                             </div>
                             <div className="col-span-6 sm:col-span-3">
                                 <Label
-                                    for="nickname"
+                                    htmlFor="nickname"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     value='Nickname' />
                                 <TextInput
@@ -141,7 +142,7 @@ export default function Registration() {
                             </div>
                             <div className="col-span-6 sm:col-span-3">
                                 <Label
-                                    for="birthday"
+                                    htmlFor="birthday"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     value='Birthday' />
                                 <Datepicker
@@ -152,7 +153,7 @@ export default function Registration() {
                             </div>
                             <div className="col-span-6 sm:col-span-3">
                                 <Label
-                                    for="contactNumber"
+                                    htmlFor="contactNumber"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     value='Contact Number' />
                                 <TextInput
@@ -166,7 +167,7 @@ export default function Registration() {
                             </div>
                             <div className="col-span-6 sm:col-span-3">
                                 <Label
-                                    for="address"
+                                    htmlFor="address"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     value='Address' />
                                 <TextInput
@@ -181,7 +182,7 @@ export default function Registration() {
 
                             <div className="col-span-6 sm:col-span-3">
                                 <Label
-                                    for="roleInMinistry"
+                                    htmlFor="roleInMinistry"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     value='Role In Ministry' />
                                 <TextInput
@@ -193,7 +194,7 @@ export default function Registration() {
                             </div>
                             <div className="col-span-6 sm:col-span-3">
                                 <Label
-                                    for="shirtSize"
+                                    htmlFor="shirtSize"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     value='Shirt Size' />
                                 <Select
@@ -219,7 +220,7 @@ export default function Registration() {
                         <div className="grid grid-cols-6 gap-6">
                             <div className="col-span-6 sm:col-span-3">
                                 <Label
-                                    for="allergy"
+                                    htmlFor="allergy"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     value='Allergy: Have you ever suffered from any allergy? (e.g. medicine, food, etc.)' />
 
@@ -233,7 +234,7 @@ export default function Registration() {
                             </div>
                             <div className="col-span-6 sm:col-span-3">
                                 <Label
-                                    for="medication"
+                                    htmlFor="medication"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     value='Are you on regular medication?' />
                                 <TextInput
@@ -246,7 +247,7 @@ export default function Registration() {
                             </div>
                             <div className="col-span-6 sm:col-span-3">
                                 <Label
-                                    for="current-password"
+                                    htmlFor="current-password"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     value='Do you have a special diet? (e.g. vegetarian, meat, fish, salt, etc.)' />
                                 <TextInput
@@ -259,7 +260,7 @@ export default function Registration() {
                             </div>
                             <div className="col-span-6 sm:col-span-3">
                                 <Label
-                                    for="current-password"
+                                    htmlFor="current-password"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     value='Are you a PWD who will require mobility assistance?' />
 
@@ -273,14 +274,15 @@ export default function Registration() {
                             </div>
                             
                         </div>
-                        <div className='mt-4'>
-                            <Button color="blue" className='w-full'>Save All</Button>
+                        <div className='mt-10 flex items-center justify-center'>
+                            <Button color="blue" className='w-60 h-16'>Save All</Button>
                         </div>
                     </div>
 
                 </div>
+                
             </div>
-
-        </>
+            </form>
+     
     )
 }

@@ -18,9 +18,10 @@ import PrivateRoute from './components/PrivateRoutes'
 import { useSelector, useDispatch } from 'react-redux';
 import Registration from './pages/Registration'
 
+
+
 export default function App() {
 
-  const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
 
 
@@ -30,14 +31,17 @@ export default function App() {
          <Header />
       )
       }
-     
+
       <Routes>
-      <Route path='/registration' element={<Registration />} />
+        
         <Route path='/about' element={<About />} />
         <Route path='/sign-in' element={<SignIn />} />
         <Route path='/sign-up' element={<SignUp />} />
+
         <Route element={<PrivateRoute />}>
+          
           <Route path='/' element={<Home />} />
+          <Route path='/registration' element={<Registration />} />
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/projects' element={<Projects />} />
           <Route path='/primer' element={<Primer />} />
