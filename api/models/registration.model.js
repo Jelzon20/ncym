@@ -51,14 +51,14 @@ const registrationSchema = new mongoose.Schema(
       type: String,
      
     },
-    allergies: {
+    allergy: {
       type: String,
       
     },
     medication: {
       type: String,
     },
-    dietaryRequirement: {
+    diet: {
       type: String,
       
     },

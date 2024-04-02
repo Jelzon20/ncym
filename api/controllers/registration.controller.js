@@ -4,7 +4,7 @@ import { errorHandler } from "../utils/error.js";
 
 export const register = async (req, res, next) => {
 
-  const { dioceseOrOrg, parishOrLocalUnit, title, nickname, birthday, contactNumber, shirtSize, roleInMinistry, address, emerContactPerson, emerRelation, emerContactNumber, allergies, medication, dietaryRequirement, disability } = req.body;
+  const { dioceseOrOrg, parishOrLocalUnit, title, nickname, birthday, contactNumber, shirtSize, roleInMinistry, address, emerContactPerson, emerRelation, emerContactNumber, allergy, medication, diet, disability } = req.body;
 
   if (
     !dioceseOrOrg ||
@@ -19,9 +19,9 @@ export const register = async (req, res, next) => {
     !emerContactPerson ||
     !emerRelation ||
     !emerContactNumber ||
-    !allergies ||
+    !allergy ||
     !medication ||
-    !dietaryRequirement ||
+    !diet ||
     !disability ||
     dioceseOrOrg === "" ||
     parishOrLocalUnit === "" ||
@@ -35,9 +35,9 @@ export const register = async (req, res, next) => {
     emerContactPerson === "" ||
     emerRelation === "" ||
     emerContactNumber === "" ||
-    allergies === "" ||
+    allergy === "" ||
     medication === "" ||
-    dietaryRequirement === "" ||
+    diet === "" ||
     disability === ""
 
   ) {
@@ -60,9 +60,9 @@ export const register = async (req, res, next) => {
     emerContactPerson,
     emerRelation,
     emerContactNumber,
-    allergies,
+    allergy,
     medication,
-    dietaryRequirement,
+    diet,
     disability,
   });
   try {

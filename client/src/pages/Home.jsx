@@ -7,15 +7,19 @@ export default function Home() {
   const { currentUser } = useSelector((state) => state.user);
   const [registered, setRegistered] = useState();
   const navigate = useNavigate();
+
   useEffect(() => {
-    setRegistered(currentUser.isRegistered)
-    if(!registered) {  
+    console.log(currentUser.isRegistered)
+
+    if(currentUser.isRegistered) {
+        navigate('/');
+    } else {
       navigate('/registration');
     }
-  },[currentUser])
-  
+    
+  }, [currentUser]);
 
- return  (
+return  (
     <section className="bg-white dark:bg-gray-900 min-h-screen">
     <div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 lg:px-12">
         
@@ -24,5 +28,6 @@ export default function Home() {
     </div>
 </section>
   ) 
+
 }
 
