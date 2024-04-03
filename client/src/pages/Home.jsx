@@ -2,13 +2,18 @@ import React from 'react'
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import {
+  getRegistrationStart,
+  getRegistrationSuccess,
+  getRegistrationFailure,
+} from '../redux/register/registerSlice';
 
 export default function Home() {
   const { currentUser } = useSelector((state) => state.user);
-  const [registered, setRegistered] = useState();
-  const navigate = useNavigate();
+   const navigate = useNavigate();
+   const dispatch = useDispatch();
 
-  useEffect(() => {
+   useEffect(() => {
     console.log(currentUser.isRegistered)
 
     if(currentUser.isRegistered) {
@@ -16,8 +21,46 @@ export default function Home() {
     } else {
       navigate('/registration');
     }
-    
   }, [currentUser]);
+
+
+  useEffect(() => {
+    async function getRegistration() {
+       try {
+         dispatch(getRegistrationStart());
+         const getReg = await fetch(`/api/reg/${currentUser.id}`, {
+           method: "GET",
+           headers: { "Content-Type": "application/json" },
+         });
+         const data = await getReg.json();
+         console.log(data);
+         if (data.success === false) {
+           dispatch(getRegistrationFailure(data.message));
+         }
+         dispatch(getRegistrationSuccess(data));
+         
+       } catch (error) {
+         dispatch(getRegistrationFailure(error.message));
+       }
+    }
+    getRegistration();
+  }, [currentUser]);
+
+  // try {
+  //   dispatch(getRegistrationStart());
+  //   const getReg = await fetch(`/api/reg/${currentUser.id}`, {
+  //     method: "GET",
+  //     headers: { "Content-Type": "application/json" },
+  //   });
+  //   const data = await getReg.json();
+  //   if (data.success === false) {
+  //     dispatch(getRegistrationFailure(data.message));
+  //   }
+  //   dispatch(getRegistrationSuccess(data));
+  //   navigate("/");
+  // } catch (error) {
+  //   dispatch(getRegistrationFailure(error.message));
+  // }
 
 return  (
     <section className="bg-white dark:bg-gray-900 min-h-screen">

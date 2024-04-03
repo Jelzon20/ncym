@@ -1,4 +1,5 @@
 import Registration from "../models/registration.model.js";
+import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 
 
@@ -68,6 +69,22 @@ export const register = async (req, res, next) => {
   try {
     await newRegistration.save();
     res.json("Registration successful");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getRegistration = async (req, res, next) => {
+  try {
+    // console.log(req.params.regId);
+    // const user = await User.findById(req.user.id);
+    const registration = await Registration.findOne({userId: req.user.id});
+    if (!registration){
+      return next(errorHandler(404, 'Registration not found'));
+    }
+    const { ...rest } = registration._doc;
+    res.status(200).json(rest);
+      
   } catch (error) {
     next(error);
   }
