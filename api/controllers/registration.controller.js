@@ -5,13 +5,15 @@ import { errorHandler } from "../utils/error.js";
 
 export const register = async (req, res, next) => {
 
-  const { dioceseOrOrg, parishOrLocalUnit, title, nickname, birthday, contactNumber, shirtSize, roleInMinistry, address, emerContactPerson, emerRelation, emerContactNumber, allergy, medication, diet, disability } = req.body;
+  const { dioceseOrOrg, parishOrLocalUnit, title, nickname, firstName, lastName, birthday, contactNumber, shirtSize, roleInMinistry, address, emerContactPerson, emerRelation, emerContactNumber, allergy, medication, diet, disability } = req.body;
 
   if (
     !dioceseOrOrg ||
     !parishOrLocalUnit ||
     !title ||
     !nickname ||
+    !firstName ||
+    !lastName ||
     !birthday ||
     !contactNumber ||
     !shirtSize ||
@@ -28,6 +30,8 @@ export const register = async (req, res, next) => {
     parishOrLocalUnit === "" ||
     title === "" ||
     nickname === "" ||
+    firstName === "" ||
+    lastName === "" ||
     birthday === "" ||
     contactNumber === "" ||
     shirtSize === "" ||
@@ -48,27 +52,30 @@ export const register = async (req, res, next) => {
 
   const newRegistration = new Registration({
     userId: req.user.id,
-    // ...req.body,
-    dioceseOrOrg,
-    parishOrLocalUnit,
-    title,
-    nickname,
-    birthday,
-    contactNumber,
-    shirtSize,
-    roleInMinistry,
-    address,
-    emerContactPerson,
-    emerRelation,
-    emerContactNumber,
-    allergy,
-    medication,
-    diet,
-    disability,
+    ...req.body,
+    // dioceseOrOrg,
+    // parishOrLocalUnit,
+    // title,
+    // nickname,
+    // firstName,
+    // lastName,
+    // birthday,
+    // contactNumber,
+    // shirtSize,
+    // roleInMinistry,
+    // address,
+    // emerContactPerson,
+    // emerRelation,
+    // emerContactNumber,
+    // allergy,
+    // medication,
+    // diet,
+    // disability,
   });
   try {
     await newRegistration.save();
-    res.json("Registration successful");
+    const { ...rest } = newRegistration._doc;
+    res.status(200).json(rest);
   } catch (error) {
     next(error);
   }

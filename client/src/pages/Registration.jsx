@@ -68,6 +68,8 @@ export default function Registration() {
       !formData.emerRelation ||
       !formData.title ||
       !formData.nickname ||
+      !formData.lastName ||
+      !formData.firstName ||
       !formData.birthday ||
       !formData.contactNumber ||
       !formData.shirtSize ||
@@ -80,7 +82,9 @@ export default function Registration() {
     ) {
       dispatch(registerFailure("Please fill all the fields"));
       console.log("Please fill all the fields");
+      console.log(formData);
     }
+    
 
     try {
       dispatch(registerStart());
@@ -89,6 +93,7 @@ export default function Registration() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+      console.log(formData);
       const data = await res.json();
       if (data.success === false) {
         dispatch(registerFailure(data.message));
@@ -258,7 +263,37 @@ export default function Registration() {
                   id="nickname"
                   onChange={handleChange}
                   // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Green"
+                  // placeholder="Jel"
+                  required
+                />
+              </div>
+              <div className="col-span-6 sm:col-span-3">
+                <Label
+                  htmlFor="firstName"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  value="First Name"
+                />
+                <TextInput
+                  type="text"
+                  id="firstName"
+                  onChange={handleChange}
+                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  placeholder="Juan"
+                  required
+                />
+              </div>
+              <div className="col-span-6 sm:col-span-3">
+                <Label
+                  htmlFor="lastName"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  value="Last Name"
+                />
+                <TextInput
+                  type="text"
+                  id="lastName"
+                  onChange={handleChange}
+                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  placeholder="Dela Cruz"
                   required
                 />
               </div>

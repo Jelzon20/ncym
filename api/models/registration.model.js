@@ -17,6 +17,12 @@ const registrationSchema = new mongoose.Schema(
     title: {
       type: String,
     },
+    firstName: {
+      type: String,
+    },
+    lastName: {
+      type: String,
+    },
     nickname: {
       type: String,
     },
