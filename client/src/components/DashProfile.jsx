@@ -430,6 +430,7 @@ export default function DashProfile() {
                 gradientDuoTone="purpleToPink"
                 type="submit"
                 className="w-60 font-semibold"
+                
                 //   disabled={loading}
               >
                 Update Sign In
@@ -442,13 +443,71 @@ export default function DashProfile() {
             <QRCode value={currentUser && currentUser._id} className="mt-5 p-5 self-center"/>
             <Button
                 gradientDuoTone="purpleToPink"
-                type="submit"
                 className="w-60 font-semibold self-center"
+                onClick={() => setShowModal(true)}
                 //   disabled={loading}
               >
                 View ID
               </Button>
           </div>
+        <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size='md'
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className='text-center' id="print-content" >
+            {/* <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' /> */}
+            <h3 className='text-lg dark:text-gray-400'>
+              NCYM 2024
+            </h3>
+            <h4>
+              Palo, Leyte
+            </h4>
+            <h1 className="mt-5 p-2">Hi, I'm</h1>
+            <div className="grid place-items-center border max-w-full h-16 ">
+              <h1 className="text-4xl">Jel</h1>
+            </div>
+            <h1 className="p-2">Abuyog, Leyte</h1>
+            <div className='mt-8 flex w-full justify-between '>
+              <div className="flex flex-col items-start">
+              <div>
+              <Label 
+                className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                value={`Diocese/Org: ` + (currentRegister && currentRegister.dioceseOrOrg)}
+              />
+              </div>
+              <div>
+              <Label 
+                className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                value={`Parish/Local Unit: ` + (currentRegister && currentRegister.dioceseOrOrg)}
+              />
+              </div>
+              <div>
+              <Label 
+                className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                value={`Contact Number: ` + (currentRegister && currentRegister.contactNumber)}
+              />
+              </div>
+              </div>
+              
+              <div>
+              <QRCode size={120} value={currentUser && currentUser._id} className="self-center"/>
+              </div>
+            </div>
+            <div className='mt-8 flex justify-center gap-4 no-print'>
+              <Button gradientDuoTone="purpleToPink" onClick={() => window.print()}>
+                Print
+              </Button>
+              <Button color='gray' onClick={() => setShowModal(false)}>
+                No, close
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
         </div>
       </div>
       <div className="col-span-2">
