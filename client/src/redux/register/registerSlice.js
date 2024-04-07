@@ -36,6 +36,19 @@ const registerSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    updateRegStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    updateRegSuccess: (state, action) => {
+      state.currentRegister = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    updateRegFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
@@ -45,7 +58,10 @@ export const {
     registerFailure,
     getRegistrationStart,
     getRegistrationSuccess,
-    getRegistrationFailure
+    getRegistrationFailure,
+    updateRegStart,
+    updateRegSuccess,
+    updateRegFailure
     
 } = registerSlice.actions;
 

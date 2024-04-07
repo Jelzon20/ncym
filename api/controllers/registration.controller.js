@@ -96,3 +96,43 @@ export const getRegistration = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateReg = async (req, res, next) => {
+
+  if ((req.user.id !== req.params.userId) || req.params.isAdmin == true)  {
+    return next(errorHandler(403, 'You are not allowed to update this user'));
+  }
+
+  try {
+    const updatedReg = await Registration.findByIdAndUpdate(
+      req.params.regId,
+      {
+        $set: {
+          dioceseOrOrg: req.body.dioceseOrOrg,
+          parishOrLocalUnit: req.body.parishOrLocalUnit,
+          title: req.body.title,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          nickname: req.body.nickname,
+          birthday: req.body.birthday,
+          contactNumber: req.body.contactNumber,
+          shirtSize: req.body.shirtSize,
+          roleInMinistry: req.body.roleInMinistry,
+          address: req.body.address,
+          emerContactPerson: req.body.emerContactPerson,
+          emerRelation: req.body.emerRelation,
+          emerContactNumber: req.body.emerContactNumber,
+          allergy: req.body.allergy,
+          medication: req.body.medication,
+          diet: req.body.diet,
+          disability: req.body.disability,
+        },
+      },
+      { new: true }
+    );
+    const {...rest } = updatedReg._doc;
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+}

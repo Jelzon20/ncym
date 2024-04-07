@@ -29,6 +29,11 @@ import {
   deleteUserFailure,
   signoutSuccess,
 } from "../redux/user/userSlice";
+import {
+  updateRegStart,
+  updateRegSuccess,
+  updateRegFailure
+} from "../redux/register/registerSlice";
 import { useDispatch } from "react-redux";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
@@ -36,7 +41,7 @@ import { Link, useNavigate } from "react-router-dom";
 export default function DashProfile() {
   const { currentUser, error, loading } = useSelector((state) => state.user);
   const {
-    // loading,
+    loading: regLoading,
     error: errorMessage,
     currentRegister,
   } = useSelector((state) => state.register);
@@ -46,7 +51,9 @@ export default function DashProfile() {
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
   const [imageFileUploading, setImageFileUploading] = useState(false);
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
+  const [updateRegistrationSuccess, setUpdateRegistrationSuccess] = useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
+  const [updateRegistrationError, setUpdateRegistrationError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({});
   const [profileFormData, setProfileFormData] = useState({});
@@ -114,12 +121,20 @@ export default function DashProfile() {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  const handleDateChange = (date) => {
+    setProfileFormData({ ...profileFormData, birthday: date.value });
+  };
+
+  const handleProfileChange = (e) => {
+    setProfileFormData({ ...profileFormData, [e.target.id]: e.target.value });
+  };
+
   const handleSignInUpdateSubmit = async (e) => {
     e.preventDefault();
     setUpdateUserError(null);
     setUpdateUserSuccess(null);
     if (Object.keys(formData).length === 0) {
-      setUpdateUserError("No changes made");
+      setUpdateUserError("No changes made in sign in info");
       return;
     }
     if (imageFileUploading) {
@@ -151,7 +166,35 @@ export default function DashProfile() {
 
   const handleProfileUpdateSubmit = async (e) => {
     e.preventDefault();
-    console.log('submitted');
+    setUpdateRegistrationError(null);
+    setUpdateRegistrationSuccess(null);
+    if (Object.keys(profileFormData).length === 0) {
+      setUpdateRegistrationError("No changes made in profile");
+      return;
+    }
+
+    try {
+      dispatch(updateRegStart());
+      const res = await fetch(`/api/reg/update/${currentRegister._id}/${currentUser._id}/${currentUser.isAdmin}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(profileFormData),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        dispatch(updateRegFailure(data.message));
+        setUpdateRegistrationError(data.message);
+      } else {
+        dispatch(updateRegSuccess(data));
+        setUpdateRegistrationSuccess("User's sign in details updated successfully");
+      }
+
+    } catch (error) {
+      dispatch(updateRegFailure(error.message));
+      setUpdateRegistrationError(error.message);
+    }
   }
 
   const handleDeleteUser = async () => {
@@ -340,13 +383,35 @@ export default function DashProfile() {
             {errorMessage}
           </Alert>
         )}
+        {updateUserError && (
+          <Alert color='failure' className='mt-5'>
+            {updateUserError}
+          </Alert>
+        )}
+        {updateUserSuccess && (
+          <Alert color='success' className='mt-5'>
+            {updateUserSuccess}
+          </Alert>
+        )}
+        {updateRegistrationError && (
+          <Alert color='failure' className='mt-5'>
+            {updateRegistrationError}
+          </Alert>
+        )}
+        {updateRegistrationSuccess && (
+          <Alert color='success' className='mt-5'>
+            {updateRegistrationSuccess}
+          </Alert>
+        )}
         <h1 className="text-xl font-semibold text-gray-900 sm:text-3xl dark:text-white">
           User Settings
         </h1>
       </div>
       {/* <!-- Right Content --> */}
       <div className="col-span-full xl:col-auto">
+
         <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+
           <form onSubmit={handleSignInUpdateSubmit}>
             <h3 className="mb-4 text-xl font-semibold dark:text-white">
               Sign In info
@@ -359,10 +424,8 @@ export default function DashProfile() {
               hidden
             />
             <div className="flex items-center justify-center">
-              <div
-                className="w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full"
-                onClick={() => filePickerRef.current.click()}
-              >
+              <div className="relative w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full"
+                onClick={() => filePickerRef.current.click()} >
                 {imageFileUploadProgress && (
                   <CircularProgressbar
                     value={imageFileUploadProgress || 0}
@@ -377,9 +440,8 @@ export default function DashProfile() {
                         left: 0,
                       },
                       path: {
-                        stroke: `rgba(62, 152, 199, ${
-                          imageFileUploadProgress / 100
-                        })`,
+                        stroke: `rgba(62, 152, 199, ${imageFileUploadProgress / 100
+                          })`,
                       },
                     }}
                   />
@@ -387,14 +449,14 @@ export default function DashProfile() {
                 <img
                   src={imageFileUrl || currentUser.profilePicture}
                   alt="user"
-                  className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${
-                    imageFileUploadProgress &&
+                  className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${imageFileUploadProgress &&
                     imageFileUploadProgress < 100 &&
                     "opacity-60"
-                  }`}
+                    }`}
                 />
               </div>
             </div>
+
             {imageFileUploadError && (
               <Alert color="failure">{imageFileUploadError}</Alert>
             )}
@@ -430,8 +492,8 @@ export default function DashProfile() {
                 gradientDuoTone="purpleToPink"
                 type="submit"
                 className="w-60 font-semibold"
-                
-                //   disabled={loading}
+
+              //   disabled={loading}
               >
                 Update Sign In
               </Button>
@@ -440,74 +502,74 @@ export default function DashProfile() {
           </form>
 
           <div className="mt-5 flex flex-col items-center justify-center">
-            <QRCode value={currentUser && currentUser._id} className="mt-5 p-5 self-center"/>
+            <QRCode value={currentUser && currentUser._id} className="mt-5 p-5 self-center" />
             <Button
-                gradientDuoTone="purpleToPink"
-                className="w-60 font-semibold self-center"
-                onClick={() => setShowModal(true)}
-                //   disabled={loading}
-              >
-                View ID
-              </Button>
+              gradientDuoTone="purpleToPink"
+              className="w-60 font-semibold self-center"
+              onClick={() => setShowModal(true)}
+            //   disabled={loading}
+            >
+              View ID
+            </Button>
           </div>
-        <Modal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        popup
-        size='md'
-      >
-        <Modal.Header />
-        <Modal.Body>
-          <div className='text-center' id="print-content" >
-            {/* <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' /> */}
-            <h3 className='text-lg dark:text-gray-400'>
-              NCYM 2024
-            </h3>
-            <h4>
-              Palo, Leyte
-            </h4>
-            <h1 className="mt-5 p-2">Hi, I'm</h1>
-            <div className="grid place-items-center border max-w-full h-16 ">
-              <h1 className="text-4xl">Jel</h1>
-            </div>
-            <h1 className="p-2">Abuyog, Leyte</h1>
-            <div className='mt-8 flex w-full justify-between '>
-              <div className="flex flex-col items-start">
-              <div>
-              <Label 
-                className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
-                value={`Diocese/Org: ` + (currentRegister && currentRegister.dioceseOrOrg)}
-              />
+          <Modal
+            show={showModal}
+            onClose={() => setShowModal(false)}
+            popup
+            size='md'
+          >
+            <Modal.Header />
+            <Modal.Body>
+              <div className='text-center' id="print-content" >
+                {/* <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' /> */}
+                <h3 className='text-lg dark:text-gray-400'>
+                  NCYM 2024
+                </h3>
+                <h4>
+                  Palo, Leyte
+                </h4>
+                <h1 className="mt-5 p-2">Hi, I'm</h1>
+                <div className="grid place-items-center border max-w-full h-16 ">
+                  <h1 className="text-4xl">Jel</h1>
+                </div>
+                <h1 className="p-2">Abuyog, Leyte</h1>
+                <div className='mt-8 flex w-full justify-between '>
+                  <div className="flex flex-col items-start">
+                    <div>
+                      <Label
+                        className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                        value={`Diocese/Org: ` + (currentRegister && currentRegister.dioceseOrOrg)}
+                      />
+                    </div>
+                    <div>
+                      <Label
+                        className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                        value={`Parish/Local Unit: ` + (currentRegister && currentRegister.dioceseOrOrg)}
+                      />
+                    </div>
+                    <div>
+                      <Label
+                        className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                        value={`Contact Number: ` + (currentRegister && currentRegister.contactNumber)}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <QRCode size={120} value={currentUser && currentUser._id} className="self-center" />
+                  </div>
+                </div>
+                <div className='mt-8 flex justify-center gap-4 no-print'>
+                  <Button gradientDuoTone="purpleToPink" onClick={() => window.print()}>
+                    Print
+                  </Button>
+                  <Button color='gray' onClick={() => setShowModal(false)}>
+                    No, close
+                  </Button>
+                </div>
               </div>
-              <div>
-              <Label 
-                className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
-                value={`Parish/Local Unit: ` + (currentRegister && currentRegister.dioceseOrOrg)}
-              />
-              </div>
-              <div>
-              <Label 
-                className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
-                value={`Contact Number: ` + (currentRegister && currentRegister.contactNumber)}
-              />
-              </div>
-              </div>
-              
-              <div>
-              <QRCode size={120} value={currentUser && currentUser._id} className="self-center"/>
-              </div>
-            </div>
-            <div className='mt-8 flex justify-center gap-4 no-print'>
-              <Button gradientDuoTone="purpleToPink" onClick={() => window.print()}>
-                Print
-              </Button>
-              <Button color='gray' onClick={() => setShowModal(false)}>
-                No, close
-              </Button>
-            </div>
-          </div>
-        </Modal.Body>
-      </Modal>
+            </Modal.Body>
+          </Modal>
         </div>
       </div>
       <div className="col-span-2">
@@ -526,9 +588,9 @@ export default function DashProfile() {
                 />
                 <Select
                   id="dioceseOrOrg"
-                  onChange={handleChange}
-                  defaultValue={currentRegister.dioceseOrOrg}
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  onChange={handleProfileChange}
+                  defaultValue={currentRegister && currentRegister.dioceseOrOrg}
+                // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
                   <option value="Diocese 1">Diocese 1</option>
@@ -543,9 +605,9 @@ export default function DashProfile() {
                 />
                 <Select
                   id="parishOrLocalUnit"
-                  onChange={handleChange}
-                  defaultValue={currentRegister.parishOrLocalUnit}
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  onChange={handleProfileChange}
+                  defaultValue={currentRegister && currentRegister.parishOrLocalUnit}
+                // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
                   <option value="Parish 1">Parish 1</option>
@@ -569,9 +631,9 @@ export default function DashProfile() {
                 />
                 <Select
                   id="title"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.title}
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
                   <option value="Mr.">Mr.</option>
@@ -587,7 +649,7 @@ export default function DashProfile() {
                 <TextInput
                   type="text"
                   id="nickname"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.nickname}
                   // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Green"
@@ -603,7 +665,7 @@ export default function DashProfile() {
                 <TextInput
                   type="text"
                   id="firstName"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.firstName}
                   // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Juan"
@@ -619,7 +681,7 @@ export default function DashProfile() {
                 <TextInput
                   type="text"
                   id="lastName"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.lastName}
                   // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Juan"
@@ -655,7 +717,7 @@ export default function DashProfile() {
                 <TextInput
                   type="number"
                   id="contactNumber"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={
                     currentRegister && currentRegister.contactNumber
                   }
@@ -673,7 +735,7 @@ export default function DashProfile() {
                 <TextInput
                   type="text"
                   id="address"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.address}
                   // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="e.g. California"
@@ -690,7 +752,7 @@ export default function DashProfile() {
                 <TextInput
                   type="text"
                   id="roleInMinistry"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={
                     currentRegister && currentRegister.roleInMinistry
                   }
@@ -705,10 +767,10 @@ export default function DashProfile() {
                 />
                 <Select
                   id="shirtSize"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.shirtSize}
                   required
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
                   <option value="Small">Small</option>
@@ -732,7 +794,7 @@ export default function DashProfile() {
                 <TextInput
                   type="text"
                   id="emerContactPerson"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={
                     currentRegister && currentRegister.emerContactPerson
                   }
@@ -748,7 +810,7 @@ export default function DashProfile() {
                 <TextInput
                   type="text"
                   id="emerContactNumber"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={
                     currentRegister && currentRegister.emerContactNumber
                   }
@@ -764,7 +826,7 @@ export default function DashProfile() {
                 <TextInput
                   type="text"
                   id="emerRelation"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.emerRelation}
                   required
                 />
@@ -787,7 +849,7 @@ export default function DashProfile() {
                 <TextInput
                   type="text"
                   id="allergy"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.allergy}
                   placeholder="If yes, please provide details"
                   required
@@ -802,7 +864,7 @@ export default function DashProfile() {
                 <TextInput
                   type="text"
                   id="medication"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.medication}
                   placeholder="If yes, please provide details"
                   required
@@ -817,7 +879,7 @@ export default function DashProfile() {
                 <TextInput
                   type="text"
                   id="diet"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.diet}
                   placeholder="If yes, please provide details"
                   required
@@ -833,7 +895,7 @@ export default function DashProfile() {
                 <TextInput
                   type="text"
                   id="disability"
-                  onChange={handleChange}
+                  onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.disability}
                   placeholder="If yes, please provide details"
                   required
@@ -845,7 +907,7 @@ export default function DashProfile() {
                 gradientDuoTone="purpleToPink"
                 type="submit"
                 className="w-60 font-semibold"
-                //   disabled={loading}
+              //   disabled={loading}
               >
                 Update Profile
               </Button>
