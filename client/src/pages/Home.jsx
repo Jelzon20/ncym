@@ -9,8 +9,10 @@ import {
   getRegistrationFailure,
 } from "../redux/register/registerSlice";
 
+
 export default function Home() {
   const { currentUser } = useSelector((state) => state.user);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -28,18 +30,19 @@ export default function Home() {
     async function getRegistration() {
       try {
         dispatch(getRegistrationStart());
-        const getReg = await fetch(`/api/reg/${currentUser.id}`, {
+        const getReg = await fetch('/api/reg/me/', {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
         const data = await getReg.json();
         console.log(data);
         if (data.success === false) {
-          dispatch(getRegistrationFailure(data.message));
+         return dispatch(getRegistrationFailure(data.message));
         }
         dispatch(getRegistrationSuccess(data));
+        
       } catch (error) {
-        dispatch(getRegistrationFailure(error.message));
+        return dispatch(getRegistrationFailure(error.message));
       }
     }
     getRegistration();
@@ -61,7 +64,7 @@ export default function Home() {
   //   dispatch(getRegistrationFailure(error.message));
   // }
 
-  return (
+  return  (
     <section className="bg-white dark:bg-gray-900 min-h-screen">
       <div className="flex flex-col items-center justify-center py-8 px-4 text-center mx-auto max-w-screen-xl lg:py-16 lg:px-12">
         <div className="">

@@ -28,11 +28,10 @@ export default function Registration() {
   const [formData, setFormData] = useState({});
   const [updateFormData, setUpdateFormData] = useState({});
   const {
-    loading,
     error: errorMessage,
     currentRegister,
   } = useSelector((state) => state.register);
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -96,7 +95,7 @@ export default function Registration() {
       console.log(formData);
       const data = await res.json();
       if (data.success === false) {
-        dispatch(registerFailure(data.message));
+        return dispatch(registerFailure(data.message));
       }
 
       if (res.ok) {
@@ -112,12 +111,12 @@ export default function Registration() {
         });
         const data = await updRes.json();
         if (data.success === false) {
-          dispatch(updateFailure(data.message));
+          return dispatch(updateFailure(data.message));
         }
         dispatch(updateSuccess(data));
         navigate("/");
       } catch (error) {
-        dispatch(updateFailure(error.message));
+          return dispatch(updateFailure(error.message));
       }
     } catch (error) {
       dispatch(registerFailure(error.message));

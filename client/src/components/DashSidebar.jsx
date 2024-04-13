@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { signoutSuccess } from '../redux/user/userSlice';
+import { clearRegSuccess } from '../redux/register/registerSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 
@@ -36,6 +37,7 @@ export default function DashSidebar() {
         console.log(data.message);
       } else {
         dispatch(signoutSuccess());
+        dispatch(clearRegSuccess())
         navigate('/sign-in');
       }
     } catch (error) {
@@ -90,15 +92,7 @@ export default function DashSidebar() {
                   Users
                 </Sidebar.Item>
               </Link>
-              <Link to='/dashboard?tab=comments'>
-                <Sidebar.Item
-                  active={tab === 'comments'}
-                  icon={HiAnnotation}
-                  as='div'
-                >
-                  Comments
-                </Sidebar.Item>
-              </Link>
+              
             </>
           )}
           <Sidebar.Item

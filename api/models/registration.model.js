@@ -1,10 +1,12 @@
 import mongoose from 'mongoose';
 
 const registrationSchema = new mongoose.Schema(
+  
   {
-    userId: {
-      type: String,
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
+      ref: 'User'
     },
     dioceseOrOrg: {
       type: String,

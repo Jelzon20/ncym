@@ -1,6 +1,7 @@
 import bcryptjs from 'bcryptjs';
 import { errorHandler } from '../utils/error.js';
 import User from '../models/user.model.js';
+import Registration from '../models/registration.model.js';
 
 export const test = (req, res) => {
   res.json({ message: 'API is working'});
@@ -94,8 +95,18 @@ export const getUsers = async (req, res, next) => {
       .skip(startIndex)
       .limit(limit);
 
+    const regs = await Registration.find()
+      .sort({ createdAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+
     const usersWithoutPassword = users.map((user) => {
       const { password, ...rest } = user._doc;
+      return rest;
+    });
+
+    const registrations = regs.map((reg) => {
+      const { ...rest } = reg._doc;
       return rest;
     });
 

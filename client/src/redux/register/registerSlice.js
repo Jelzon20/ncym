@@ -49,6 +49,11 @@ const registerSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    clearRegSuccess: (state) => {
+      state.currentRegister = null;
+      state.loading = false;
+      state.error = null;
+    },
   },
 });
 
@@ -61,7 +66,8 @@ export const {
     getRegistrationFailure,
     updateRegStart,
     updateRegSuccess,
-    updateRegFailure
+    updateRegFailure,
+    clearRegSuccess
     
 } = registerSlice.actions;
 

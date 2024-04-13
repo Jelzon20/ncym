@@ -38,6 +38,7 @@ export const signup = async (req, res, next) => {
 
 export const signin = async (req, res, next) => {
   const { email, password } = req.body;
+  const jwtOptions = { expiresIn: '2h' };
 
   if (!email || !password || email === '' || password === '') {
     next(errorHandler(400, 'All fields are required'));
@@ -55,7 +56,8 @@ export const signin = async (req, res, next) => {
       { id: validUser._id, 
         isAdmin: validUser.isAdmin 
       },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET, 
+      jwtOptions
     );
 
     const { password: pass, ...rest } = validUser._doc;

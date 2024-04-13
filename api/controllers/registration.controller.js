@@ -51,7 +51,7 @@ export const register = async (req, res, next) => {
   }
 
   const newRegistration = new Registration({
-    userId: req.user.id,
+    user: req.user.id,
     ...req.body,
     // dioceseOrOrg,
     // parishOrLocalUnit,
@@ -81,11 +81,71 @@ export const register = async (req, res, next) => {
   }
 };
 
-export const getRegistration = async (req, res, next) => {
+export const getRegs   = async (req, res, next) => {
+  if (!req.user.isAdmin) {
+    return next(errorHandler(403, 'You are not allowed to see all users'));
+  }
+  try {
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const sortDirection = req.query.sort === 'asc' ? 1 : -1;
+
+    const regs = await Registration.find().populate('user', ['email', 'profilePicture', 'isAdmin', 'isRegistered', 'isAccepted'])
+      .sort({ createdAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+
+    const registrations = regs.map((reg) => {
+      const { ...rest } = reg._doc;
+      return rest;
+    });
+
+    const totalRegistration = await Registration.countDocuments();
+
+    const now = new Date();
+
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
+    const lastMonthRegs = await Registration.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+
+    res.status(200).json({
+      regs: registrations,
+      totalRegistration,
+      lastMonthRegs,
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMyReg = async (req, res, next) => {
   try {
     // console.log(req.params.regId);
     // const user = await User.findById(req.user.id);
-    const registration = await Registration.findOne({userId: req.user.id});
+    const registration = await Registration.findOne({user: req.user.id}).populate('user', ['email', 'profilePicture', 'isAdmin', 'isRegistered', 'isAccepted']);
+    if (!registration){
+      return next(errorHandler(404, 'Registration not found'));
+    }
+    const { ...rest } = registration._doc;
+    res.status(200).json(rest);
+      
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getRegistration = async (req, res, next) => {
+
+  try {
+    // console.log(req.params.regId);
+    // const user = await User.findById(req.user.id);
+    const registration = await Registration.findOne({_id: req.params.regId}).populate('user', ['email', 'profilePicture']);
     if (!registration){
       return next(errorHandler(404, 'Registration not found'));
     }
@@ -136,3 +196,4 @@ export const updateReg = async (req, res, next) => {
     next(error);
   }
 }
+
