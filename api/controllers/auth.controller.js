@@ -8,12 +8,8 @@ export const signup = async (req, res, next) => {
   const { firstname, lastname, email, password } = req.body;
 
   if (
-    !firstname ||
-    !lastname ||
     !email ||
     !password ||
-    firstname === "" ||
-    lastname === "" ||
     email === "" ||
     password === ""
   ) {
@@ -23,8 +19,6 @@ export const signup = async (req, res, next) => {
   const hashedPassword = bcryptjs.hashSync(password, 10);
 
   const newUser = new User({
-    firstname,
-    lastname,
     email,
     password: hashedPassword,
   });

@@ -8,9 +8,9 @@ export const test = (req, res) => {
 }
 
 export const updateUser = async (req, res, next) => {
-  if (req.user.id !== req.params.userId) {
-    return next(errorHandler(403, 'You are not allowed to update this user'));
-  }
+  // if (req.user.id !== req.params.userId) {
+  //   return next(errorHandler(403, 'You are not allowed to update this user'));
+  // }
   if (req.body.password) {
     if (req.body.password.length < 6) {
       return next(errorHandler(400, 'Password must be at least 6 characters'));
@@ -40,13 +40,13 @@ export const updateUser = async (req, res, next) => {
       req.params.userId,
       {
         $set: {
-          firstname: req.body.firstname,
-          lastname: req.body.lastname,
           email: req.body.email,
           profilePicture: req.body.profilePicture,
           password: req.body.password,
           isAdmin: req.body.isAdmin,
-          isRegistered: req.body.isRegistered
+          isRegistered: req.body.isRegistered,
+          isAccepted: req.body.isAccepted,
+          isActive: req.body.isActive
         },
       },
       { new: true }

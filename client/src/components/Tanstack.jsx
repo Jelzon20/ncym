@@ -7,14 +7,14 @@ import {
     getPaginationRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import { Modal, Table, Button, Label, Pagination, Alert } from 'flowbite-react';
+import { Modal, Table, Button, Label, Pagination, Alert, TextInput, Toast } from 'flowbite-react';
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import DownloadBtn from "./DownloadBtn";
 import DebouncedInput from "./DebouncedInput.jsx";
 import { SearchIcon } from "../Icons/icons";
-import { FaCheck, FaInfo, FaTimes } from 'react-icons/fa';
-import { HiOutlineExclamationCircle } from 'react-icons/hi';    
+import { FaCheck, FaInfo, FaTimes, } from 'react-icons/fa';
+import { HiOutlineExclamationCircle, HiCheck } from 'react-icons/hi';    
 import QRCode from "react-qr-code";
 import Loading from './Loading.jsx';
 import {
@@ -42,6 +42,7 @@ export default function Tanstack() {
     const [userIdToView, setUserIdToView] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const columnHelper = createColumnHelper();
+    const [show, setShow] = useState(true);
 
     const columns = [
         
@@ -188,6 +189,22 @@ export default function Tanstack() {
         console.log(users)
     }, [currentUser._id]);
 
+    const rerender = async () => {
+      try {
+        const res = await fetch(`/api/reg/getregs`);
+        const data = await res.json();
+        if (res.ok) {
+            setUsers(data.regs);
+            if (data.regs.length < 9) {
+                setShowMore(false);
+
+            }
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+    }
+
     const table = useReactTable({
         data: users,
         columns,
@@ -243,9 +260,14 @@ export default function Tanstack() {
             const data = await updUser.json();
             if (data.success === false) {
               return dispatch(updateFailure(data.message));
+            } else{
+              dispatch(updateSuccess(data));
+              setUpdateUserSuccess("User has been accepted");
+              setShowProfModal(false)
+              rerender();
+              
             }
-            dispatch(updateSuccess(data));
-            setUpdateUserSuccess("User has been accepted");
+            
           } catch (error) {
               return dispatch(updateFailure(error.message));
           }
@@ -253,9 +275,15 @@ export default function Tanstack() {
     return (
         <div className="p-2 max-w-7xl mx-auto text-white fill-gray-400">
             {updateUserSuccess && (
-          <Alert color='success' className='mt-5'>
-            {updateUserSuccess}
-          </Alert>
+          <Toast color='success' className='mt-5 max-w-full bg-green-200'>
+            
+            <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+          <HiCheck className="h-5 w-5" />
+        </div>
+        <div className="ml-3 text-sm font-normal">{updateUserSuccess}</div>
+        <Toast.Toggle />
+          </Toast>
+          
         )}
             <div className="flex justify-between mb-2">
                 <div className="w-full flex items-center gap-1">
@@ -342,41 +370,131 @@ export default function Tanstack() {
         show={showProfModal}
         onClose={() => (setShowProfModal(false), setReg([]))}
         popup
-        size='md'
+        size='2xl'
       >
         <Modal.Header />
         <Modal.Body>
-            {(reg === undefined || reg.length == 0) ? (<Loading />) : (<div className='text-center' id="print-content" >
+            {(reg === undefined || reg.length == 0) ? (<Loading />) : (
+                
+            <div className='text-center' id="print-content" >
+             <div className="flex items-center justify-center">
             {/* <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' /> */}
-            <h3 className='text-lg dark:text-gray-400'>
-              NCYM 2024
-            </h3>
-            <h4>
-              Palo, Leyte
-            </h4>
-            <h1 className="mt-5 p-2">Hi, I'm</h1>
-            <div className="grid place-items-center border max-w-full h-16 ">
-              <h1 className="text-4xl">{reg && reg.nickname}</h1>
+            <div className="relative w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full" >
+                
+                <img
+                  src={reg && reg.user.profilePicture}
+                  alt="user"
+                  className='rounded-full w-full h-full object-cover border-8 border-[lightgray]'
+                />
+              </div>
+              </div>
+            
+
+              <div className="p-4 mt-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+
+            <div className="grid grid-cols-6 gap-6">
+              <div className="col-span-6 sm:col-span-3">
+                <Label
+                  htmlFor="title"
+                  className="block mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                  value="First Name"
+                />
+                <TextInput
+                  type="text"
+                  id="emerContactPerson"
+                //   onChange={handleProfileChange}
+                  defaultValue={
+                    reg && reg.firstName
+                  }
+                  required
+                />
+              </div>
+              <div className="col-span-6 sm:col-span-3">
+                <Label
+                  htmlFor="title"
+                  className="block mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                  value="Last Name"
+                />
+                <TextInput
+                  type="text"
+                  id="emerContactNumber"
+                //   onChange={handleProfileChange}
+                  defaultValue={
+                    reg && reg.lastName
+                  }
+                  required
+                />
+              </div>
+              <div className="col-span-6 sm:col-span-3">
+                <Label
+                  htmlFor="title"
+                  className="block mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                  value="Diocese/Organization"
+                />
+                <TextInput
+                  type="text"
+                  id="emerContactNumber"
+                //   onChange={handleProfileChange}
+                  defaultValue={
+                    reg && reg.dioceseOrOrg
+                  }
+                  required
+                />
+              </div>
+              <div className="col-span-6 sm:col-span-3">
+                <Label
+                  htmlFor="title"
+                  className="block mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                  value="Parish/Local Unit"
+                />
+                <TextInput
+                  type="text"
+                  id="emerContactNumber"
+                //   onChange={handleProfileChange}
+                  defaultValue={
+                    reg && reg.parishOrLocalUnit
+                  }
+                  required
+                />
+              </div>
             </div>
-            <h1 className="p-2">Abuyog, Leyte</h1>
+          </div>
+
+
+
+            <div className="grid place-items-center border max-w-full h-10 bg-indigo-950">
+              
+            </div>
             <div className='mt-8 flex w-full justify-between '>
               <div className="flex flex-col items-start">
                 <div>
                   <Label
                     className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
-                    value={`Diocese/Org: ` + (reg && reg.dioceseOrOrg)}
+                    value={`Address: ` + (reg && reg.address)}
                   />
                 </div>
                 <div>
                   <Label
                     className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
-                    value={`Parish/Local Unit: ` + (reg && reg.parishOrLocalUnit)}
+                    value={`Birthday: ` + (reg && reg.birthday)}
+                  />
+                </div>
+                <div>
+                  <Label
+                    className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                    value={`Contact Number: ` + (reg && reg.contactNumber)}
                   />
                 </div>  
                 <div>
                   <Label
                     className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
-                    value={`Contact Number: ` + (reg && reg.contactNumber)}
+                    value={`Email: ` + (reg && reg.user.email)}
+                  />
+                </div>
+                <div>
+                  <Label
+                    className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                    value={`Role in Ministry: ` + (reg && reg.roleInMinistry)}
                   />
                 </div>
               </div>
@@ -386,14 +504,18 @@ export default function Tanstack() {
               </div>
             </div>
             <div className='mt-8 flex justify-center gap-4 no-print'>
-              <Button gradientDuoTone="purpleToPink" onClick={() => handleUpdateUser(reg.user._id)}>
+              <Button className='bg-indigo-950' onClick={() => handleUpdateUser(reg.user._id)}>
                 Accept
               </Button>
               <Button color='gray' onClick={() => setShowProfModal(false)}>
                 Close
               </Button>
             </div>
-          </div>)}
+          </div>
+
+          
+        
+        )}
             
            
               

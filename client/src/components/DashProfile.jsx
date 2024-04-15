@@ -347,9 +347,9 @@ export default function DashProfile() {
             </div>
             <div className="mt-10 flex items-center justify-center">
               <Button
-                gradientDuoTone="purpleToPink"
+               
                 type="submit"
-                className="w-60 font-semibold"
+                className="w-60 font-semibold bg-indigo-950 dark:bg-indigo-950"
 
               //   disabled={loading}
               >
@@ -361,14 +361,9 @@ export default function DashProfile() {
 
           <div className="mt-5 flex flex-col items-center justify-center">
             <QRCode value={currentUser && currentUser._id} className="mt-5 p-5 self-center" />
-            <Button
-              gradientDuoTone="purpleToPink"
-              className="w-60 font-semibold self-center"
-              onClick={() => setShowModal(true)}
-            //   disabled={loading}
-            >
-              View ID
-            </Button>
+            <span className="text-indigo-950 italic dark:text-white">
+              Present this QR to record attendance.
+            </span>
           </div>
           <Modal
             show={showModal}
@@ -461,16 +456,15 @@ export default function DashProfile() {
                   className="block mb-2 text-sm font-semibold text-gray-900 dark:text-white"
                   value="Parish/Local Unit"
                 />
-                <Select
+                <TextInput
+                  type="text"
                   id="parishOrLocalUnit"
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.parishOrLocalUnit}
-                // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                >
-                  <option value="">Select here</option>
-                  <option value="Parish 1">Parish 1</option>
-                  <option value="Local Unit 1">Local Unit 1</option>
-                </Select>
+                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  
+                  required
+                />
               </div>
             </div>
           </div>
@@ -510,7 +504,7 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.nickname}
                   // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Green"
+                  
                   required
                 />
               </div>
@@ -762,9 +756,9 @@ export default function DashProfile() {
             </div>
             <div className="mt-10 flex items-center justify-center">
               <Button
-                gradientDuoTone="purpleToPink"
+                
                 type="submit"
-                className="w-60 font-semibold"
+                className="w-60 font-semibold bg-indigo-950 dark:bg-indigo-950"
               //   disabled={loading}
               >
                 Update Profile
