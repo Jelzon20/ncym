@@ -7,6 +7,7 @@ import {
   Label,
   Select,
   Datepicker,
+  FileInput
 } from "flowbite-react";
 import QRCode from "react-qr-code";
 import { useEffect, useRef, useState } from "react";
@@ -51,6 +52,20 @@ export default function DashProfile() {
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
   const [imageFileUploading, setImageFileUploading] = useState(false);
+
+  const [file, setFile] = useState(null);
+  const [fileUrl, setFileUrl] = useState(null);
+  const [fileUploadProgress, setFileUploadProgress] = useState(null);
+  const [fileUploadError, setFileUploadError] = useState(null);
+  const [fileUploading, setFileUploading] = useState(false);
+
+  const [paymentFile, setPaymentFile] = useState(null);
+  const [paymentFileUrl, setPaymentFileUrl] = useState(null);
+  const [paymentFileUploadProgress, setPaymentFileUploadProgress] = useState(null);
+  const [paymentFileUploadError, setPaymentFileUploadError] = useState(null);
+  const [paymentFileUploading, setPaymentFileUploading] = useState(false);
+
+
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [updateRegistrationSuccess, setUpdateRegistrationSuccess] = useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
@@ -58,9 +73,13 @@ export default function DashProfile() {
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({});
   const [profileFormData, setProfileFormData] = useState({});
+
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
+
   const filePickerRef = useRef();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -68,6 +87,103 @@ export default function DashProfile() {
       setImageFileUrl(URL.createObjectURL(file));
     }
   };
+
+  const handleWaiverFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFile(file);
+      setFileUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const handlePaymentFileChange = (e) => {
+    const paymentFile = e.target.files[0];
+    if (paymentFile) {
+      setPaymentFile(file);
+      setPaymentFileUrl(URL.createObjectURL(paymentFile));
+    }
+  };
+
+  useEffect(() => {
+    if (file) {
+      uploadWaiverFile();
+    }
+  }, [file]);
+
+  useEffect(() => {
+    if (paymentFile) {
+      uploadPaymentFile();
+    }
+  }, [paymentFile]);
+
+  const uploadWaiverFile = async () => {
+    setFileUploading(true);
+    setFileUploadError(null);
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + file.name;
+    const storageRef = ref(storage, `/files/${fileName}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+        setFileUploadProgress(progress.toFixed(0));
+      },
+      (error) => {
+        setFileUploadError(
+          "Could not upload file (File must be less than 2MB)"
+        );
+        setFileUploadProgress(null);
+        setFile(null);
+        setFileUrl(null);
+        setFileUploading(false);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFileUrl(downloadURL);
+          setFormData({ ...formData, waiver: downloadURL });
+          setFileUploading(false);
+        });
+      }
+    );
+  };
+
+  const uploadPaymentFile = async () => {
+    setPaymentFileUploading(true);
+    setPaymentFileUploadError(null);
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + paymentFile.name;
+    const storageRef = ref(storage, `/files/${fileName}`);
+    const uploadTask = uploadBytesResumable(storageRef, paymentFile);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+        setPaymentFileUploadProgress(progress.toFixed(0));
+      },
+      (error) => {
+        setFileUploadError(
+          "Could not upload file (File must be less than 2MB)"
+        );
+        setPaymentFileUploadProgress(null);
+        setPaymentFile(null);
+        setPaymentFileUrl(null);
+        setPaymentFileUploading(false);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setPaymentFileUrl(downloadURL);
+          setFormData({ ...formData, proofOfPayment: downloadURL });
+          setPaymentFileUploading(false);
+        });
+      }
+    );
+  };
+
   useEffect(() => {
     if (imageFile) {
       uploadImage();
@@ -135,103 +251,116 @@ export default function DashProfile() {
     setUpdateUserError(null);
     setUpdateUserSuccess(null);
     if (Object.keys(formData).length === 0) {
+      setOpenConfirmModal(false);
       setUpdateUserError("No changes made in sign in info");
       return;
     }
     if (imageFileUploading) {
+      setOpenConfirmModal(false);
       setUpdateUserError("Please wait for image to upload");
       return;
     }
-    try {
-      dispatch(updateStart());
-      const res = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        dispatch(updateFailure(data.message));
-        setUpdateUserError(data.message);
-      } else {
-        dispatch(updateSuccess(data));
-        setUpdateUserSuccess("User's sign in details updated successfully");
-      }
-    } catch (error) {
-      dispatch(updateFailure(error.message));
-      setUpdateUserError(error.message);
-    }
+
+    console.log(formData);
+    // try {
+    //   dispatch(updateStart());
+    //   const res = await fetch(`/api/user/update/${currentUser._id}`, {
+    //     method: "PUT",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(formData),
+    //   });
+    //   const data = await res.json();
+    //   if (!res.ok) {
+    //     dispatch(updateFailure(data.message));
+    //     setUpdateUserError(data.message);
+    //   } else {
+    //     dispatch(updateSuccess(data));
+    //     setUpdateUserSuccess("User's sign in details updated successfully");
+    //   }
+    // } catch (error) {
+    //   dispatch(updateFailure(error.message));
+    //   setUpdateUserError(error.message);
+    // }
   };
+
+
 
   const handleProfileUpdateSubmit = async (e) => {
     e.preventDefault();
     setUpdateRegistrationError(null);
     setUpdateRegistrationSuccess(null);
     if (Object.keys(profileFormData).length === 0) {
+      setOpenConfirmModal(false);
       setUpdateRegistrationError("No changes made in profile");
       return;
     }
 
-    try {
-      dispatch(updateRegStart());
-      const res = await fetch(`/api/reg/update/${currentRegister._id}/${currentUser._id}/${currentUser.isAdmin}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(profileFormData),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        dispatch(updateRegFailure(data.message));
-        setUpdateRegistrationError(data.message);
-      } else {
-        dispatch(updateRegSuccess(data));
-        setUpdateRegistrationSuccess("User's sign in details updated successfully");
-      }
-
-    } catch (error) {
-      dispatch(updateRegFailure(error.message));
-      setUpdateRegistrationError(error.message);
+    if (fileUploading || paymentFileUploading) {
+      setOpenConfirmModal(false);
+      setUpdateUserError("Please wait for files to upload");
+      return;
     }
+    console.log(profileFormData);
+    // try {
+    //   dispatch(updateRegStart());
+    //   const res = await fetch(`/api/reg/update/${currentRegister._id}/${currentUser._id}/${currentUser.isAdmin}`, {
+    //     method: "PUT",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(profileFormData),
+    //   });
+    //   const data = await res.json();
+    //   if (!res.ok) {
+    //     dispatch(updateRegFailure(data.message));
+    //     setUpdateRegistrationError(data.message);
+    //   } else {
+    //     dispatch(updateRegSuccess(data));
+    //     setUpdateRegistrationSuccess("User's sign in details updated successfully");
+    //   }
+
+    // } catch (error) {
+    //   dispatch(updateRegFailure(error.message));
+    //   setUpdateRegistrationError(error.message);
+    // }
   }
 
-  const handleDeleteUser = async () => {
-    setShowModal(false);
-    try {
-      dispatch(deleteUserStart());
-      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        dispatch(deleteUserFailure(data.message));
-      } else {
-        dispatch(deleteUserSuccess(data));
-      }
-    } catch (error) {
-      dispatch(deleteUserFailure(error.message));
-    }
-  };
+  // const handleDeleteUser = async () => {
+  //   setShowModal(false);
+  //   try {
+  //     dispatch(deleteUserStart());
+  //     const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+  //       method: "DELETE",
+  //     });
+  //     const data = await res.json();
+  //     if (!res.ok) {
+  //       dispatch(deleteUserFailure(data.message));
+  //     } else {
+  //       dispatch(deleteUserSuccess(data));
+  //     }
+  //   } catch (error) {
+  //     dispatch(deleteUserFailure(error.message));
+  //   }
+  // };
 
-  const handleSignout = async () => {
-    try {
-      const res = await fetch("/api/user/signout", {
-        method: "POST",
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        console.log(data.message);
-      } else {
-        dispatch(signoutSuccess());
-        navigate("/sign-in");
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+  // const handleSignout = async () => {
+  //   try {
+  //     const res = await fetch("/api/user/signout", {
+  //       method: "POST",
+  //     });
+  //     const data = await res.json();
+  //     if (!res.ok) {
+  //       console.log(data.message);
+  //     } else {
+  //       dispatch(signoutSuccess());
+  //       navigate("/sign-in");
+  //     }
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // };
 
   return (
     <div className="max-w-max mx-auto grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
@@ -426,7 +555,7 @@ export default function DashProfile() {
         </div>
       </div>
       <div className="col-span-2">
-        <form onSubmit={handleProfileUpdateSubmit}>
+        <form>
           <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
             <h3 className="mb-4 text-xl font-semibold dark:text-white">
               Origin
@@ -687,6 +816,158 @@ export default function DashProfile() {
           </div>
           <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
             <h3 className="mb-4 text-xl font-semibold dark:text-white">
+              Travel Details
+            </h3>
+
+            <div className="grid grid-cols-9 gap-9">
+              <div className="col-span-6 sm:col-span-3">
+                <Label
+                  htmlFor="CarrierToPalo"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  value="Carrier to Palo"
+                />
+
+                <Select
+                  id="carrierToPalo"
+                  onChange={handleProfileChange}
+                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                >
+                  <option value="">Select here</option>
+                  <option value="Airplane">Airplane</option>
+                  <option value="Bus">Bus</option>
+                </Select>
+              </div>
+              <div className="col-span-6 sm:col-span-3">
+                <Label
+                  htmlFor="arrivalDate"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  value="Date of Arrival"
+                />
+                <Datepicker
+                  id="arrivalDate"
+                  onSelectedDateChanged={(date) =>
+                    handleArrivalChange({
+                      value: moment(date).format("MM/DD/YYYY"),
+                    })
+                  }
+                  // onSelectedDateChanged={handleDateChange}
+                  required
+                />
+              </div>
+              <div className="col-span-6 sm:col-span-3">
+                <Label
+                  htmlFor="arrivalTime"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  value="Estimated Time of Arrival"
+                />
+                <Select
+                  id="arrivalTime"
+                  onChange={handleProfileChange}
+                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                >
+                  <option value="">Select here</option>
+                  <option value="12:00">00:00</option>
+                  <option value="1:00">1:00</option>
+                  <option value="2:00">2:00</option>
+                  <option value="3:00">3:00</option>
+                  <option value="4:00">4:00</option>
+                  <option value="5:00">5:00</option>
+                  <option value="6:00">6:00</option>
+                  <option value="7:00">7:00</option>
+                  <option value="8:00">8:00</option>
+                  <option value="9:00">9:00</option>
+                  <option value="10:00">10:00</option>
+                  <option value="11:00">11:00</option>
+                  <option value="12:00">12:00</option>
+                  <option value="13:00">13:00</option>
+                  <option value="14:00">14:00</option>
+                  <option value="15:00">15:00</option>
+                  <option value="16:00">16:00</option>
+                  <option value="17:00">17:00</option>
+                  <option value="18:00">18:00</option>
+                  <option value="19:00">19:00</option>
+                  <option value="20:00">20:00</option>
+                  <option value="21:00">21:00</option>
+                  <option value="22:00">22:00</option>
+                  <option value="23:00">23:00</option>
+                </Select>
+              </div>
+              <div className="col-span-6 sm:col-span-3">
+                <Label
+                  htmlFor="carrierOutToPalo"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  value="Carrier out of Palo"
+                />
+
+                <Select
+                  id="carrierOutOfPalo"
+                  onChange={handleProfileChange}
+                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                >
+                  <option value="">Select here</option>
+                  <option value="Airplane">Airplane</option>
+                  <option value="Bus">Bus</option>
+                </Select>
+              </div>
+              <div className="col-span-6 sm:col-span-3">
+                <Label
+                  htmlFor="departuredate"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  value="Date of Departure"
+                />
+                <Datepicker
+                  id="departureDate"
+                  onSelectedDateChanged={(date) =>
+                    handleDepartureChange({
+                      value: moment(date).format("MM/DD/YYYY"),
+                    })
+                  }
+                  // onSelectedDateChanged={handleDateChange}
+                  required
+                />
+              </div>
+              <div className="col-span-6 sm:col-span-3">
+                <Label
+                  htmlFor="departureTime"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  value="Estimated Time of Departure"
+                />
+                <Select
+                  id="departureTime"
+                  onChange={handleProfileChange}
+                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                >
+                  <option value="">Select here</option>
+                  <option value="12:00">00:00</option>
+                  <option value="1:00">1:00</option>
+                  <option value="2:00">2:00</option>
+                  <option value="3:00">3:00</option>
+                  <option value="4:00">4:00</option>
+                  <option value="5:00">5:00</option>
+                  <option value="6:00">6:00</option>
+                  <option value="7:00">7:00</option>
+                  <option value="8:00">8:00</option>
+                  <option value="9:00">9:00</option>
+                  <option value="10:00">10:00</option>
+                  <option value="11:00">11:00</option>
+                  <option value="12:00">12:00</option>
+                  <option value="13:00">13:00</option>
+                  <option value="14:00">14:00</option>
+                  <option value="15:00">15:00</option>
+                  <option value="16:00">16:00</option>
+                  <option value="17:00">17:00</option>
+                  <option value="18:00">18:00</option>
+                  <option value="19:00">19:00</option>
+                  <option value="20:00">20:00</option>
+                  <option value="21:00">21:00</option>
+                  <option value="22:00">22:00</option>
+                  <option value="23:00">23:00</option>
+                </Select>
+              </div>
+            </div>
+          </div>
+          <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+            <h3 className="mb-4 text-xl font-semibold dark:text-white">
               Health Declaration (Leave empty if none)
             </h3>
 
@@ -754,7 +1035,7 @@ export default function DashProfile() {
                 />
               </div>
             </div>
-            <div className="mt-10 flex items-center justify-center">
+            {/* <div className="mt-10 flex items-center justify-center">
               <Button
                 
                 type="submit"
@@ -763,8 +1044,88 @@ export default function DashProfile() {
               >
                 Update Profile
               </Button>
+            </div> */}
+          </div>
+          <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+            <h3 className="mb-4 text-xl font-semibold dark:text-white">
+              Attachments (maximum of 3 MB)
+            </h3>
+
+            <div className="grid grid-cols-6 gap-6">
+              <div className="col-span-6 sm:col-span-3">
+                <Label
+                  htmlFor="allergy"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  value="Full Accomplished Autorization and Waiver Form"
+                />
+
+                <FileInput
+                  id="waiver"
+                  accept=".doc, .docx, .pdf"
+                  onChange={handleWaiverFileChange}
+                  required
+                />
+                {file ? (<Progress
+                  progress={fileUploadProgress}
+                  // progress={45}
+                  progressLabelPosition="inside"
+                  textLabel="Lode"
+                  size="lg"
+                  className="mt-4"
+                  labelProgress
+                />) : (<></>)}
+              </div>
+              <div className="col-span-6 sm:col-span-3">
+                <Label
+                  htmlFor="medication"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  value="Proof of Payment"
+                />
+                <FileInput
+                  id="payment"
+                  onChange={handlePaymentFileChange}
+                  required
+                />
+
+                {paymentFile ? (<Progress
+                  progress={paymentFileUploadProgress}
+                  // progress={45}
+                  progressLabelPosition="inside"
+                  textLabel="Lode"
+                  size="lg"
+                  className="mt-4"
+                  labelProgress
+                />) : (<></>)}
+              </div>
+            </div>
+            <div className="mt-10 flex items-center justify-center">
+              <Button
+                // type="submit"
+                onClick={() => setOpenConfirmModal(true)}
+                className="w-60 bg-indigo-950 dark:bg-indigo-950"
+                //   disabled={loading}
+              >
+                Update Profile
+              </Button>
               {/* <Button color="blue" className='w-60'>Save All</Button> */}
             </div>
+            <Modal dismissible show={openConfirmModal} onClose={() => setOpenConfirmModal(false)}>
+              <Modal.Header>Terms of Service</Modal.Header>
+              <Modal.Body>
+                <div className="space-y-6">
+                  
+                  <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                  By submitting this registration form, you are confirming that the data provided is accurate and factual. Your commitment to providing correct information is appreciated and essential for us to serve you better. Rest assured, the data you share with us is handled with the utmost care and confidentiality. 
+                  </p>
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button onClick={handleProfileUpdateSubmit}>I accept</Button>
+                <Button color="gray" onClick={() => setOpenConfirmModal(false)}>
+                  Decline
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </div>
         </form>
       </div>

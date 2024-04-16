@@ -10,11 +10,9 @@ const registrationSchema = new mongoose.Schema(
     },
     dioceseOrOrg: {
       type: String,
-      
     },
     parishOrLocalUnit: {
       type: String,
-      
     },
     title: {
       type: String,
@@ -71,6 +69,38 @@ const registrationSchema = new mongoose.Schema(
       
     },
     disability: {
+      type: String,
+      
+    },
+    arrivalDate: {
+      type: String,
+      
+    },
+    arrivalTime: {
+      type: String,
+      
+    },
+    carrierOutOfPalo: {
+      type: String,
+      
+    },
+    carrierToPalo: {
+      type: String,
+      
+    },
+    departureDate: {
+      type: String,
+      
+    },
+    departureTime: {
+      type: String,
+      
+    },
+    proofOfPayment: {
+      type: String,
+      
+    },
+    waiver: {
       type: String,
       
     },

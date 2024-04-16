@@ -14,7 +14,8 @@ import {
   Toast,
   FileInput,
   Spinner,
-  Progress 
+  Progress,
+  Modal
 } from "flowbite-react";
 import {
   registerFailure,
@@ -56,6 +57,8 @@ export default function Registration() {
   const [paymentFileUploadProgress, setPaymentFileUploadProgress] = useState(null);
   const [paymentFileUploadError, setPaymentFileUploadError] = useState(null);
   const [paymentFileUploading, setPaymentFileUploading] = useState(false);
+
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -165,7 +168,7 @@ export default function Registration() {
     console.log(currentUser.isRegistered)
 
     if(currentUser.isRegistered) {
-        navigate('/');
+        navigate('/dashboard?tab=profile');
     }
     
   }, [currentUser]);
@@ -208,53 +211,71 @@ export default function Registration() {
       !formData.allergy ||
       !formData.medication ||
       !formData.diet ||
-      !formData.disability
+      !formData.disability ||
+      !formData.arrivalDate ||
+      !formData.arrivalTime ||
+      !formData.carrierOutOfPalo ||
+      !formData.carrierToPalo ||
+      !formData.departureDate || 
+      !formData.departureTime
     ) {
+      setOpenConfirmModal(false);
       dispatch(registerFailure("Please fill all the fields"));
-      console.log("Please fill all the fields");
+      return;
+      
     }
     console.log(formData);
 
-    // try {
-    //   dispatch(registerStart());
-    //   const res = await fetch("/api/reg/register", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(formData),
-    //   });
-    //   console.log(formData);
-    //   const data = await res.json();
-    //   if (data.success === false) {
-    //     return dispatch(registerFailure(data.message));
-    //   }
+    // navigate("/dashboard?tab=profile");
 
-    //   if (res.ok) {
-    //     dispatch(registerSuccess(data));
-    //   }
+    try {
+      dispatch(registerStart());
+      const res = await fetch("/api/reg/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      console.log(formData);
+      const data = await res.json();
+      if (data.success === false) {
+        setOpenConfirmModal(false);
+        dispatch(registerFailure(data.message));
+        return;
+      }
 
-    //   try {
-    //     dispatch(updateStart());
-    //     const updRes = await fetch(`/api/user/update/${currentUser._id}`, {
-    //       method: "PUT",
-    //       headers: { "Content-Type": "application/json" },
-    //       body: JSON.stringify(updateFormData),
-    //     });
-    //     const data = await updRes.json();
-    //     if (data.success === false) {
-    //       return dispatch(updateFailure(data.message));
-    //     }
-    //     dispatch(updateSuccess(data));
-    //     navigate("/");
-    //   } catch (error) {
-    //       return dispatch(updateFailure(error.message));
-    //   }
-    // } catch (error) {
-    //   dispatch(registerFailure(error.message));
-    // }
+      if (res.ok) {
+        dispatch(registerSuccess(data));
+      }
+
+      try {
+        dispatch(updateStart());
+        const updRes = await fetch(`/api/user/update/${currentUser._id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updateFormData),
+        });
+        const data = await updRes.json();
+        if (data.success === false) {
+          setOpenConfirmModal(false);
+          dispatch(updateFailure(data.message));
+          return;
+        }
+        dispatch(updateSuccess(data));
+        navigate("/dashboard?tab=profile");
+      } catch (error) {
+        setOpenConfirmModal(false);
+        dispatch(updateFailure(error.message));
+        return;
+      }
+    } catch (error) {
+      setOpenConfirmModal(false);
+      dispatch(registerFailure(error.message));
+      return;
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form>
       <div className="max-w-max mx-auto grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
         <div className="mb-4 col-span-full xl:mb-2">
           {errorMessage && (
@@ -787,7 +808,8 @@ export default function Registration() {
             </div>
             <div className="mt-10 flex items-center justify-center">
               <Button
-                type="submit"
+                // type="submit"
+                onClick={() => setOpenConfirmModal(true)}
                 className="w-60 bg-indigo-950 dark:bg-indigo-950"
                 //   disabled={loading}
               >
@@ -795,6 +817,23 @@ export default function Registration() {
               </Button>
               {/* <Button color="blue" className='w-60'>Save All</Button> */}
             </div>
+            <Modal dismissible show={openConfirmModal} onClose={() => setOpenConfirmModal(false)}>
+              <Modal.Header>Terms of Service</Modal.Header>
+              <Modal.Body>
+                <div className="space-y-6">
+                  
+                  <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                  By submitting this registration form, you are confirming that the data provided is accurate and factual. Your commitment to providing correct information is appreciated and essential for us to serve you better. Rest assured, the data you share with us is handled with the utmost care and confidentiality. 
+                  </p>
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button onClick={handleSubmit}>I accept</Button>
+                <Button color="gray" onClick={() => setOpenConfirmModal(false)}>
+                  Decline
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </div>
         </div>
       </div>
