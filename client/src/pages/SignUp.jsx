@@ -65,6 +65,14 @@ export default function SignUp() {
         {/* right */}
 
         <div className='flex-1'>
+        <h1 className='text-gray-800 font-bold text-3xl mb-1"'>Create new account</h1>
+          <p className=''></p>
+          <div className='flex gap-2 text-sm font-normal text-gray-600 mb-7 mt-1'>
+            <span>Have an account?</span>
+            <Link to='/sign-in' className='text-blue-500'>
+              Sign In
+            </Link>
+          </div>
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div>
               <Label value='Email' className='font-semibold' />
@@ -100,12 +108,7 @@ export default function SignUp() {
             </Button>
             <OAuth />
           </form>
-          <div className='flex gap-2 text-sm mt-5'>
-            <span>Have an account?</span>
-            <Link to='/sign-in' className='text-blue-500'>
-              Sign In
-            </Link>
-          </div>
+          
           {errorMessage && (
             <Alert className='mt-5' color='failure'>
               {errorMessage}

@@ -27,7 +27,7 @@ import {
   updateSuccess,
   updateFailure,
   } from "../redux/user/userSlice";
-  import { HiCheck, HiX } from 'react-icons/hi';  
+  import { HiCheck, HiX, HiInformationCircle } from 'react-icons/hi';  
 import moment from "moment/moment.js";
 import {
   getDownloadURL,
@@ -41,7 +41,7 @@ export default function Registration() {
   const [formData, setFormData] = useState({});
   const [updateFormData, setUpdateFormData] = useState({});
   const {
-    error: errorMessage,
+    error,
     currentRegister,
   } = useSelector((state) => state.register);
   const { currentUser, loading } = useSelector((state) => state.user);
@@ -59,6 +59,8 @@ export default function Registration() {
   const [paymentFileUploading, setPaymentFileUploading] = useState(false);
 
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
+
+  const [showAlert, setShowAlert] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -217,7 +219,9 @@ export default function Registration() {
       !formData.carrierOutOfPalo ||
       !formData.carrierToPalo ||
       !formData.departureDate || 
-      !formData.departureTime
+      !formData.departureTime ||
+      !formData.waiver || 
+      !formData.proofOfPayment
     ) {
       setOpenConfirmModal(false);
       dispatch(registerFailure("Please fill all the fields"));
@@ -240,37 +244,34 @@ export default function Registration() {
       if (data.success === false) {
         setOpenConfirmModal(false);
         dispatch(registerFailure(data.message));
-        return;
       }
 
       if (res.ok) {
         dispatch(registerSuccess(data));
+
+        try {
+          dispatch(updateStart());
+          const updRes = await fetch(`/api/user/update/${currentUser._id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updateFormData),
+          });
+          const data = await updRes.json();
+          if (data.success === false) {
+            setOpenConfirmModal(false);
+            dispatch(updateFailure(data.message));
+          }
+          dispatch(updateSuccess(data));
+          navigate("/dashboard?tab=profile");
+        } catch (error) {
+          setOpenConfirmModal(false);
+          dispatch(updateFailure(error.message));
+        }
       }
 
-      try {
-        dispatch(updateStart());
-        const updRes = await fetch(`/api/user/update/${currentUser._id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updateFormData),
-        });
-        const data = await updRes.json();
-        if (data.success === false) {
-          setOpenConfirmModal(false);
-          dispatch(updateFailure(data.message));
-          return;
-        }
-        dispatch(updateSuccess(data));
-        navigate("/dashboard?tab=profile");
-      } catch (error) {
-        setOpenConfirmModal(false);
-        dispatch(updateFailure(error.message));
-        return;
-      }
     } catch (error) {
       setOpenConfirmModal(false);
       dispatch(registerFailure(error.message));
-      return;
     }
   };
 
@@ -278,18 +279,12 @@ export default function Registration() {
     <form>
       <div className="max-w-max mx-auto grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
         <div className="mb-4 col-span-full xl:mb-2">
-          {errorMessage && (
-            <Toast color="error" className="mt-5 max-w-full bg-red-200">
-              <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
-                <HiX className="h-5 w-5" />
-              </div>
-              <div className="ml-3 text-sm font-normal">{errorMessage}</div>
-              <Toast.Toggle />
-            </Toast>
-            // <Alert className="max-w-full mt-5" color="failure">
-            //   {errorMessage}
-            // </Alert>
+          {error && (
+            <Alert color="failure" icon={HiInformationCircle}>
+              <span className="font-medium">{error}</span> 
+            </Alert>
           )}
+
           <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
             Registration
           </h1>
@@ -529,8 +524,12 @@ export default function Registration() {
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
+                  <option value="X-Small">X-Small</option>
                   <option value="Small">Small</option>
                   <option value="Medium">Medium</option>
+                  <option value="Large">Large</option>
+                  <option value="X-Large">X-Large</option>
+                  <option value="XX-Large">XX-Large</option>
                 </Select>
               </div>
             </div>
@@ -554,8 +553,9 @@ export default function Registration() {
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
-                  <option value="Airplane">Airplane</option>
-                  <option value="Bus">Bus</option>
+                  <option value="Air">Air</option>
+                  <option value="Land">Land</option>
+                  <option value="Sea">Sea</option>
                 </Select>
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -587,7 +587,7 @@ export default function Registration() {
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
-                  <option value="12:00">00:00</option>
+                  <option value="00:00">00:00</option>
                   <option value="1:00">1:00</option>
                   <option value="2:00">2:00</option>
                   <option value="3:00">3:00</option>
@@ -626,8 +626,9 @@ export default function Registration() {
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
-                  <option value="Airplane">Airplane</option>
-                  <option value="Bus">Bus</option>
+                  <option value="Air">Air</option>
+                  <option value="Land">Land</option>
+                  <option value="Sea">Sea</option>
                 </Select>
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -659,7 +660,7 @@ export default function Registration() {
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
-                  <option value="12:00">00:00</option>
+                  <option value="00:00">00:00</option>
                   <option value="1:00">1:00</option>
                   <option value="2:00">2:00</option>
                   <option value="3:00">3:00</option>
@@ -773,15 +774,19 @@ export default function Registration() {
                   onChange={handleWaiverFileChange}
                   required
                 />
-                {file ? (<Progress
-                  progress={fileUploadProgress}
-                  // progress={45}
-                  progressLabelPosition="inside"
-                  textLabel="Lode"
-                  size="lg"
-                  className="mt-4"
-                  labelProgress
-                />) : (<></>)}
+                {file ? (
+                  <Progress
+                    progress={fileUploadProgress}
+                    // progress={45}
+                    progressLabelPosition="inside"
+                    textLabel="Lode"
+                    size="lg"
+                    className="mt-4"
+                    labelProgress
+                  />
+                ) : (
+                  <></>
+                )}
               </div>
               <div className="col-span-6 sm:col-span-3">
                 <Label
@@ -791,19 +796,24 @@ export default function Registration() {
                 />
                 <FileInput
                   id="payment"
+                  accept="image/*"
                   onChange={handlePaymentFileChange}
                   required
                 />
 
-                {paymentFile ? (<Progress
-                  progress={paymentFileUploadProgress}
-                  // progress={45}
-                  progressLabelPosition="inside"
-                  textLabel="Lode"
-                  size="lg"
-                  className="mt-4"
-                  labelProgress
-                />) : (<></>)}
+                {paymentFile ? (
+                  <Progress
+                    progress={paymentFileUploadProgress}
+                    // progress={45}
+                    progressLabelPosition="inside"
+                    textLabel="Lode"
+                    size="lg"
+                    className="mt-4"
+                    labelProgress
+                  />
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
             <div className="mt-10 flex items-center justify-center">
@@ -817,13 +827,21 @@ export default function Registration() {
               </Button>
               {/* <Button color="blue" className='w-60'>Save All</Button> */}
             </div>
-            <Modal dismissible show={openConfirmModal} onClose={() => setOpenConfirmModal(false)}>
+            <Modal
+              dismissible
+              show={openConfirmModal}
+              onClose={() => setOpenConfirmModal(false)}
+            >
               <Modal.Header>Terms of Service</Modal.Header>
               <Modal.Body>
                 <div className="space-y-6">
-                  
                   <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                  By submitting this registration form, you are confirming that the data provided is accurate and factual. Your commitment to providing correct information is appreciated and essential for us to serve you better. Rest assured, the data you share with us is handled with the utmost care and confidentiality. 
+                    By submitting this registration form, you are confirming
+                    that the data provided is accurate and factual. Your
+                    commitment to providing correct information is appreciated
+                    and essential for us to serve you better. Rest assured, the
+                    data you share with us is handled with the utmost care and
+                    confidentiality.
                   </p>
                 </div>
               </Modal.Body>

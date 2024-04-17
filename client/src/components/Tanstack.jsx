@@ -17,11 +17,13 @@ import { FaCheck, FaInfo, FaTimes, } from 'react-icons/fa';
 import { HiOutlineExclamationCircle, HiCheck } from 'react-icons/hi';    
 import QRCode from "react-qr-code";
 import Loading from './Loading.jsx';
+import { Toaster, toast } from 'sonner'
 import {
-    updateStart,
-    updateSuccess,
-    updateFailure,
+  updateOtherUserStart,
+  updateOtherUserSuccess,
+  updateOtherUserFailure
     } from "../redux/user/userSlice";
+import CustomAlert from './CustomAlert.jsx'
 
 
 
@@ -55,35 +57,28 @@ export default function Tanstack() {
                     className="mr-10 rounded-full w-10 h-10 object-cover"
                 />
             ),
-            
             header: "Profile",
         }),
         columnHelper.accessor(users => users.user.email, {
             cell: (info) => <span className='mr-10'>{info.getValue()}</span>,
             header: "Email",
-            
         }),
         columnHelper.accessor(users => users.dioceseOrOrg, {
             cell: (info) => <span className='mr-10'>{info.getValue()}</span>,
             header: "Diocese",
-            
         }),
         columnHelper.accessor(users => users.parishOrLocalUnit, {
             cell: (info) => <span className='mr-10'>{info.getValue()}</span>,
             header: "Parish",
-            
         }),
         columnHelper.accessor("firstName", {    
             cell: (info) => <span className='mr-10'>{info.getValue()}</span>,
             header: "First Name",
-            
         }),
         columnHelper.accessor("lastName", {    
             cell: (info) => <span className='mr-10'>{info.getValue()}</span>,
             header: "Last Name",
-            
         }),
-       
         columnHelper.accessor(users => users.user.isAdmin, {
             cell: (info) => (
                 (info.getValue() === true) ? (
@@ -94,10 +89,6 @@ export default function Tanstack() {
             ),
             header: "Admin",
         }),
-        //   columnHelper.accessor("isAccepted", {
-        //     cell: (info) => <span>{info.getValue().toString()}</span>,
-        //     header: "Accepted",
-        //   }),
         columnHelper.accessor(users => users.user.isRegistered, {
             cell: (info) => (
                 (info.getValue() === true) ? (
@@ -105,7 +96,6 @@ export default function Tanstack() {
                 ) : (
                     <FaTimes className='text-red-500 mr-10' />
                 )
-                // <span>{info.getValue().toString()}</span>
 
             ),
             header: "Registered",
@@ -117,7 +107,6 @@ export default function Tanstack() {
                 ) : (
                     <FaTimes className='text-red-500 mr-10' />
                 )
-                // <span>{info.getValue().toString()}</span>
 
             ),
             header: "Accepted",
@@ -129,7 +118,6 @@ export default function Tanstack() {
                 ) : (
                     <FaTimes className='text-red-500 mr-10' />
                 )
-                // <span>{info.getValue().toString()}</span>
 
             ),
             header: "Active",
@@ -174,10 +162,6 @@ export default function Tanstack() {
                 const data = await res.json();
                 if (res.ok) {
                     setUsers(data.regs);
-                    if (data.regs.length < 9) {
-                        setShowMore(false);
-
-                    }
                 }
             } catch (error) {
                 console.log(error.message);
@@ -195,10 +179,6 @@ export default function Tanstack() {
         const data = await res.json();
         if (res.ok) {
             setUsers(data.regs);
-            if (data.regs.length < 9) {
-                setShowMore(false);
-
-            }
         }
     } catch (error) {
         console.log(error.message);
@@ -240,8 +220,6 @@ export default function Tanstack() {
               const data = await res.json();
               if (res.ok) {
                 setReg(data);
-              } else {
-                setErrorMessage('No Profile')
               }
             } catch (error) {
               console.log(error.message);
@@ -251,7 +229,7 @@ export default function Tanstack() {
       const handleUpdateUser = async (userId) => {
         setUpdateUserSuccess(null);
         try {
-            dispatch(updateStart());
+            dispatch(updateOtherUserStart);
             const updUser = await fetch(`/api/user/update/${userId}`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
@@ -259,21 +237,25 @@ export default function Tanstack() {
             });
             const data = await updUser.json();
             if (data.success === false) {
-              return dispatch(updateFailure(data.message));
+              dispatch(updateOtherUserFailure(data.message));
             } else{
-              dispatch(updateSuccess(data));
-              setUpdateUserSuccess("User has been accepted");
+              dispatch(updateOtherUserSuccess(data));
+              // setUpdateUserSuccess("User has been accepted");
+              toast.success('User has been accepted');
               setShowProfModal(false)
               rerender();
               
             }
             
           } catch (error) {
-              return dispatch(updateFailure(error.message));
+              return dispatch(updateOtherUserFailure(error.message));
           }
       };
+      toast.success('User has been accepted');
+      console.log()
     return (
         <div className="p-2 max-w-7xl mx-auto text-white fill-gray-400">
+          <Toaster richColors position="top-center" expand={true} />
             {updateUserSuccess && (
           <Toast color='success' className='mt-5 max-w-full bg-green-200'>
             
@@ -291,7 +273,7 @@ export default function Tanstack() {
                     <DebouncedInput
                         value={globalFilter ?? ""}
                         onChange={(value) => setGlobalFilter(String(value))}
-                        className="p-2 bg-transparent outline-none border-b-2 w-1/5 focus:w-1/3 duration-300 border-indigo-500"
+                        className="p-2 bg-transparent outline-none border-b-2 w-1/5 focus:w-1/3 duration-300 border-indigo-500 text-gray-900 dark:text-white"
                         placeholder="Search all columns..."
                     />
                 </div>
@@ -504,9 +486,11 @@ export default function Tanstack() {
               </div>
             </div>
             <div className='mt-8 flex justify-center gap-4 no-print'>
-              <Button className='bg-indigo-950' onClick={() => handleUpdateUser(reg.user._id)}>
+              {(reg && !reg.user.isAccepted) ? (<Button className='bg-indigo-950' onClick={() => handleUpdateUser(reg.user._id)}>
                 Accept
-              </Button>
+              </Button>) : (<></>)}
+
+              
               <Button color='gray' onClick={() => setShowProfModal(false)}>
                 Close
               </Button>

@@ -7,7 +7,9 @@ import {
   Label,
   Select,
   Datepicker,
-  FileInput
+  FileInput,
+  Progress,
+  Toast,
 } from "flowbite-react";
 import QRCode from "react-qr-code";
 import { useEffect, useRef, useState } from "react";
@@ -33,12 +35,12 @@ import {
 import {
   updateRegStart,
   updateRegSuccess,
-  updateRegFailure
+  updateRegFailure,
 } from "../redux/register/registerSlice";
 import { useDispatch } from "react-redux";
-import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { HiOutlineExclamationCircle, HiX, HiCheck } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
-
+import moment from "moment/moment.js";
 
 export default function DashProfile() {
   const { currentUser, error, loading } = useSelector((state) => state.user);
@@ -61,16 +63,17 @@ export default function DashProfile() {
 
   const [paymentFile, setPaymentFile] = useState(null);
   const [paymentFileUrl, setPaymentFileUrl] = useState(null);
-  const [paymentFileUploadProgress, setPaymentFileUploadProgress] = useState(null);
+  const [paymentFileUploadProgress, setPaymentFileUploadProgress] =
+    useState(null);
   const [paymentFileUploadError, setPaymentFileUploadError] = useState(null);
   const [paymentFileUploading, setPaymentFileUploading] = useState(false);
 
-
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
-  const [updateRegistrationSuccess, setUpdateRegistrationSuccess] = useState(null);
+  const [updateRegistrationSuccess, setUpdateRegistrationSuccess] =
+    useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
   const [updateRegistrationError, setUpdateRegistrationError] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(true);
   const [formData, setFormData] = useState({});
   const [profileFormData, setProfileFormData] = useState({});
 
@@ -143,7 +146,7 @@ export default function DashProfile() {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setFileUrl(downloadURL);
-          setFormData({ ...formData, waiver: downloadURL });
+          setProfileFormData({ ...formData, waiver: downloadURL });
           setFileUploading(false);
         });
       }
@@ -177,7 +180,7 @@ export default function DashProfile() {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setPaymentFileUrl(downloadURL);
-          setFormData({ ...formData, proofOfPayment: downloadURL });
+          setProfileFormData({ ...formData, proofOfPayment: downloadURL });
           setPaymentFileUploading(false);
         });
       }
@@ -262,30 +265,28 @@ export default function DashProfile() {
     }
 
     console.log(formData);
-    // try {
-    //   dispatch(updateStart());
-    //   const res = await fetch(`/api/user/update/${currentUser._id}`, {
-    //     method: "PUT",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(formData),
-    //   });
-    //   const data = await res.json();
-    //   if (!res.ok) {
-    //     dispatch(updateFailure(data.message));
-    //     setUpdateUserError(data.message);
-    //   } else {
-    //     dispatch(updateSuccess(data));
-    //     setUpdateUserSuccess("User's sign in details updated successfully");
-    //   }
-    // } catch (error) {
-    //   dispatch(updateFailure(error.message));
-    //   setUpdateUserError(error.message);
-    // }
+    try {
+      dispatch(updateStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        dispatch(updateFailure(data.message));
+        setUpdateUserError(data.message);
+      } else {
+        dispatch(updateSuccess(data));
+        setUpdateUserSuccess("User's sign in details updated successfully");
+      }
+    } catch (error) {
+      dispatch(updateFailure(error.message));
+      setUpdateUserError(error.message);
+    }
   };
-
-
 
   const handleProfileUpdateSubmit = async (e) => {
     e.preventDefault();
@@ -303,29 +304,37 @@ export default function DashProfile() {
       return;
     }
     console.log(profileFormData);
-    // try {
-    //   dispatch(updateRegStart());
-    //   const res = await fetch(`/api/reg/update/${currentRegister._id}/${currentUser._id}/${currentUser.isAdmin}`, {
-    //     method: "PUT",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(profileFormData),
-    //   });
-    //   const data = await res.json();
-    //   if (!res.ok) {
-    //     dispatch(updateRegFailure(data.message));
-    //     setUpdateRegistrationError(data.message);
-    //   } else {
-    //     dispatch(updateRegSuccess(data));
-    //     setUpdateRegistrationSuccess("User's sign in details updated successfully");
-    //   }
 
-    // } catch (error) {
-    //   dispatch(updateRegFailure(error.message));
-    //   setUpdateRegistrationError(error.message);
-    // }
-  }
+    try {
+      dispatch(updateRegStart());
+      const res = await fetch(
+        `/api/reg/update/${currentRegister._id}/${currentUser._id}/${currentUser.isAdmin}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(profileFormData),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        dispatch(updateRegFailure(data.message));
+        setUpdateRegistrationError(data.message);
+        setOpenConfirmModal(false);
+        return;
+      } else {
+        dispatch(updateRegSuccess(data));
+        setUpdateRegistrationSuccess("User profile updated successfully");
+        setOpenConfirmModal(false);
+      }
+    } catch (error) {
+      dispatch(updateRegFailure(error.message));
+      setUpdateRegistrationError(error.message);
+      setOpenConfirmModal(false);
+      return;
+    }
+  };
 
   // const handleDeleteUser = async () => {
   //   setShowModal(false);
@@ -362,33 +371,76 @@ export default function DashProfile() {
   //   }
   // };
 
+  const subStr = (str) => {
+    return str.substring(str.indexOf("%2F") + 3, str.lastIndexOf("?alt"));
+  };
   return (
     <div className="max-w-max mx-auto grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
       <div className="mb-4 col-span-full xl:mb-2">
+        {currentUser && !currentUser.isAccepted && currentUser.isRegistered ? (
+          <span>
+            <Toast color="error" className="mt-5 max-w-full bg-green-200">
+              <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+                <HiCheck className="h-5 w-5" />
+              </div>
+              <div className="ml-3 text-sm font-normal">
+                Thank you for filling-out registration form. The administrator
+                will review your account.
+              </div>
+              <Toast.Toggle />
+            </Toast>
+          </span>
+        ) : (
+          <></>
+        )}
         {errorMessage && (
-          <Alert className="max-w-full mt-5" color="failure">
-            {errorMessage}
-          </Alert>
+          <Toast color="error" className="mt-5 max-w-full bg-red-200">
+            <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
+              <HiX className="h-5 w-5" />
+            </div>
+            <div className="ml-3 text-sm font-normal">{errorMessage}</div>
+            <Toast.Toggle />
+          </Toast>
         )}
         {updateUserError && (
-          <Alert color='failure' className='mt-5'>
-            {updateUserError}
-          </Alert>
+          <Toast color="error" className="mt-5 max-w-full bg-red-200">
+            <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
+              <HiX className="h-5 w-5" />
+            </div>
+            <div className="ml-3 text-sm font-normal">{updateUserError}</div>
+            <Toast.Toggle />
+          </Toast>
         )}
         {updateUserSuccess && (
-          <Alert color='success' className='mt-5'>
-            {updateUserSuccess}
-          </Alert>
+          <Toast color="success" className="mt-5 max-w-full bg-green-200">
+            <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-red-200">
+              <HiCheck className="h-5 w-5" />
+            </div>
+            <div className="ml-3 text-sm font-normal">{updateUserSuccess}</div>
+            <Toast.Toggle />
+          </Toast>
         )}
         {updateRegistrationError && (
-          <Alert color='failure' className='mt-5'>
-            {updateRegistrationError}
-          </Alert>
+          <Toast color="error" className="mt-5 max-w-full bg-red-200">
+            <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
+              <HiX className="h-5 w-5" />
+            </div>
+            <div className="ml-3 text-sm font-normal">
+              {updateRegistrationError}
+            </div>
+            <Toast.Toggle />
+          </Toast>
         )}
         {updateRegistrationSuccess && (
-          <Alert color='success' className='mt-5'>
-            {updateRegistrationSuccess}
-          </Alert>
+          <Toast color="success" className="mt-5 max-w-full bg-green-200">
+            <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-red-200">
+              <HiCheck className="h-5 w-5" />
+            </div>
+            <div className="ml-3 text-sm font-normal">
+              {updateRegistrationSuccess}
+            </div>
+            <Toast.Toggle />
+          </Toast>
         )}
         <h1 className="text-xl font-semibold text-gray-900 sm:text-3xl dark:text-white">
           User Settings
@@ -396,9 +448,7 @@ export default function DashProfile() {
       </div>
       {/* <!-- Right Content --> */}
       <div className="col-span-full xl:col-auto">
-
         <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-
           <form onSubmit={handleSignInUpdateSubmit}>
             <h3 className="mb-4 text-xl font-semibold dark:text-white">
               Sign In info
@@ -411,8 +461,10 @@ export default function DashProfile() {
               hidden
             />
             <div className="flex items-center justify-center">
-              <div className="relative w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full"
-                onClick={() => filePickerRef.current.click()} >
+              <div
+                className="relative w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full"
+                onClick={() => filePickerRef.current.click()}
+              >
                 {imageFileUploadProgress && (
                   <CircularProgressbar
                     value={imageFileUploadProgress || 0}
@@ -427,8 +479,9 @@ export default function DashProfile() {
                         left: 0,
                       },
                       path: {
-                        stroke: `rgba(62, 152, 199, ${imageFileUploadProgress / 100
-                          })`,
+                        stroke: `rgba(62, 152, 199, ${
+                          imageFileUploadProgress / 100
+                        })`,
                       },
                     }}
                   />
@@ -436,10 +489,11 @@ export default function DashProfile() {
                 <img
                   src={imageFileUrl || currentUser.profilePicture}
                   alt="user"
-                  className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${imageFileUploadProgress &&
+                  className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${
+                    imageFileUploadProgress &&
                     imageFileUploadProgress < 100 &&
                     "opacity-60"
-                    }`}
+                  }`}
                 />
               </div>
             </div>
@@ -476,11 +530,10 @@ export default function DashProfile() {
             </div>
             <div className="mt-10 flex items-center justify-center">
               <Button
-               
                 type="submit"
-                className="w-60 font-semibold bg-indigo-950 dark:bg-indigo-950"
+                className="w-60 font-semibold bg-indigo-950 dark:bg-orange-500"
 
-              //   disabled={loading}
+                //   disabled={loading}
               >
                 Update Sign In
               </Button>
@@ -489,7 +542,10 @@ export default function DashProfile() {
           </form>
 
           <div className="mt-5 flex flex-col items-center justify-center">
-            <QRCode value={currentUser && currentUser._id} className="mt-5 p-5 self-center" />
+            <QRCode
+              value={currentUser && currentUser._id}
+              className="mt-5 p-5 self-center"
+            />
             <span className="text-indigo-950 italic dark:text-white">
               Present this QR to record attendance.
             </span>
@@ -498,55 +554,21 @@ export default function DashProfile() {
             show={showModal}
             onClose={() => setShowModal(false)}
             popup
-            size='md'
+            size="md"
           >
             <Modal.Header />
             <Modal.Body>
-              <div className='text-center' id="print-content" >
-                {/* <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' /> */}
-                <h3 className='text-lg dark:text-gray-400'>
-                  NCYM 2024
+              <div className="text-center">
+                <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-600 dark:text-gray-600" />
+                <h3 className="mb-5 text-lg font-normal text-gray-600 dark:text-gray-600">
+                  Kindly update your photo for better identification purposes.
                 </h3>
-                <h4>
-                  Palo, Leyte
-                </h4>
-                <h1 className="mt-5 p-2">Hi, I'm</h1>
-                <div className="grid place-items-center border max-w-full h-16 ">
-                  <h1 className="text-4xl">Jel</h1>
-                </div>
-                <h1 className="p-2">Abuyog, Leyte</h1>
-                <div className='mt-8 flex w-full justify-between '>
-                  <div className="flex flex-col items-start">
-                    <div>
-                      <Label
-                        className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
-                        value={`Diocese/Org: ` + (currentRegister && currentRegister.dioceseOrOrg)}
-                      />
-                    </div>
-                    <div>
-                      <Label
-                        className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
-                        value={`Parish/Local Unit: ` + (currentRegister && currentRegister.dioceseOrOrg)}
-                      />
-                    </div>
-                    <div>
-                      <Label
-                        className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
-                        value={`Contact Number: ` + (currentRegister && currentRegister.contactNumber)}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <QRCode size={120} value={currentUser && currentUser._id} className="self-center" />
-                  </div>
-                </div>
-                <div className='mt-8 flex justify-center gap-4 no-print'>
-                  <Button gradientDuoTone="purpleToPink" onClick={() => window.print()}>
-                    Print
-                  </Button>
-                  <Button color='gray' onClick={() => setShowModal(false)}>
-                    No, close
+                <div className="flex justify-center gap-4">
+                  <Button
+                    className="bg-indigo-950 dark:bg-orange-500"
+                    onClick={() => setShowModal(false)}
+                  >
+                    {"Okay"}
                   </Button>
                 </div>
               </div>
@@ -572,11 +594,199 @@ export default function DashProfile() {
                   id="dioceseOrOrg"
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.dioceseOrOrg}
-                // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
-                  <option value="Diocese 1">Diocese 1</option>
-                  <option value="Organization 1">Organization 1</option>
+                  <option value="Diocese of Alaminos">
+                    Diocese of Alaminos
+                  </option>
+                  <option value="Diocese of Baguio">Diocese of Baguio</option>
+                  <option value="Diocese of Bangued">Diocese of Bangued</option>
+                  <option value="Prelature of Batanes">
+                    Prelature of Batanes
+                  </option>
+                  <option value="Diocese of Bayombong">
+                    Diocese of Bayombong
+                  </option>
+                  <option value="Apostolic Vicariate of Bontoc-Lagawe">
+                    Apostolic Vicariate of Bontoc-Lagawe
+                  </option>
+                  <option value="Diocese of Ilagan">Diocese of Ilagan</option>
+                  <option value="Diocese of Laoag">Diocese of Laoag</option>
+                  <option value="Archdiocese of Lingayen-Dagupan">
+                    Archdiocese of Lingayen-Dagupan
+                  </option>
+                  <option value="Archdiocese of Nueva Segovia">
+                    Archdiocese of Nueva Segovia
+                  </option>
+                  <option value="Diocese of San Fernando (La Union)">
+                    Diocese of San Fernando (La Union)
+                  </option>
+                  <option value="Apostolic Vicariate of Tabuk">
+                    Apostolic Vicariate of Tabuk
+                  </option>
+                  <option value="Archdiocese of Tuguegarao">
+                    Archdiocese of Tuguegarao
+                  </option>
+                  <option value="Diocese of Urdaneta">
+                    Diocese of Urdaneta
+                  </option>
+                  <option value="Diocese of Balanga">Diocese of Balanga</option>
+                  <option value="Diocese of Cabanatuan">
+                    Diocese of Cabanatuan
+                  </option>
+                  <option value="Diocese of Iba">Diocese of Iba</option>
+                  <option value="Diocese of Malolos">Diocese of Malolos</option>
+                  <option value="Archdiocese of San Fernando ">
+                    Archdiocese of San Fernando{" "}
+                  </option>
+                  <option value="Diocese of San Jose (Nueva Ecija)">
+                    Diocese of San Jose (Nueva Ecija)
+                  </option>
+                  <option value="Diocese of Tarlac">Diocese of Tarlac</option>
+                  <option value="Diocese of Antipolo">
+                    Diocese of Antipolo
+                  </option>
+                  <option value="Diocese of Cubao">Diocese of Cubao</option>
+                  <option value="Diocese of Imus">Diocese of Imus</option>
+                  <option value="Diocese of Kalookan">
+                    Diocese of Kalookan
+                  </option>
+                  <option value="Archdiocese of Manila">
+                    Archdiocese of Manila
+                  </option>
+                  <option value="Diocese of Novaliches">
+                    Diocese of Novaliches
+                  </option>
+                  <option value="Diocese of Parañaque">
+                    Diocese of Parañaque
+                  </option>
+                  <option value="Diocese of Pasig">Diocese of Pasig</option>
+                  <option value="Apostolic Vicariate of Puerto Princesa">
+                    Apostolic Vicariate of Puerto Princesa
+                  </option>
+                  <option value="Apostolic Vicariate of Taytay">
+                    Apostolic Vicariate of Taytay
+                  </option>
+                  <option value="Diocese of Boac">Diocese of Boac</option>
+                  <option value="Apostolic Vicariate of Calapan">
+                    Apostolic Vicariate of Calapan
+                  </option>
+                  <option value="Diocese of Gumaca">Diocese of Gumaca</option>
+                  <option value="Prelature of Infanta">
+                    Prelature of Infanta
+                  </option>
+                  <option value="Archdiocese of Lipa">
+                    Archdiocese of Lipa
+                  </option>
+                  <option value="Diocese of Lucena">Diocese of Lucena</option>
+                  <option value="Apostolic Vicariate of San Jose">
+                    Apostolic Vicariate of San Jose
+                  </option>
+                  <option value="Diocese of San Pablo">
+                    Diocese of San Pablo
+                  </option>
+                  <option value="Archdiocese of Caceres">
+                    Archdiocese of Caceres
+                  </option>
+                  <option value="Diocese of Daet">Diocese of Daet</option>
+                  <option value="Diocese of Legazpi">Diocese of Legazpi</option>
+                  <option value="Diocese of Libmanan">
+                    Diocese of Libmanan
+                  </option>
+                  <option value="Diocese of Masbate">Diocese of Masbate</option>
+                  <option value="Diocese of Sorsogon">
+                    Diocese of Sorsogon
+                  </option>
+                  <option value="Diocese of Virac">Diocese of Virac</option>
+                  <option value="Diocese of Borongan">
+                    Diocese of Borongan
+                  </option>
+                  <option value="Diocese of Calbayog">
+                    Diocese of Calbayog
+                  </option>
+                  <option value="Diocese of Catarman">
+                    Diocese of Catarman
+                  </option>
+                  <option value="Archdiocese of Cebu">
+                    Archdiocese of Cebu
+                  </option>
+                  <option value="Diocese of Dumaguete ">
+                    Diocese of Dumaguete{" "}
+                  </option>
+                  <option value="Diocese of Maasin">Diocese of Maasin</option>
+                  <option value="Diocese of Naval">Diocese of Naval</option>
+                  <option value="Archdiocese of Palo">
+                    Archdiocese of Palo
+                  </option>
+                  <option value="Diocese of Tagbilaran ">
+                    Diocese of Tagbilaran{" "}
+                  </option>
+                  <option value="Diocese of Talibon">Diocese of Talibon</option>
+                  <option value="Diocese of Bacolod">Diocese of Bacolod</option>
+                  <option value="Archdiocese of Capiz">
+                    Archdiocese of Capiz
+                  </option>
+                  <option value="Archdiocese of Jaro">
+                    Archdiocese of Jaro
+                  </option>
+                  <option value="Diocese of Kabankalan">
+                    Diocese of Kabankalan
+                  </option>
+                  <option value="Diocese of Kalibo">Diocese of Kalibo</option>
+                  <option value="Diocese of Romblon">Diocese of Romblon</option>
+                  <option value="Diocese of San Carlos">
+                    Diocese of San Carlos
+                  </option>
+                  <option value="Diocese of San Jose, Antique">
+                    Diocese of San Jose, Antique
+                  </option>
+                  <option value="Diocese of Butuan">Diocese of Butuan</option>
+                  <option value="Archdiocese of Cagayan de Oro">
+                    Archdiocese of Cagayan de Oro
+                  </option>
+                  <option value="Diocese of Malaybalay">
+                    Diocese of Malaybalay
+                  </option>
+                  <option value="Diocese of Surigao">Diocese of Surigao</option>
+                  <option value="Diocese of Tandag">Diocese of Tandag</option>
+                  <option value="Archdiocese of Davao">
+                    Archdiocese of Davao
+                  </option>
+                  <option value="Diocese of Digos">Diocese of Digos</option>
+                  <option value="Diocese of Mati">Diocese of Mati</option>
+                  <option value="Diocese of Tagum">Diocese of Tagum</option>
+                  <option value="Diocese of Dipolog">Diocese of Dipolog</option>
+                  <option value="Diocese of Iligan">Diocese of Iligan</option>
+                  <option value="Prelature of Marawi">
+                    Prelature of Marawi
+                  </option>
+                  <option value="Archdiocese of Ozamis ">
+                    Archdiocese of Ozamis{" "}
+                  </option>
+                  <option value="Diocese of Pagadian">
+                    Diocese of Pagadian
+                  </option>
+                  <option value="Archdiocese of Cotabato">
+                    Archdiocese of Cotabato
+                  </option>
+                  <option value="Diocese of Kidapawan">
+                    Diocese of Kidapawan
+                  </option>
+                  <option value="Diocese of Marbel">Diocese of Marbel</option>
+                  <option value="Diocese of Ipil">Diocese of Ipil</option>
+                  <option value="Prelature of Isabela">
+                    Prelature of Isabela
+                  </option>
+                  <option value="Apostolic Vicariate of Jolo">
+                    Apostolic Vicariate of Jolo
+                  </option>
+                  <option value="Archdiocese of Zamboanga">
+                    Archdiocese of Zamboanga
+                  </option>
+                  <option value="Military Ordinariate of the Philippines">
+                    Military Ordinariate of the Philippines
+                  </option>
                 </Select>
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -589,9 +799,11 @@ export default function DashProfile() {
                   type="text"
                   id="parishOrLocalUnit"
                   onChange={handleProfileChange}
-                  defaultValue={currentRegister && currentRegister.parishOrLocalUnit}
+                  defaultValue={
+                    currentRegister && currentRegister.parishOrLocalUnit
+                  }
                   // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  
+
                   required
                 />
               </div>
@@ -614,7 +826,7 @@ export default function DashProfile() {
                   id="title"
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.title}
-                // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
                   <option value="Mr.">Mr.</option>
@@ -633,7 +845,7 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.nickname}
                   // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  
+
                   required
                 />
               </div>
@@ -751,11 +963,15 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.shirtSize}
                   required
-                // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
+                  <option value="X-Small">X-Small</option>
                   <option value="Small">Small</option>
                   <option value="Medium">Medium</option>
+                  <option value="Large">Large</option>
+                  <option value="X-Large">X-Large</option>
+                  <option value="XX-Large">XX-Large</option>
                 </Select>
               </div>
             </div>
@@ -829,12 +1045,16 @@ export default function DashProfile() {
 
                 <Select
                   id="carrierToPalo"
+                  defaultValue={
+                    currentRegister && currentRegister.carrierToPalo
+                  }
                   onChange={handleProfileChange}
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
-                  <option value="Airplane">Airplane</option>
-                  <option value="Bus">Bus</option>
+                  <option value="Air">Air</option>
+                  <option value="Land">Land</option>
+                  <option value="Sea">Sea</option>
                 </Select>
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -845,6 +1065,9 @@ export default function DashProfile() {
                 />
                 <Datepicker
                   id="arrivalDate"
+                  defaultDate={
+                    new Date(currentRegister && currentRegister.arrivalDate)
+                  }
                   onSelectedDateChanged={(date) =>
                     handleArrivalChange({
                       value: moment(date).format("MM/DD/YYYY"),
@@ -862,11 +1085,12 @@ export default function DashProfile() {
                 />
                 <Select
                   id="arrivalTime"
+                  defaultValue={currentRegister && currentRegister.arrivalTime}
                   onChange={handleProfileChange}
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
-                  <option value="12:00">00:00</option>
+                  <option value="00:00">00:00</option>
                   <option value="1:00">1:00</option>
                   <option value="2:00">2:00</option>
                   <option value="3:00">3:00</option>
@@ -901,12 +1125,16 @@ export default function DashProfile() {
 
                 <Select
                   id="carrierOutOfPalo"
+                  defaultValue={
+                    currentRegister && currentRegister.carrierOutOfPalo
+                  }
                   onChange={handleProfileChange}
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
-                  <option value="Airplane">Airplane</option>
-                  <option value="Bus">Bus</option>
+                  <option value="Air">Air</option>
+                  <option value="Land">Land</option>
+                  <option value="Sea">Sea</option>
                 </Select>
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -917,6 +1145,9 @@ export default function DashProfile() {
                 />
                 <Datepicker
                   id="departureDate"
+                  defaultDate={
+                    new Date(currentRegister && currentRegister.departureDate)
+                  }
                   onSelectedDateChanged={(date) =>
                     handleDepartureChange({
                       value: moment(date).format("MM/DD/YYYY"),
@@ -934,6 +1165,9 @@ export default function DashProfile() {
                 />
                 <Select
                   id="departureTime"
+                  defaultValue={
+                    currentRegister && currentRegister.departureTime
+                  }
                   onChange={handleProfileChange}
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
@@ -1053,11 +1287,17 @@ export default function DashProfile() {
 
             <div className="grid grid-cols-6 gap-6">
               <div className="col-span-6 sm:col-span-3">
+                {!file ? (
+                  <li>{currentRegister && subStr(currentRegister.waiver)}</li>
+                ) : (
+                  <></>
+                )}
                 <Label
                   htmlFor="allergy"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   value="Full Accomplished Autorization and Waiver Form"
                 />
+                {/* <span>{currentRegister && currentRegister.waiver}</span> */}
 
                 <FileInput
                   id="waiver"
@@ -1065,62 +1305,97 @@ export default function DashProfile() {
                   onChange={handleWaiverFileChange}
                   required
                 />
-                {file ? (<Progress
-                  progress={fileUploadProgress}
-                  // progress={45}
-                  progressLabelPosition="inside"
-                  textLabel="Lode"
-                  size="lg"
-                  className="mt-4"
-                  labelProgress
-                />) : (<></>)}
+                {file ? (
+                  <Progress
+                    progress={fileUploadProgress}
+                    // progress={45}
+                    progressLabelPosition="inside"
+                    textLabel="Lode"
+                    size="lg"
+                    className="mt-4"
+                    labelProgress
+                  />
+                ) : (
+                  <></>
+                )}
               </div>
               <div className="col-span-6 sm:col-span-3">
+                {!paymentFile ? (
+                  <li>
+                    {currentRegister && subStr(currentRegister.proofOfPayment)}
+                  </li>
+                ) : (
+                  <></>
+                )}
                 <Label
                   htmlFor="medication"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   value="Proof of Payment"
                 />
+                {/* <span>{
+                paymentFile ? (<></>) :
+                  (currentRegister && currentRegister.proofOfPayment) ? (<>{
+                    currentRegister.proofOfPayment.substring(currentRegister.proofOfPayment.indexOf("%2F") + 3, currentRegister.proofOfPayment.lastIndexOf("?alt"))
+                   }</>) : (<></>)
+                }</span> */}
                 <FileInput
                   id="payment"
+                  accept="image/*"
                   onChange={handlePaymentFileChange}
                   required
                 />
 
-                {paymentFile ? (<Progress
-                  progress={paymentFileUploadProgress}
-                  // progress={45}
-                  progressLabelPosition="inside"
-                  textLabel="Lode"
-                  size="lg"
-                  className="mt-4"
-                  labelProgress
-                />) : (<></>)}
+                {paymentFile ? (
+                  <Progress
+                    progress={paymentFileUploadProgress}
+                    // progress={45}
+                    progressLabelPosition="inside"
+                    textLabel="Lode"
+                    size="lg"
+                    className="mt-4"
+                    labelProgress
+                  />
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
             <div className="mt-10 flex items-center justify-center">
               <Button
                 // type="submit"
                 onClick={() => setOpenConfirmModal(true)}
-                className="w-60 bg-indigo-950 dark:bg-indigo-950"
+                className="w-60 bg-indigo-950 dark:bg-orange-500"
                 //   disabled={loading}
               >
                 Update Profile
               </Button>
               {/* <Button color="blue" className='w-60'>Save All</Button> */}
             </div>
-            <Modal dismissible show={openConfirmModal} onClose={() => setOpenConfirmModal(false)}>
+            <Modal
+              dismissible
+              show={openConfirmModal}
+              onClose={() => setOpenConfirmModal(false)}
+            >
               <Modal.Header>Terms of Service</Modal.Header>
               <Modal.Body>
                 <div className="space-y-6">
-                  
-                  <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                  By submitting this registration form, you are confirming that the data provided is accurate and factual. Your commitment to providing correct information is appreciated and essential for us to serve you better. Rest assured, the data you share with us is handled with the utmost care and confidentiality. 
+                  <p className="text-base leading-relaxed text-gray-600 dark:text-gray-600">
+                    By submitting this registration form, you are confirming
+                    that the data provided is accurate and factual. Your
+                    commitment to providing correct information is appreciated
+                    and essential for us to serve you better. Rest assured, the
+                    data you share with us is handled with the utmost care and
+                    confidentiality.
                   </p>
                 </div>
               </Modal.Body>
               <Modal.Footer>
-                <Button onClick={handleProfileUpdateSubmit}>I accept</Button>
+                <Button
+                  onClick={handleProfileUpdateSubmit}
+                  className="bg-indigo-950 dark:bg-indigo-950"
+                >
+                  I accept
+                </Button>
                 <Button color="gray" onClick={() => setOpenConfirmModal(false)}>
                   Decline
                 </Button>

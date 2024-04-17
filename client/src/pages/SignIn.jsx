@@ -70,6 +70,8 @@ export default function SignIn() {
         {/* right */}
 
         <div className='flex-1'>
+          <h1 className='text-gray-800 font-bold text-4xl mb-1"'>Hello Again!</h1>
+          <p className='text-sm font-normal text-gray-600 mb-7 mt-1'> Welcome Back</p>
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div>
               <Label value='Your email' className='font-semibold'/>

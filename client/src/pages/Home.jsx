@@ -19,8 +19,10 @@ export default function Home() {
   useEffect(() => {
     console.log(currentUser.isRegistered);
 
-    if (currentUser.isRegistered) {
+    if (currentUser.isAccepted && currentUser.isRegistered) {
       navigate("/");
+    } else if(currentUser.isRegistered) {
+      navigate('/dashboard?tab=profile');
     } else {
       navigate("/registration");
     }

@@ -90,7 +90,7 @@ export const getRegs   = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 9;
     const sortDirection = req.query.sort === 'asc' ? 1 : -1;
 
-    const regs = await Registration.find().populate('user', ['email', 'profilePicture', 'isAdmin', 'isRegistered', 'isAccepted'])
+    const regs = await Registration.find().populate('user', ['email', 'profilePicture', 'isAdmin', 'isRegistered', 'isAccepted', 'isActive'])
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
@@ -128,7 +128,7 @@ export const getMyReg = async (req, res, next) => {
   try {
     // console.log(req.params.regId);
     // const user = await User.findById(req.user.id);
-    const registration = await Registration.findOne({user: req.user.id}).populate('user', ['email', 'profilePicture', 'isAdmin', 'isRegistered', 'isAccepted']);
+    const registration = await Registration.findOne({user: req.user.id}).populate('user', ['email', 'profilePicture', 'isAdmin', 'isRegistered', 'isAccepted', 'isActive']);
     if (!registration){
       return next(errorHandler(404, 'Registration not found'));
     }
@@ -145,7 +145,7 @@ export const getRegistration = async (req, res, next) => {
   try {
     // console.log(req.params.regId);
     // const user = await User.findById(req.user.id);
-    const registration = await Registration.findOne({_id: req.params.regId}).populate('user', ['email', 'profilePicture']);
+    const registration = await Registration.findOne({_id: req.params.regId}).populate('user', ['email', 'profilePicture', 'isAdmin', 'isRegistered', 'isAccepted', 'isActive']);
     if (!registration){
       return next(errorHandler(404, 'Registration not found'));
     }
@@ -186,6 +186,14 @@ export const updateReg = async (req, res, next) => {
           medication: req.body.medication,
           diet: req.body.diet,
           disability: req.body.disability,
+          arrivalDate: req.body.arrivalDate,
+          arrivalTime: req.body.arrivalTime,
+          carrierOutOfPalo: req.body.carrierOutOfPalo,
+          carrierToPalo: req.body.carrierToPalo,
+          departureDate: req.body.departureDate,
+          departureTime: req.body.departureTime,
+          proofOfPayment: req.body.proofOfPayment,
+          waiver: req.body.waiver
         },
       },
       { new: true }
