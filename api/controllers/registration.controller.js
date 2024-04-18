@@ -3,9 +3,10 @@ import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 
 
+
 export const register = async (req, res, next) => {
 
-  const { dioceseOrOrg, parishOrLocalUnit, title, nickname, firstName, lastName, birthday, contactNumber, shirtSize, roleInMinistry, address, emerContactPerson, emerRelation, emerContactNumber, allergy, medication, diet, disability } = req.body;
+  const { dioceseOrOrg, parishOrLocalUnit, title, nickname, firstName, lastName, birthday, contactNumber, shirtSize, roleInMinistry, address, emerContactPerson, emerRelation, emerContactNumber, allergy, medication, diet, disability, arrivalDate, carrierOutOfPalo, arrivalTime, carrierToPalo, departureDate, departureTime, waiver, proofOfPayment } = req.body;
 
   if (
     !dioceseOrOrg ||
@@ -22,10 +23,14 @@ export const register = async (req, res, next) => {
     !emerContactPerson ||
     !emerRelation ||
     !emerContactNumber ||
-    !allergy ||
-    !medication ||
-    !diet ||
-    !disability ||
+    !arrivalDate ||
+    !arrivalTime ||
+    !carrierOutOfPalo ||
+    !carrierToPalo ||
+    !departureDate || 
+    !departureTime ||
+    !waiver || 
+    !proofOfPayment ||
     dioceseOrOrg === "" ||
     parishOrLocalUnit === "" ||
     title === "" ||
@@ -40,10 +45,13 @@ export const register = async (req, res, next) => {
     emerContactPerson === "" ||
     emerRelation === "" ||
     emerContactNumber === "" ||
-    allergy === "" ||
-    medication === "" ||
-    diet === "" ||
-    disability === ""
+    arrivalTime === "" ||
+    carrierOutOfPalo === "" ||
+    carrierToPalo === "" ||
+    departureDate === "" || 
+    departureTime === "" ||
+    waiver === "" || 
+    proofOfPayment === ""
 
   ) {
     next(errorHandler(400, 'All fields are required'));

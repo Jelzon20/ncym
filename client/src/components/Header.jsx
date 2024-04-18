@@ -2,6 +2,7 @@ import React from 'react'
 import { Avatar, Button, Dropdown, Navbar, TextInput } from 'flowbite-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
+import webLogo from '../assets/webLogo.png'
 import { FaMoon, FaSun } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../redux/theme/themeSlice';
@@ -50,12 +51,13 @@ export default function Header() {
         to='/'
         className='self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white'
       >
-        <span className='px-2 py-1 bg-indigo-950 rounded-lg text-white'>
+        <img src={webLogo} alt="NCYM Logo" className='w-32'/>
+        {/* <span className='px-2 py-1 bg-indigo-950 rounded-lg text-white'>
               NCYM
             </span>
             <span className='text-indigo-950'>
             2024
-            </span>
+            </span> */}
       </Link>
       <div className='flex gap-2 md:order-2'>
         <Button
@@ -101,9 +103,9 @@ export default function Header() {
         <Navbar.Link className='font-semibold' active={path === '/'} as={'div'}>
           <Link to='/'>Home</Link>
         </Navbar.Link>
-        <Navbar.Link className='font-semibold'  active={path === '/primer'} as={'div'}>
+        {/* <Navbar.Link className='font-semibold'  active={path === '/primer'} as={'div'}>
           <Link to='/primer'>Primer</Link>
-        </Navbar.Link>
+        </Navbar.Link> */}
         <Navbar.Link className='font-semibold' active={path === '/program'} as={'div'}>
           <Link to='/program'>Program</Link>
         </Navbar.Link>
@@ -116,9 +118,12 @@ export default function Header() {
         <Navbar.Link className='font-semibold' active={path === '/host'} as={'div'}>
           <Link to='/host'>The Host</Link>
         </Navbar.Link>
-        <Navbar.Link className='font-semibold' active={path === '/contact-us'} as={'div'}>
-          <Link to='/contact-us'>Contact Us</Link>
+        <Navbar.Link active={path === '/messages'} as={'div'}>
+          <Link to='/messages'>Messages</Link>
         </Navbar.Link>
+        {/* <Navbar.Link className='font-semibold' active={path === '/contact-us'} as={'div'}>
+          <Link to='/contact-us'>Contact Us</Link>
+        </Navbar.Link> */}
         {/* <Navbar.Link active={path === '/about'} as={'div'}>
           <Link to='/about'>About</Link>
         </Navbar.Link>

@@ -7,7 +7,7 @@ import {
     getPaginationRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import { Modal, Table, Button, Label, Pagination, Alert, TextInput, Toast } from 'flowbite-react';
+import { Modal, Table, Button, Label, Pagination, Alert, TextInput, Toast, Spinner } from 'flowbite-react';
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import DownloadBtn from "./DownloadBtn";
@@ -16,14 +16,12 @@ import { SearchIcon } from "../Icons/icons";
 import { FaCheck, FaInfo, FaTimes, } from 'react-icons/fa';
 import { HiOutlineExclamationCircle, HiCheck } from 'react-icons/hi';    
 import QRCode from "react-qr-code";
-import Loading from './Loading.jsx';
 import { Toaster, toast } from 'sonner'
 import {
   updateOtherUserStart,
   updateOtherUserSuccess,
   updateOtherUserFailure
     } from "../redux/user/userSlice";
-import CustomAlert from './CustomAlert.jsx'
 
 
 
@@ -34,7 +32,6 @@ export default function Tanstack() {
     const [data] = useState(() => [...users]);
     const [globalFilter, setGlobalFilter] = useState("");
     const dispatch = useDispatch();
-    const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
     // const [updateFormData, setUpdateFormData] = useState({});
     
 
@@ -88,17 +85,6 @@ export default function Tanstack() {
                 )
             ),
             header: "Admin",
-        }),
-        columnHelper.accessor(users => users.user.isRegistered, {
-            cell: (info) => (
-                (info.getValue() === true) ? (
-                    <FaCheck className='text-green-500 mr-10'  />
-                ) : (
-                    <FaTimes className='text-red-500 mr-10' />
-                )
-
-            ),
-            header: "Registered",
         }),
         columnHelper.accessor(users => users.user.isAccepted, {
             cell: (info) => (
@@ -227,7 +213,7 @@ export default function Tanstack() {
       };
 
       const handleUpdateUser = async (userId) => {
-        setUpdateUserSuccess(null);
+      
         try {
             dispatch(updateOtherUserStart);
             const updUser = await fetch(`/api/user/update/${userId}`, {
@@ -240,7 +226,6 @@ export default function Tanstack() {
               dispatch(updateOtherUserFailure(data.message));
             } else{
               dispatch(updateOtherUserSuccess(data));
-              // setUpdateUserSuccess("User has been accepted");
               toast.success('User has been accepted');
               setShowProfModal(false)
               rerender();
@@ -251,22 +236,10 @@ export default function Tanstack() {
               return dispatch(updateOtherUserFailure(error.message));
           }
       };
-      toast.success('User has been accepted');
-      console.log()
     return (
         <div className="p-2 max-w-7xl mx-auto text-white fill-gray-400">
           <Toaster richColors position="top-center" expand={true} />
-            {updateUserSuccess && (
-          <Toast color='success' className='mt-5 max-w-full bg-green-200'>
             
-            <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-          <HiCheck className="h-5 w-5" />
-        </div>
-        <div className="ml-3 text-sm font-normal">{updateUserSuccess}</div>
-        <Toast.Toggle />
-          </Toast>
-          
-        )}
             <div className="flex justify-between mb-2">
                 <div className="w-full flex items-center gap-1">
                     <SearchIcon />
@@ -356,7 +329,7 @@ export default function Tanstack() {
       >
         <Modal.Header />
         <Modal.Body>
-            {(reg === undefined || reg.length == 0) ? (<Loading />) : (
+            {(reg === undefined || reg.length == 0) ? (<Spinner />) : (
                 
             <div className='text-center' id="print-content" >
              <div className="flex items-center justify-center">

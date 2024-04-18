@@ -36,6 +36,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import { Toaster, toast } from 'sonner'
 
 export default function Registration() {
   const [formData, setFormData] = useState({});
@@ -210,10 +211,10 @@ export default function Registration() {
       !formData.shirtSize ||
       !formData.roleInMinistry ||
       !formData.address ||
-      !formData.allergy ||
-      !formData.medication ||
-      !formData.diet ||
-      !formData.disability ||
+      // !formData.allergy ||
+      // !formData.medication ||
+      // !formData.diet ||
+      // !formData.disability ||
       !formData.arrivalDate ||
       !formData.arrivalTime ||
       !formData.carrierOutOfPalo ||
@@ -279,6 +280,7 @@ export default function Registration() {
     <form>
       <div className="max-w-max mx-auto grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
         <div className="mb-4 col-span-full xl:mb-2">
+        <Toaster richColors position="top-center" expand={true} />
           {error && (
             <Alert color="failure" icon={HiInformationCircle}>
               <span className="font-medium">{error}</span> 
@@ -307,8 +309,196 @@ export default function Registration() {
                 // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
               >
                 <option value="">Select here</option>
-                <option value="Diocese 1">Diocese 1</option>
-                <option value="Organization 1">Organization 1</option>
+                  <option value="Diocese of Alaminos">
+                    Diocese of Alaminos
+                  </option>
+                  <option value="Diocese of Baguio">Diocese of Baguio</option>
+                  <option value="Diocese of Bangued">Diocese of Bangued</option>
+                  <option value="Prelature of Batanes">
+                    Prelature of Batanes
+                  </option>
+                  <option value="Diocese of Bayombong">
+                    Diocese of Bayombong
+                  </option>
+                  <option value="Apostolic Vicariate of Bontoc-Lagawe">
+                    Apostolic Vicariate of Bontoc-Lagawe
+                  </option>
+                  <option value="Diocese of Ilagan">Diocese of Ilagan</option>
+                  <option value="Diocese of Laoag">Diocese of Laoag</option>
+                  <option value="Archdiocese of Lingayen-Dagupan">
+                    Archdiocese of Lingayen-Dagupan
+                  </option>
+                  <option value="Archdiocese of Nueva Segovia">
+                    Archdiocese of Nueva Segovia
+                  </option>
+                  <option value="Diocese of San Fernando (La Union)">
+                    Diocese of San Fernando (La Union)
+                  </option>
+                  <option value="Apostolic Vicariate of Tabuk">
+                    Apostolic Vicariate of Tabuk
+                  </option>
+                  <option value="Archdiocese of Tuguegarao">
+                    Archdiocese of Tuguegarao
+                  </option>
+                  <option value="Diocese of Urdaneta">
+                    Diocese of Urdaneta
+                  </option>
+                  <option value="Diocese of Balanga">Diocese of Balanga</option>
+                  <option value="Diocese of Cabanatuan">
+                    Diocese of Cabanatuan
+                  </option>
+                  <option value="Diocese of Iba">Diocese of Iba</option>
+                  <option value="Diocese of Malolos">Diocese of Malolos</option>
+                  <option value="Archdiocese of San Fernando ">
+                    Archdiocese of San Fernando{" "}
+                  </option>
+                  <option value="Diocese of San Jose (Nueva Ecija)">
+                    Diocese of San Jose (Nueva Ecija)
+                  </option>
+                  <option value="Diocese of Tarlac">Diocese of Tarlac</option>
+                  <option value="Diocese of Antipolo">
+                    Diocese of Antipolo
+                  </option>
+                  <option value="Diocese of Cubao">Diocese of Cubao</option>
+                  <option value="Diocese of Imus">Diocese of Imus</option>
+                  <option value="Diocese of Kalookan">
+                    Diocese of Kalookan
+                  </option>
+                  <option value="Archdiocese of Manila">
+                    Archdiocese of Manila
+                  </option>
+                  <option value="Diocese of Novaliches">
+                    Diocese of Novaliches
+                  </option>
+                  <option value="Diocese of Parañaque">
+                    Diocese of Parañaque
+                  </option>
+                  <option value="Diocese of Pasig">Diocese of Pasig</option>
+                  <option value="Apostolic Vicariate of Puerto Princesa">
+                    Apostolic Vicariate of Puerto Princesa
+                  </option>
+                  <option value="Apostolic Vicariate of Taytay">
+                    Apostolic Vicariate of Taytay
+                  </option>
+                  <option value="Diocese of Boac">Diocese of Boac</option>
+                  <option value="Apostolic Vicariate of Calapan">
+                    Apostolic Vicariate of Calapan
+                  </option>
+                  <option value="Diocese of Gumaca">Diocese of Gumaca</option>
+                  <option value="Prelature of Infanta">
+                    Prelature of Infanta
+                  </option>
+                  <option value="Archdiocese of Lipa">
+                    Archdiocese of Lipa
+                  </option>
+                  <option value="Diocese of Lucena">Diocese of Lucena</option>
+                  <option value="Apostolic Vicariate of San Jose">
+                    Apostolic Vicariate of San Jose
+                  </option>
+                  <option value="Diocese of San Pablo">
+                    Diocese of San Pablo
+                  </option>
+                  <option value="Archdiocese of Caceres">
+                    Archdiocese of Caceres
+                  </option>
+                  <option value="Diocese of Daet">Diocese of Daet</option>
+                  <option value="Diocese of Legazpi">Diocese of Legazpi</option>
+                  <option value="Diocese of Libmanan">
+                    Diocese of Libmanan
+                  </option>
+                  <option value="Diocese of Masbate">Diocese of Masbate</option>
+                  <option value="Diocese of Sorsogon">
+                    Diocese of Sorsogon
+                  </option>
+                  <option value="Diocese of Virac">Diocese of Virac</option>
+                  <option value="Diocese of Borongan">
+                    Diocese of Borongan
+                  </option>
+                  <option value="Diocese of Calbayog">
+                    Diocese of Calbayog
+                  </option>
+                  <option value="Diocese of Catarman">
+                    Diocese of Catarman
+                  </option>
+                  <option value="Archdiocese of Cebu">
+                    Archdiocese of Cebu
+                  </option>
+                  <option value="Diocese of Dumaguete ">
+                    Diocese of Dumaguete{" "}
+                  </option>
+                  <option value="Diocese of Maasin">Diocese of Maasin</option>
+                  <option value="Diocese of Naval">Diocese of Naval</option>
+                  <option value="Archdiocese of Palo">
+                    Archdiocese of Palo
+                  </option>
+                  <option value="Diocese of Tagbilaran ">
+                    Diocese of Tagbilaran{" "}
+                  </option>
+                  <option value="Diocese of Talibon">Diocese of Talibon</option>
+                  <option value="Diocese of Bacolod">Diocese of Bacolod</option>
+                  <option value="Archdiocese of Capiz">
+                    Archdiocese of Capiz
+                  </option>
+                  <option value="Archdiocese of Jaro">
+                    Archdiocese of Jaro
+                  </option>
+                  <option value="Diocese of Kabankalan">
+                    Diocese of Kabankalan
+                  </option>
+                  <option value="Diocese of Kalibo">Diocese of Kalibo</option>
+                  <option value="Diocese of Romblon">Diocese of Romblon</option>
+                  <option value="Diocese of San Carlos">
+                    Diocese of San Carlos
+                  </option>
+                  <option value="Diocese of San Jose, Antique">
+                    Diocese of San Jose, Antique
+                  </option>
+                  <option value="Diocese of Butuan">Diocese of Butuan</option>
+                  <option value="Archdiocese of Cagayan de Oro">
+                    Archdiocese of Cagayan de Oro
+                  </option>
+                  <option value="Diocese of Malaybalay">
+                    Diocese of Malaybalay
+                  </option>
+                  <option value="Diocese of Surigao">Diocese of Surigao</option>
+                  <option value="Diocese of Tandag">Diocese of Tandag</option>
+                  <option value="Archdiocese of Davao">
+                    Archdiocese of Davao
+                  </option>
+                  <option value="Diocese of Digos">Diocese of Digos</option>
+                  <option value="Diocese of Mati">Diocese of Mati</option>
+                  <option value="Diocese of Tagum">Diocese of Tagum</option>
+                  <option value="Diocese of Dipolog">Diocese of Dipolog</option>
+                  <option value="Diocese of Iligan">Diocese of Iligan</option>
+                  <option value="Prelature of Marawi">
+                    Prelature of Marawi
+                  </option>
+                  <option value="Archdiocese of Ozamis ">
+                    Archdiocese of Ozamis{" "}
+                  </option>
+                  <option value="Diocese of Pagadian">
+                    Diocese of Pagadian
+                  </option>
+                  <option value="Archdiocese of Cotabato">
+                    Archdiocese of Cotabato
+                  </option>
+                  <option value="Diocese of Kidapawan">
+                    Diocese of Kidapawan
+                  </option>
+                  <option value="Diocese of Marbel">Diocese of Marbel</option>
+                  <option value="Diocese of Ipil">Diocese of Ipil</option>
+                  <option value="Prelature of Isabela">
+                    Prelature of Isabela
+                  </option>
+                  <option value="Apostolic Vicariate of Jolo">
+                    Apostolic Vicariate of Jolo
+                  </option>
+                  <option value="Archdiocese of Zamboanga">
+                    Archdiocese of Zamboanga
+                  </option>
+                  <option value="Military Ordinariate of the Philippines">
+                    Military Ordinariate of the Philippines
+                  </option>
               </Select>
             </div>
             <div className="mb-6">
@@ -706,7 +896,7 @@ export default function Registration() {
                   id="allergy"
                   onChange={handleChange}
                   placeholder="If yes, please provide details"
-                  required
+                 
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -720,7 +910,7 @@ export default function Registration() {
                   id="medication"
                   onChange={handleChange}
                   placeholder="If yes, please provide details"
-                  required
+                 
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -734,7 +924,7 @@ export default function Registration() {
                   id="diet"
                   onChange={handleChange}
                   placeholder="If yes, please provide details"
-                  required
+                 
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -749,7 +939,7 @@ export default function Registration() {
                   id="disability"
                   onChange={handleChange}
                   placeholder="If yes, please provide details"
-                  required
+                 
                 />
               </div>
             </div>

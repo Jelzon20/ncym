@@ -246,7 +246,8 @@ export default function DashProfile() {
 
   const handleSignInUpdateSubmit = async (e) => {
     e.preventDefault();
-    
+    toast.error(null);
+    toast.success(null);
     if (Object.keys(formData).length === 0) {
       setOpenConfirmModal(false);
       toast.error('No changes made in sign in info');
@@ -284,7 +285,8 @@ export default function DashProfile() {
 
   const handleProfileUpdateSubmit = async (e) => {
     e.preventDefault();
-   
+    toast.error(null);
+    toast.success(null);
     if (Object.keys(profileFormData).length === 0) {
       setOpenConfirmModal(false);
       toast.error("No changes made in profile");
@@ -387,11 +389,55 @@ export default function DashProfile() {
         ) : (
           <></>
         )}
-          {errorMessage && (
-            <Alert color="failure" icon={HiInformationCircle}>
-              <span className="font-medium">{errorMessage}</span> 
-            </Alert>
-          )}
+        {errorMessage && (
+          <Toast color="error" className="mt-5 max-w-full bg-red-200">
+            <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
+              <HiX className="h-5 w-5" />
+            </div>
+            <div className="ml-3 text-sm font-normal">{errorMessage}</div>
+            <Toast.Toggle />
+          </Toast>
+        )}
+        {updateUserError && (
+          <Toast color="error" className="mt-5 max-w-full bg-red-200">
+            <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
+              <HiX className="h-5 w-5" />
+            </div>
+            <div className="ml-3 text-sm font-normal">{updateUserError}</div>
+            <Toast.Toggle />
+          </Toast>
+        )}
+        {updateUserSuccess && (
+          <Toast color="success" className="mt-5 max-w-full bg-green-200">
+            <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-red-200">
+              <HiCheck className="h-5 w-5" />
+            </div>
+            <div className="ml-3 text-sm font-normal">{updateUserSuccess}</div>
+            <Toast.Toggle />
+          </Toast>
+        )}
+        {updateRegistrationError && (
+          <Toast color="error" className="mt-5 max-w-full bg-red-200">
+            <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
+              <HiX className="h-5 w-5" />
+            </div>
+            <div className="ml-3 text-sm font-normal">
+              {updateRegistrationError}
+            </div>
+            <Toast.Toggle />
+          </Toast>
+        )}
+        {updateRegistrationSuccess && (
+          <Toast color="success" className="mt-5 max-w-full bg-green-200">
+            <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-red-200">
+              <HiCheck className="h-5 w-5" />
+            </div>
+            <div className="ml-3 text-sm font-normal">
+              {updateRegistrationSuccess}
+            </div>
+            <Toast.Toggle />
+          </Toast>
+        )}
         <h1 className="text-xl font-semibold text-gray-900 sm:text-3xl dark:text-white">
           User Settings
         </h1>
