@@ -27,7 +27,6 @@ export default function Home() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(currentUser.isRegistered);
 
     if (currentUser.isAccepted && currentUser.isRegistered) {
       navigate("/");
@@ -47,7 +46,6 @@ export default function Home() {
           headers: { "Content-Type": "application/json" },
         });
         const data = await getReg.json();
-        console.log(data);
         if (data.success === false) {
           dispatch(getRegistrationFailure(data.message));
           return;
@@ -91,13 +89,7 @@ export default function Home() {
             national conference of youth ministers 2024{" "}
           </p>
           <p className="max-w-2xl mb-6 md:text-lg lg:mb-8 text-white font-light font-abc">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis
-            molestie nisi consequat diam tincidunt egestas. Maecenas mattis ex
-            in libero maximus aliquet. Sed porta nisi sed lectus hendrerit, et
-            rhoncus nunc commodo. Donec erat risus, feugiat id arcu ac, dapibus
-            auctor lorem. Nunc diam sem, efficitur non aliquet sed, ullamcorper
-            non ante. Cras nec arcu sed ipsum mollis ullamcorper id ac arcu. Nam
-            convallis arcu nec laoreet posuere.{" "}
+          The 2024 National Conference of Youth Ministers draws inspiration from Pope Francis' message at the 28th World Youth Day on November 26, 2023. He described the youth of the Universal Church as the "joyful hope of the church" and emphasized their role as agents of change. This event marks the beginning of the youth's journey, entrusted to Mary, Mother and Our Lady of Hope, leading up to the 2025 Jubilee Year themed as "Pilgrims of Hope."
           </p>
           <a
             href="#primer"
@@ -111,9 +103,9 @@ export default function Home() {
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                fill-rule="evenodd"
+               fillRule="evenodd"
                 d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                clip-rule="evenodd"
+                clipRule="evenodd"
               ></path>
             </svg>
           </a>

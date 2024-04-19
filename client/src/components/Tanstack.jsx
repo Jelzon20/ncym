@@ -121,7 +121,7 @@ export default function Tanstack() {
                     >
                         View
                     </span>
-                    <span
+                    {/* <span
                         onClick={() => {
                             setShowModal(true);
                             setUserIdToDelete(info.getValue());
@@ -130,7 +130,7 @@ export default function Tanstack() {
                         className='font-medium text-red-500 hover:underline cursor-pointer'
                     >
                         Delete
-                    </span>
+                    </span> */}
                 </>
             ),
             header: "Actions",
@@ -150,13 +150,12 @@ export default function Tanstack() {
                     setUsers(data.regs);
                 }
             } catch (error) {
-                console.log(error.message);
+              toast.error(data.message)
             }
         };
         if (currentUser.isAdmin) {
             fetchUsers();
         }
-        console.log(users)
     }, [currentUser._id]);
 
     const rerender = async () => {
@@ -167,12 +166,12 @@ export default function Tanstack() {
             setUsers(data.regs);
         }
     } catch (error) {
-        console.log(error.message);
+        toast.error(error.message)
     }
     }
 
     const table = useReactTable({
-        data: users,
+        data: users, 
         columns,
         state: {
             globalFilter,
@@ -182,25 +181,24 @@ export default function Tanstack() {
         getPaginationRowModel: getPaginationRowModel(),
     });
 
-    const handleDeleteUser = async () => {
-        try {
-            const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
-                method: 'DELETE',
-            });
-            const data = await res.json();
-            if (res.ok) {
-                setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
-                setShowModal(false);
-            } else {
-                console.log(data.message);
-            }
-        } catch (error) {
-            console.log(error.message);
-        }
-      };
+    // const handleDeleteUser = async () => {
+    //     try {
+    //         const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
+    //             method: 'DELETE',
+    //         });
+    //         const data = await res.json();
+    //         if (res.ok) {
+    //             setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
+    //             setShowModal(false);
+    //         } else {
+    //             toast.error(data.message)
+    //         }
+    //     } catch (error) {
+    //       toast.error(error.message)
+    //     }
+    //   };
     
       const handleViewUser = async (regId) => {
-        console.log(regId)
             try {
               const res = await fetch(`/api/reg/${regId}`);
               const data = await res.json();
@@ -208,14 +206,14 @@ export default function Tanstack() {
                 setReg(data);
               }
             } catch (error) {
-              console.log(error.message);
+              toast.error(error.message)
             }
       };
 
       const handleUpdateUser = async (userId) => {
       
         try {
-            dispatch(updateOtherUserStart);
+            dispatch(updateOtherUserStart());
             const updUser = await fetch(`/api/user/update/${userId}`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
@@ -237,7 +235,7 @@ export default function Tanstack() {
           }
       };
     return (
-        <div className="p-2 max-w-7xl mx-auto text-white fill-gray-400">
+        <div className="p-2 max-w-full mx-auto text-white fill-gray-400">
           <Toaster richColors position="top-center" expand={true} />
             
             <div className="flex justify-between mb-2">
@@ -250,8 +248,8 @@ export default function Tanstack() {
                         placeholder="Search all columns..."
                     />
                 </div>
-                <DownloadBtn data={users} fileName={"peoples"} />
-            </div>  
+                <DownloadBtn data={users} fileName={"users"} />
+            </div>
             <table className="border border-gray-700 w-full text-left">
                 <thead className="bg-indigo-600">
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -293,7 +291,7 @@ export default function Tanstack() {
                     )}
                 </tbody>
             </table>
-            <Modal
+            {/* <Modal
         show={showModal}
         onClose={() => (
             setShowModal(false),
@@ -319,7 +317,7 @@ export default function Tanstack() {
             </div>
           </div>
         </Modal.Body>
-      </Modal>
+      </Modal> */}
 
       <Modal
         show={showProfModal}

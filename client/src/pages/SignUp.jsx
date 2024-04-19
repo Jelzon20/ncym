@@ -3,6 +3,7 @@ import { useState } from 'react';
 import logo from "../assets/logov6.png";
 import { Link, useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
+import { Toaster, toast } from 'sonner'
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
@@ -15,7 +16,8 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if ( !formData.email || !formData.password) {
-      return setErrorMessage('Please fill out all fields.');
+      toast.error("Please fill out all fields.")
+      // return setErrorMessage('Please fill out all fields.');
     } 
     
     try {
@@ -29,15 +31,18 @@ export default function SignUp() {
       const data = await res.json();
       if (data.success === false) {
         setErrorMessage(data.message);
+        toast.error(data.message);
         setLoading(false);
       }
       setLoading(false);
       if(res.ok) {
+        toast.success("Account has been created")
         navigate('/sign-in');
       }
     } 
     catch (error) {
       setErrorMessage(error.message);
+      toast.error(error.message);
       setLoading(false);
     }
     
@@ -45,8 +50,15 @@ export default function SignUp() {
 
   return (
     <div className='min-h-screen mt-20'>
+      <Toaster richColors position="top-center" expand={true} />
+
       <div className='flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5'>
         {/* left */}
+        {/* {errorMessage && (
+            <Alert className='mt-5' color='failure'>
+              {errorMessage}
+            </Alert>
+          )} */}
         <div className='flex-1'>
           {/* <Link to='/' className='font-bold dark:text-white text-4xl'>
           <span className='px-2 py-1 bg-indigo-950 rounded-lg text-white'>
@@ -75,12 +87,14 @@ export default function SignUp() {
           </div>
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div>
-              <Label value='Email' className='font-semibold' />
+              <Label value='Email' htmlFor="email" className='font-semibold' />
               <TextInput
                 type='email'
                 placeholder='name@company.com'
                 id='email'
                 onChange={handleChange}
+                
+                required
               />
             </div>
             <div>
@@ -90,6 +104,7 @@ export default function SignUp() {
                 placeholder='Password'
                 id='password'
                 onChange={handleChange}
+                required
               />
             </div>
             <Button
@@ -109,11 +124,7 @@ export default function SignUp() {
             <OAuth />
           </form>
           
-          {errorMessage && (
-            <Alert className='mt-5' color='failure'>
-              {errorMessage}
-            </Alert>
-          )}
+          
         </div>
       </div>
     </div>

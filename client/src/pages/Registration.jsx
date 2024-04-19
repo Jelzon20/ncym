@@ -15,7 +15,7 @@ import {
   FileInput,
   Spinner,
   Progress,
-  Modal
+  Modal,
 } from "flowbite-react";
 import {
   registerFailure,
@@ -26,8 +26,8 @@ import {
   updateStart,
   updateSuccess,
   updateFailure,
-  } from "../redux/user/userSlice";
-  import { HiCheck, HiX, HiInformationCircle } from 'react-icons/hi';  
+} from "../redux/user/userSlice";
+import { HiCheck, HiX, HiInformationCircle } from "react-icons/hi";
 import moment from "moment/moment.js";
 import {
   getDownloadURL,
@@ -36,15 +36,12 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
-import { Toaster, toast } from 'sonner'
+import { Toaster, toast } from "sonner";
 
 export default function Registration() {
   const [formData, setFormData] = useState({});
   const [updateFormData, setUpdateFormData] = useState({});
-  const {
-    error,
-    currentRegister,
-  } = useSelector((state) => state.register);
+  const { error, currentRegister } = useSelector((state) => state.register);
   const { currentUser, loading } = useSelector((state) => state.user);
 
   const [file, setFile] = useState(null);
@@ -80,6 +77,7 @@ export default function Registration() {
       setPaymentFile(file);
       setPaymentFileUrl(URL.createObjectURL(paymentFile));
     }
+    console.log(paymentFile);
   };
 
   useEffect(() => {
@@ -91,6 +89,7 @@ export default function Registration() {
   useEffect(() => {
     if (paymentFile) {
       uploadPaymentFile();
+      console.log(paymentFile)
     }
   }, [paymentFile]);
 
@@ -113,10 +112,12 @@ export default function Registration() {
         setFileUploadError(
           "Could not upload file (File must be less than 2MB)"
         );
+        toast.error("Could not upload file (File must be less than 2MB)");
         setFileUploadProgress(null);
         setFile(null);
         setFileUrl(null);
         setFileUploading(false);
+        return;
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -147,6 +148,7 @@ export default function Registration() {
         setFileUploadError(
           "Could not upload file (File must be less than 2MB)"
         );
+        toast.error(error.message);
         setPaymentFileUploadProgress(null);
         setPaymentFile(null);
         setPaymentFileUrl(null);
@@ -168,12 +170,10 @@ export default function Registration() {
   }, [currentUser]);
 
   useEffect(() => {
-    console.log(currentUser.isRegistered)
 
-    if(currentUser.isRegistered) {
-        navigate('/dashboard?tab=profile');
+    if (currentUser.isRegistered) {
+      navigate("/dashboard?tab=profile");
     }
-    
   }, [currentUser]);
 
   const handleDateChange = (date) => {
@@ -187,8 +187,6 @@ export default function Registration() {
   const handleDepartureChange = (date) => {
     setFormData({ ...formData, departureDate: date.value });
   };
-
-
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -219,36 +217,45 @@ export default function Registration() {
       !formData.arrivalTime ||
       !formData.carrierOutOfPalo ||
       !formData.carrierToPalo ||
-      !formData.departureDate || 
+      !formData.departureDate ||
       !formData.departureTime ||
-      !formData.waiver || 
+      !formData.waiver ||
       !formData.proofOfPayment
     ) {
-      setOpenConfirmModal(false);
-      dispatch(registerFailure("Please fill all the fields"));
-      return;
       
+      dispatch(registerFailure("Please fill all the required fields"));
+      toast.error("Please fill all the required fields");
+      // setOpenConfirmModal(false);
+      return;
+    } else {
+      setOpenConfirmModal(true);
+
     }
-    console.log(formData);
+    
 
     // navigate("/dashboard?tab=profile");
 
-    try {
+    
+  };
+
+  const confirmSubmit = async () => {
+try {
       dispatch(registerStart());
       const res = await fetch("/api/reg/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      console.log(formData);
       const data = await res.json();
       if (data.success === false) {
         setOpenConfirmModal(false);
         dispatch(registerFailure(data.message));
+        toast.error(data.message)
       }
 
       if (res.ok) {
         dispatch(registerSuccess(data));
+        toast.success('Successful regisration.')
 
         try {
           dispatch(updateStart());
@@ -261,31 +268,33 @@ export default function Registration() {
           if (data.success === false) {
             setOpenConfirmModal(false);
             dispatch(updateFailure(data.message));
+            toast.error(data.message)
           }
           dispatch(updateSuccess(data));
           navigate("/dashboard?tab=profile");
         } catch (error) {
           setOpenConfirmModal(false);
           dispatch(updateFailure(error.message));
+          toast.error(error.message)
         }
       }
-
     } catch (error) {
       setOpenConfirmModal(false);
       dispatch(registerFailure(error.message));
+      toast.error(error.message)
     }
-  };
+  } 
 
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className="max-w-max mx-auto grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
         <div className="mb-4 col-span-full xl:mb-2">
-        <Toaster richColors position="top-center" expand={true} />
-          {error && (
+          <Toaster richColors position="top-center" expand={true} />
+          {/* {error && (
             <Alert color="failure" icon={HiInformationCircle}>
-              <span className="font-medium">{error}</span> 
+              <span className="font-medium">{error}</span>
             </Alert>
-          )}
+          )} */}
 
           <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
             Registration
@@ -299,206 +308,177 @@ export default function Registration() {
             </h3>
             <div className="mb-4">
               <Label
-                htmlFor="settings-language"
+                htmlFor="dioceseOrOrg"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 value="Diocese/Organization"
               />
               <Select
                 id="dioceseOrOrg"
                 onChange={handleChange}
+                required
                 // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
               >
                 <option value="">Select here</option>
-                  <option value="Diocese of Alaminos">
-                    Diocese of Alaminos
-                  </option>
-                  <option value="Diocese of Baguio">Diocese of Baguio</option>
-                  <option value="Diocese of Bangued">Diocese of Bangued</option>
-                  <option value="Prelature of Batanes">
-                    Prelature of Batanes
-                  </option>
-                  <option value="Diocese of Bayombong">
-                    Diocese of Bayombong
-                  </option>
-                  <option value="Apostolic Vicariate of Bontoc-Lagawe">
-                    Apostolic Vicariate of Bontoc-Lagawe
-                  </option>
-                  <option value="Diocese of Ilagan">Diocese of Ilagan</option>
-                  <option value="Diocese of Laoag">Diocese of Laoag</option>
-                  <option value="Archdiocese of Lingayen-Dagupan">
-                    Archdiocese of Lingayen-Dagupan
-                  </option>
-                  <option value="Archdiocese of Nueva Segovia">
-                    Archdiocese of Nueva Segovia
-                  </option>
-                  <option value="Diocese of San Fernando (La Union)">
-                    Diocese of San Fernando (La Union)
-                  </option>
-                  <option value="Apostolic Vicariate of Tabuk">
-                    Apostolic Vicariate of Tabuk
-                  </option>
-                  <option value="Archdiocese of Tuguegarao">
-                    Archdiocese of Tuguegarao
-                  </option>
-                  <option value="Diocese of Urdaneta">
-                    Diocese of Urdaneta
-                  </option>
-                  <option value="Diocese of Balanga">Diocese of Balanga</option>
-                  <option value="Diocese of Cabanatuan">
-                    Diocese of Cabanatuan
-                  </option>
-                  <option value="Diocese of Iba">Diocese of Iba</option>
-                  <option value="Diocese of Malolos">Diocese of Malolos</option>
-                  <option value="Archdiocese of San Fernando ">
-                    Archdiocese of San Fernando{" "}
-                  </option>
-                  <option value="Diocese of San Jose (Nueva Ecija)">
-                    Diocese of San Jose (Nueva Ecija)
-                  </option>
-                  <option value="Diocese of Tarlac">Diocese of Tarlac</option>
-                  <option value="Diocese of Antipolo">
-                    Diocese of Antipolo
-                  </option>
-                  <option value="Diocese of Cubao">Diocese of Cubao</option>
-                  <option value="Diocese of Imus">Diocese of Imus</option>
-                  <option value="Diocese of Kalookan">
-                    Diocese of Kalookan
-                  </option>
-                  <option value="Archdiocese of Manila">
-                    Archdiocese of Manila
-                  </option>
-                  <option value="Diocese of Novaliches">
-                    Diocese of Novaliches
-                  </option>
-                  <option value="Diocese of Parañaque">
-                    Diocese of Parañaque
-                  </option>
-                  <option value="Diocese of Pasig">Diocese of Pasig</option>
-                  <option value="Apostolic Vicariate of Puerto Princesa">
-                    Apostolic Vicariate of Puerto Princesa
-                  </option>
-                  <option value="Apostolic Vicariate of Taytay">
-                    Apostolic Vicariate of Taytay
-                  </option>
-                  <option value="Diocese of Boac">Diocese of Boac</option>
-                  <option value="Apostolic Vicariate of Calapan">
-                    Apostolic Vicariate of Calapan
-                  </option>
-                  <option value="Diocese of Gumaca">Diocese of Gumaca</option>
-                  <option value="Prelature of Infanta">
-                    Prelature of Infanta
-                  </option>
-                  <option value="Archdiocese of Lipa">
-                    Archdiocese of Lipa
-                  </option>
-                  <option value="Diocese of Lucena">Diocese of Lucena</option>
-                  <option value="Apostolic Vicariate of San Jose">
-                    Apostolic Vicariate of San Jose
-                  </option>
-                  <option value="Diocese of San Pablo">
-                    Diocese of San Pablo
-                  </option>
-                  <option value="Archdiocese of Caceres">
-                    Archdiocese of Caceres
-                  </option>
-                  <option value="Diocese of Daet">Diocese of Daet</option>
-                  <option value="Diocese of Legazpi">Diocese of Legazpi</option>
-                  <option value="Diocese of Libmanan">
-                    Diocese of Libmanan
-                  </option>
-                  <option value="Diocese of Masbate">Diocese of Masbate</option>
-                  <option value="Diocese of Sorsogon">
-                    Diocese of Sorsogon
-                  </option>
-                  <option value="Diocese of Virac">Diocese of Virac</option>
-                  <option value="Diocese of Borongan">
-                    Diocese of Borongan
-                  </option>
-                  <option value="Diocese of Calbayog">
-                    Diocese of Calbayog
-                  </option>
-                  <option value="Diocese of Catarman">
-                    Diocese of Catarman
-                  </option>
-                  <option value="Archdiocese of Cebu">
-                    Archdiocese of Cebu
-                  </option>
-                  <option value="Diocese of Dumaguete ">
-                    Diocese of Dumaguete{" "}
-                  </option>
-                  <option value="Diocese of Maasin">Diocese of Maasin</option>
-                  <option value="Diocese of Naval">Diocese of Naval</option>
-                  <option value="Archdiocese of Palo">
-                    Archdiocese of Palo
-                  </option>
-                  <option value="Diocese of Tagbilaran ">
-                    Diocese of Tagbilaran{" "}
-                  </option>
-                  <option value="Diocese of Talibon">Diocese of Talibon</option>
-                  <option value="Diocese of Bacolod">Diocese of Bacolod</option>
-                  <option value="Archdiocese of Capiz">
-                    Archdiocese of Capiz
-                  </option>
-                  <option value="Archdiocese of Jaro">
-                    Archdiocese of Jaro
-                  </option>
-                  <option value="Diocese of Kabankalan">
-                    Diocese of Kabankalan
-                  </option>
-                  <option value="Diocese of Kalibo">Diocese of Kalibo</option>
-                  <option value="Diocese of Romblon">Diocese of Romblon</option>
-                  <option value="Diocese of San Carlos">
-                    Diocese of San Carlos
-                  </option>
-                  <option value="Diocese of San Jose, Antique">
-                    Diocese of San Jose, Antique
-                  </option>
-                  <option value="Diocese of Butuan">Diocese of Butuan</option>
-                  <option value="Archdiocese of Cagayan de Oro">
-                    Archdiocese of Cagayan de Oro
-                  </option>
-                  <option value="Diocese of Malaybalay">
-                    Diocese of Malaybalay
-                  </option>
-                  <option value="Diocese of Surigao">Diocese of Surigao</option>
-                  <option value="Diocese of Tandag">Diocese of Tandag</option>
-                  <option value="Archdiocese of Davao">
-                    Archdiocese of Davao
-                  </option>
-                  <option value="Diocese of Digos">Diocese of Digos</option>
-                  <option value="Diocese of Mati">Diocese of Mati</option>
-                  <option value="Diocese of Tagum">Diocese of Tagum</option>
-                  <option value="Diocese of Dipolog">Diocese of Dipolog</option>
-                  <option value="Diocese of Iligan">Diocese of Iligan</option>
-                  <option value="Prelature of Marawi">
-                    Prelature of Marawi
-                  </option>
-                  <option value="Archdiocese of Ozamis ">
-                    Archdiocese of Ozamis{" "}
-                  </option>
-                  <option value="Diocese of Pagadian">
-                    Diocese of Pagadian
-                  </option>
-                  <option value="Archdiocese of Cotabato">
-                    Archdiocese of Cotabato
-                  </option>
-                  <option value="Diocese of Kidapawan">
-                    Diocese of Kidapawan
-                  </option>
-                  <option value="Diocese of Marbel">Diocese of Marbel</option>
-                  <option value="Diocese of Ipil">Diocese of Ipil</option>
-                  <option value="Prelature of Isabela">
-                    Prelature of Isabela
-                  </option>
-                  <option value="Apostolic Vicariate of Jolo">
-                    Apostolic Vicariate of Jolo
-                  </option>
-                  <option value="Archdiocese of Zamboanga">
-                    Archdiocese of Zamboanga
-                  </option>
-                  <option value="Military Ordinariate of the Philippines">
-                    Military Ordinariate of the Philippines
-                  </option>
+                <option value="Apostolic Vicariate of Bontoc-Lagawe">
+                  Apostolic Vicariate of Bontoc-Lagawe
+                </option>
+                <option value="Apostolic Vicariate of Calapan">
+                  Apostolic Vicariate of Calapan
+                </option>
+                <option value="Apostolic Vicariate of Jolo">
+                  Apostolic Vicariate of Jolo
+                </option>
+                <option value="Apostolic Vicariate of Puerto Princesa">
+                  Apostolic Vicariate of Puerto Princesa
+                </option>
+                <option value="Apostolic Vicariate of San Jose">
+                  Apostolic Vicariate of San Jose
+                </option>
+                <option value="Apostolic Vicariate of Tabuk">
+                  Apostolic Vicariate of Tabuk
+                </option>
+                <option value="Apostolic Vicariate of Taytay">
+                  Apostolic Vicariate of Taytay
+                </option>
+                <option value="Archdiocese of Caceres">
+                  Archdiocese of Caceres
+                </option>
+                <option value="Archdiocese of Cagayan de Oro">
+                  Archdiocese of Cagayan de Oro
+                </option>
+                <option value="Archdiocese of Capiz">
+                  Archdiocese of Capiz
+                </option>
+                <option value="Archdiocese of Cebu">Archdiocese of Cebu</option>
+                <option value="Archdiocese of Cotabato">
+                  Archdiocese of Cotabato
+                </option>
+                <option value="Archdiocese of Davao">
+                  Archdiocese of Davao
+                </option>
+                <option value="Archdiocese of Jaro">Archdiocese of Jaro</option>
+                <option value="Archdiocese of Lingayen-Dagupan">
+                  Archdiocese of Lingayen-Dagupan
+                </option>
+                <option value="Archdiocese of Lipa">Archdiocese of Lipa</option>
+                <option value="Archdiocese of Manila">
+                  Archdiocese of Manila
+                </option>
+                <option value="Archdiocese of Nueva Segovia">
+                  Archdiocese of Nueva Segovia
+                </option>
+                <option value="Archdiocese of Ozamis ">
+                  Archdiocese of Ozamis{" "}
+                </option>
+                <option value="Archdiocese of Palo">Archdiocese of Palo</option>
+                <option value="Archdiocese of San Fernando ">
+                  Archdiocese of San Fernando{" "}
+                </option>
+                <option value="Archdiocese of Tuguegarao">
+                  Archdiocese of Tuguegarao
+                </option>
+                <option value="Archdiocese of Zamboanga">
+                  Archdiocese of Zamboanga
+                </option>
+                <option value="Diocese of Alaminos">Diocese of Alaminos</option>
+                <option value="Diocese of Antipolo">Diocese of Antipolo</option>
+                <option value="Diocese of Bacolod">Diocese of Bacolod</option>
+                <option value="Diocese of Baguio">Diocese of Baguio</option>
+                <option value="Diocese of Balanga">Diocese of Balanga</option>
+                <option value="Diocese of Bangued">Diocese of Bangued</option>
+                <option value="Diocese of Bayombong">
+                  Diocese of Bayombong
+                </option>
+                <option value="Diocese of Boac">Diocese of Boac</option>
+                <option value="Diocese of Borongan">Diocese of Borongan</option>
+                <option value="Diocese of Butuan">Diocese of Butuan</option>
+                <option value="Diocese of Cabanatuan">
+                  Diocese of Cabanatuan
+                </option>
+                <option value="Diocese of Calbayog">Diocese of Calbayog</option>
+                <option value="Diocese of Catarman">Diocese of Catarman</option>
+                <option value="Diocese of Cubao">Diocese of Cubao</option>
+                <option value="Diocese of Daet">Diocese of Daet</option>
+                <option value="Diocese of Digos">Diocese of Digos</option>
+                <option value="Diocese of Dipolog">Diocese of Dipolog</option>
+                <option value="Diocese of Dumaguete ">
+                  Diocese of Dumaguete{" "}
+                </option>
+                <option value="Diocese of Gumaca">Diocese of Gumaca</option>
+                <option value="Diocese of Iba">Diocese of Iba</option>
+                <option value="Diocese of Ilagan">Diocese of Ilagan</option>
+                <option value="Diocese of Iligan">Diocese of Iligan</option>
+                <option value="Diocese of Imus">Diocese of Imus</option>
+                <option value="Diocese of Ipil">Diocese of Ipil</option>
+                <option value="Diocese of Kabankalan">
+                  Diocese of Kabankalan
+                </option>
+                <option value="Diocese of Kalibo">Diocese of Kalibo</option>
+                <option value="Diocese of Kalookan">Diocese of Kalookan</option>
+                <option value="Diocese of Kidapawan">
+                  Diocese of Kidapawan
+                </option>
+                <option value="Diocese of Laoag">Diocese of Laoag</option>
+                <option value="Diocese of Legazpi">Diocese of Legazpi</option>
+                <option value="Diocese of Libmanan">Diocese of Libmanan</option>
+                <option value="Diocese of Lucena">Diocese of Lucena</option>
+                <option value="Diocese of Maasin">Diocese of Maasin</option>
+                <option value="Diocese of Malaybalay">
+                  Diocese of Malaybalay
+                </option>
+                <option value="Diocese of Malolos">Diocese of Malolos</option>
+                <option value="Diocese of Marbel">Diocese of Marbel</option>
+                <option value="Diocese of Masbate">Diocese of Masbate</option>
+                <option value="Diocese of Mati">Diocese of Mati</option>
+                <option value="Diocese of Naval">Diocese of Naval</option>
+                <option value="Diocese of Novaliches">
+                  Diocese of Novaliches
+                </option>
+                <option value="Diocese of Pagadian">Diocese of Pagadian</option>
+                <option value="Diocese of Parañaque">
+                  Diocese of Parañaque
+                </option>
+                <option value="Diocese of Pasig">Diocese of Pasig</option>
+                <option value="Diocese of Romblon">Diocese of Romblon</option>
+                <option value="Diocese of San Carlos">
+                  Diocese of San Carlos
+                </option>
+                <option value="Diocese of San Fernando (La Union)">
+                  Diocese of San Fernando (La Union)
+                </option>
+                <option value="Diocese of San Jose (Nueva Ecija)">
+                  Diocese of San Jose (Nueva Ecija)
+                </option>
+                <option value="Diocese of San Jose, Antique">
+                  Diocese of San Jose, Antique
+                </option>
+                <option value="Diocese of San Pablo">
+                  Diocese of San Pablo
+                </option>
+                <option value="Diocese of Sorsogon">Diocese of Sorsogon</option>
+                <option value="Diocese of Surigao">Diocese of Surigao</option>
+                <option value="Diocese of Tagbilaran ">
+                  Diocese of Tagbilaran{" "}
+                </option>
+                <option value="Diocese of Tagum">Diocese of Tagum</option>
+                <option value="Diocese of Talibon">Diocese of Talibon</option>
+                <option value="Diocese of Tandag">Diocese of Tandag</option>
+                <option value="Diocese of Tarlac">Diocese of Tarlac</option>
+                <option value="Diocese of Urdaneta">Diocese of Urdaneta</option>
+                <option value="Diocese of Virac">Diocese of Virac</option>
+                <option value="Military Ordinariate of the Philippines">
+                  Military Ordinariate of the Philippines
+                </option>
+                <option value="Prelature of Batanes">
+                  Prelature of Batanes
+                </option>
+                <option value="Prelature of Infanta">
+                  Prelature of Infanta
+                </option>
+                <option value="Prelature of Isabela">
+                  Prelature of Isabela
+                </option>
+                <option value="Prelature of Marawi">Prelature of Marawi</option>
               </Select>
             </div>
             <div className="mb-6">
@@ -586,6 +566,7 @@ export default function Registration() {
                 <Select
                   id="title"
                   onChange={handleChange}
+                  required
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
@@ -594,6 +575,8 @@ export default function Registration() {
                   <option value="FR.">FR.</option>
                   <option value="BR.">BR.</option>
                   <option value="SR.">SR.</option>
+                  <option value="REV.">REV.</option>
+                  <option value="REV. MSGR.">REV. MSGR.</option>
                 </Select>
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -711,6 +694,7 @@ export default function Registration() {
                 <Select
                   id="shirtSize"
                   onChange={handleChange}
+                  required
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
@@ -740,12 +724,14 @@ export default function Registration() {
                 <Select
                   id="carrierToPalo"
                   onChange={handleChange}
+                  required
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
-                  <option value="Air">Air</option>
-                  <option value="Land">Land</option>
-                  <option value="Sea">Sea</option>
+                  <option value="Airplane">Airplane</option>
+                  <option value="Boat">Boat</option>
+                  <option value="Public Bus">Public Bus</option>
+                  <option value="Private Vehicle">Private Vehicle</option>
                 </Select>
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -774,6 +760,7 @@ export default function Registration() {
                 <Select
                   id="arrivalTime"
                   onChange={handleChange}
+                  required
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
@@ -813,12 +800,14 @@ export default function Registration() {
                 <Select
                   id="carrierOutOfPalo"
                   onChange={handleChange}
+                  required
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
-                  <option value="Air">Air</option>
-                  <option value="Land">Land</option>
-                  <option value="Sea">Sea</option>
+                  <option value="Airplane">Airplane</option>
+                  <option value="Boat">Boat</option>
+                  <option value="Public Bus">Public Bus</option>
+                  <option value="Private Vehicle">Private Vehicle</option>
                 </Select>
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -847,6 +836,7 @@ export default function Registration() {
                 <Select
                   id="departureTime"
                   onChange={handleChange}
+                  required
                   // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
@@ -896,7 +886,6 @@ export default function Registration() {
                   id="allergy"
                   onChange={handleChange}
                   placeholder="If yes, please provide details"
-                 
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -910,7 +899,6 @@ export default function Registration() {
                   id="medication"
                   onChange={handleChange}
                   placeholder="If yes, please provide details"
-                 
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -924,7 +912,6 @@ export default function Registration() {
                   id="diet"
                   onChange={handleChange}
                   placeholder="If yes, please provide details"
-                 
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -939,7 +926,6 @@ export default function Registration() {
                   id="disability"
                   onChange={handleChange}
                   placeholder="If yes, please provide details"
-                 
                 />
               </div>
             </div>
@@ -947,7 +933,7 @@ export default function Registration() {
 
           <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
             <h3 className="mb-4 text-xl font-semibold dark:text-white">
-              Attachments (maximum of 3 MB)
+              Attachments (maximum of 2 MB)
             </h3>
 
             <div className="grid grid-cols-6 gap-6">
@@ -960,7 +946,7 @@ export default function Registration() {
 
                 <FileInput
                   id="waiver"
-                  accept=".doc, .docx, .pdf"
+                  accept=".doc, .docx, .pdf, image/*"
                   onChange={handleWaiverFileChange}
                   required
                 />
@@ -1008,8 +994,8 @@ export default function Registration() {
             </div>
             <div className="mt-10 flex items-center justify-center">
               <Button
-                // type="submit"
-                onClick={() => setOpenConfirmModal(true)}
+                type="submit"
+                // onClick={() => setOpenConfirmModal(true)}
                 className="w-60 bg-indigo-950 dark:bg-indigo-950"
                 //   disabled={loading}
               >
@@ -1036,7 +1022,7 @@ export default function Registration() {
                 </div>
               </Modal.Body>
               <Modal.Footer>
-                <Button onClick={handleSubmit}>I accept</Button>
+                <Button onClick={confirmSubmit}>I accept</Button>
                 <Button color="gray" onClick={() => setOpenConfirmModal(false)}>
                   Decline
                 </Button>

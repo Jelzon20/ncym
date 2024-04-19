@@ -3,6 +3,7 @@ import { useState } from 'react';
 import logo from "../assets/logov6.png";
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { Toaster, toast } from 'sonner'
 
 import {
   signInStart,
@@ -23,7 +24,9 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
-      return dispatch(signInFailure('Please fill all the fields'));
+      
+      dispatch(signInFailure('Please fill all the fields'));
+      toast.error('Please fill all the fields')
     }
     try {
       dispatch(signInStart());
@@ -35,19 +38,28 @@ export default function SignIn() {
       const data = await res.json();
       if (data.success === false) {
         dispatch(signInFailure(data.message));
+        toast.error(data.message)
       }
 
       if (res.ok) {
         dispatch(signInSuccess(data));
+        toast.success("Sign in successful")
         navigate('/');
       }
     } catch (error) {
       dispatch(signInFailure(error.message));
+      toast.error(error.message)
     }
   };
 
   return (
     <div className='min-h-screen mt-20'>
+      <Toaster richColors position="top-center" expand={true} />
+      {/* {errorMessage && (
+            <Alert className='mt-5' color='failure'>
+              {errorMessage}
+            </Alert>
+          )} */}
       <div className='flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5'>
         {/* left */}
         <div className='flex-1'>
@@ -70,25 +82,28 @@ export default function SignIn() {
         {/* right */}
 
         <div className='flex-1'>
-          <h1 className='text-gray-800 font-bold text-4xl mb-1"'>Hello Again!</h1>
-          <p className='text-sm font-normal text-gray-600 mb-7 mt-1'> Welcome Back</p>
+          <h1 className='text-gray-800 font-bold text-3xl mb-5"'>Maupay nga adlaw,</h1>
+          <h1 className='text-gray-800 font-bold text-3xl mb-5"'>ka-lakbay!</h1>
+          <p className='mb-7 mt-1'>Welcom Back</p>
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div>
-              <Label value='Your email' className='font-semibold'/>
+              <Label value='Your email' htmlFor='email' className='font-semibold'/>
               <TextInput
                 type='email'
                 placeholder='name@company.com'
                 id='email'
                 onChange={handleChange}
+                required
               />
             </div>
             <div>
-              <Label value='Your password' className='font-semibold'/>
+              <Label value='Your password' htmlFor='password' className='font-semibold'/>
               <TextInput
                 type='password'
                 placeholder='**********'
                 id='password'
                 onChange={handleChange}
+                required
               />
             </div>
             <Button
@@ -113,11 +128,7 @@ export default function SignIn() {
               Sign Up
             </Link>
           </div>
-          {errorMessage && (
-            <Alert className='mt-5' color='failure'>
-              {errorMessage}
-            </Alert>
-          )}
+          
         </div>
       </div>
     </div>

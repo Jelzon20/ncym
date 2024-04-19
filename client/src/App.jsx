@@ -12,11 +12,11 @@ import Program from './pages/Program'
 import Workshops from './pages/Workshops'
 import Evaluations from './pages/Evaluations'
 import Host from './pages/Host'
-import ContactUs from './pages/ContactUs'
 import FooterCom from './components/Footer'
 import PrivateRoute from './components/PrivateRoutes'
 import { useSelector, useDispatch } from 'react-redux';
 import Registration from './pages/Registration'
+import Accomodation from './pages/Accomodation'
 
 
 
@@ -49,7 +49,7 @@ export default function App() {
           <Route path='/workshops' element={<Workshops />} />
           <Route path='/evaluation' element={<Evaluations />} />
           <Route path='/host' element={<Host />} />
-          <Route path='/contact-us' element={<ContactUs />} />
+          <Route path='/accomodation' element={<Accomodation />} />
         </Route>
         
       </Routes>
