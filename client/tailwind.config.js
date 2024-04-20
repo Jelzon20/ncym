@@ -17,7 +17,7 @@ export default {
     },
     fontFamily: {
       abc: ["Poppins", "normal"],
-      futura: ["Futura", "bold"],
+      futura: ["Futura", "sans-serif"],
       thransty: ["Thransty", "sans-serif"],
     }
   },

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useState } from "react";
+import { useState, useRef  } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -58,7 +58,11 @@ export default function Registration() {
 
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
-  const [showAlert, setShowAlert] = useState(false);
+  const requiredField = "ring-2 ring-red-500";
+
+
+  const waiverRef = useRef(null);
+  const paymentRef = useRef(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -71,14 +75,7 @@ export default function Registration() {
     }
   };
 
-  const handlePaymentFileChange = (e) => {
-    const paymentFile = e.target.files[0];
-    if (paymentFile) {
-      setPaymentFile(file);
-      setPaymentFileUrl(URL.createObjectURL(paymentFile));
-    }
-    console.log(paymentFile);
-  };
+  
 
   useEffect(() => {
     if (file) {
@@ -86,12 +83,7 @@ export default function Registration() {
     }
   }, [file]);
 
-  useEffect(() => {
-    if (paymentFile) {
-      uploadPaymentFile();
-      console.log(paymentFile)
-    }
-  }, [paymentFile]);
+  
 
   const uploadWaiverFile = async () => {
     setFileUploading(true);
@@ -113,6 +105,7 @@ export default function Registration() {
           "Could not upload file (File must be less than 2MB)"
         );
         toast.error("Could not upload file (File must be less than 2MB)");
+        waiverRef.current.value = null;
         setFileUploadProgress(null);
         setFile(null);
         setFileUrl(null);
@@ -128,6 +121,21 @@ export default function Registration() {
       }
     );
   };
+
+  const handlePaymentFileChange = (e) => {
+    const paymentFile = e.target.files[0];
+    if (paymentFile) {
+      setPaymentFile(paymentFile);
+      setPaymentFileUrl(URL.createObjectURL(paymentFile));
+    }
+    console.log(paymentFile);
+  };
+
+  useEffect(() => {
+    if (paymentFile) {
+      uploadPaymentFile();
+    }
+  }, [paymentFile]);
 
   const uploadPaymentFile = async () => {
     setPaymentFileUploading(true);
@@ -149,10 +157,12 @@ export default function Registration() {
           "Could not upload file (File must be less than 2MB)"
         );
         toast.error(error.message);
+        waiverRef.current.value = null;
         setPaymentFileUploadProgress(null);
         setPaymentFile(null);
         setPaymentFileUrl(null);
         setPaymentFileUploading(false);
+        return;
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -307,11 +317,15 @@ try {
               Origin
             </h3>
             <div className="mb-4">
-              <Label
-                htmlFor="dioceseOrOrg"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                value="Diocese/Organization"
-              />
+              <div>
+                <Label
+                  htmlFor="dioceseOrOrg"
+                  className="mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  value="Diocese/Organization"
+                />
+                {!formData.dioceseOrOrg ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+              </div>
+              
               <Select
                 id="dioceseOrOrg"
                 onChange={handleChange}
@@ -715,17 +729,22 @@ try {
 
             <div className="grid grid-cols-9 gap-9">
               <div className="col-span-6 sm:col-span-3">
+                <div>
                 <Label
                   htmlFor="CarrierToPalo"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  className="mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   value="Carrier to Palo"
                 />
+                {!formData.carrierToPalo ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
+                
 
                 <Select
                   id="carrierToPalo"
                   onChange={handleChange}
                   required
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  // className={!formData.carrierToPalo ? (requiredField) : (<></>)}
+                 
                 >
                   <option value="">Select here</option>
                   <option value="Airplane">Airplane</option>
@@ -733,6 +752,7 @@ try {
                   <option value="Public Bus">Public Bus</option>
                   <option value="Private Vehicle">Private Vehicle</option>
                 </Select>
+                
               </div>
               <div className="col-span-6 sm:col-span-3">
                 <Label
@@ -946,6 +966,7 @@ try {
 
                 <FileInput
                   id="waiver"
+                  ref={waiverRef}
                   accept=".doc, .docx, .pdf, image/*"
                   onChange={handleWaiverFileChange}
                   required
@@ -971,6 +992,7 @@ try {
                   value="Proof of Payment"
                 />
                 <FileInput
+                  ref={paymentRef}
                   id="payment"
                   accept="image/*"
                   onChange={handlePaymentFileChange}

@@ -85,10 +85,10 @@ export default function Home() {
           <h1 className="max-w-2xl mb-4 text-2xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-7xl text-white font-futura">
             NCYM 2024
           </h1>
-          <p className="max-w-2xl mb-6 font-light lg:mb-2 md:text-lg lg:text-xl text-white">
+          <p className="max-w-2xl mb-6 lg:mb-2 md:text-lg lg:text-xl text-white">
             national conference of youth ministers 2024{" "}
           </p>
-          <p className="max-w-2xl mb-6 md:text-lg lg:mb-8 text-white font-light font-abc">
+          <p className="max-w-2xl mb-6 md:text-lg lg:mb-8 text-gray-200 font-light font-abc">
           The 2024 National Conference of Youth Ministers draws inspiration from Pope Francis' message at the 28th World Youth Day on November 26, 2023. He described the youth of the Universal Church as the "joyful hope of the church" and emphasized their role as agents of change. This event marks the beginning of the youth's journey, entrusted to Mary, Mother and Our Lady of Hope, leading up to the 2025 Jubilee Year themed as "Pilgrims of Hope."
           </p>
           <a

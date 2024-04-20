@@ -28,6 +28,7 @@ import {
 export default function Tanstack() {
     const { currentUser } = useSelector((state) => state.user);
     const [users, setUsers] = useState([]);
+    const [toExport, setToExport] = useState([]);
     const [reg, setReg] = useState([]);
     const [data] = useState(() => [...users]);
     const [globalFilter, setGlobalFilter] = useState("");
@@ -158,6 +159,43 @@ export default function Tanstack() {
         }
     }, [currentUser._id]);
 
+    
+      // Declare a flatten function that takes 
+// object as parameter and returns the 
+// flatten object
+const flattenArr = (ob) => {
+ 
+  // The object which contains the
+  // final result
+  let fileToExport = [];
+
+  for (const x in ob) {
+    
+    let user = ob[x];
+
+    
+    for (const i in user) {
+
+      if ((typeof user[i]) === 'object' && !Array.isArray(user[i])) {
+        // const temp = flattenObj(user[i]);
+        Object.keys(user[i]).forEach(key => {
+          const value = user[i][key];
+          if(key == "_id") {
+            key = "user_id";
+          }
+          user[key] = value;
+        });
+        
+      }
+      
+    }
+    fileToExport.push(user);
+  }
+  return fileToExport;
+}
+  
+
+
     const rerender = async () => {
       try {
         const res = await fetch(`/api/reg/getregs`);
@@ -248,7 +286,9 @@ export default function Tanstack() {
                         placeholder="Search all columns..."
                     />
                 </div>
-                <DownloadBtn data={users} fileName={"users"} />
+                <DownloadBtn data={flattenArr(users)} fileName={"users"} />
+                {/*   data={flattenObj(users)} */}
+                {/* <Button onClick={() => {toExportFn(users, [])}}>TEST</Button> */}
             </div>
             <table className="border border-gray-700 w-full text-left">
                 <thead className="bg-indigo-600">
@@ -341,8 +381,6 @@ export default function Tanstack() {
                 />
               </div>
               </div>
-            
-
               <div className="p-4 mt-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 
             <div className="grid grid-cols-6 gap-6">
