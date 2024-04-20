@@ -8,8 +8,6 @@ import {
   getRegistrationSuccess,
   getRegistrationFailure,
 } from "../redux/register/registerSlice";
-
-import ComingSoon from "../assets/maintenance.svg";
 import p1 from "../assets/p1.png";
 import p2 from "../assets/p2.png";
 import p3 from "../assets/p3.png";
@@ -17,8 +15,6 @@ import p3 from "../assets/p3.png";
 import p5 from "../assets/p5.png";
 import p6 from "../assets/p6.png";
 import logov6 from "../assets/logov6.png";
-
-import bg from "../assets/bg.png";
 
 export default function Home() {
   const { currentUser } = useSelector((state) => state.user);
@@ -30,6 +26,7 @@ export default function Home() {
 
     if (currentUser.isAccepted && currentUser.isRegistered) {
       navigate("/");
+      window.location.hash = '#hero'
     } else if (currentUser.isRegistered) {
       navigate("/dashboard?tab=profile");
     } else {
@@ -58,30 +55,15 @@ export default function Home() {
     }
     getRegistration();
   }, [currentUser]);
-
-  // try {
-  //   dispatch(getRegistrationStart());
-  //   const getReg = await fetch(`/api/reg/${currentUser.id}`, {
-  //     method: "GET",
-  //     headers: { "Content-Type": "application/json" },
-  //   });
-  //   const data = await getReg.json();
-  //   if (data.success === false) {
-  //     dispatch(getRegistrationFailure(data.message));
-  //   }
-  //   dispatch(getRegistrationSuccess(data));
-  //   navigate("/");
-  // } catch (error) {
-  //   dispatch(getRegistrationFailure(error.message));
-  // }
+  
 
   return (
-    <section className=" dark:bg-gray-900 min-h-screen max-w-full bg-gradient-to-r from-red-800 via-orange-600 to-yellow-400">
+    <section id="hero" className=" dark:bg-gray-900 min-h-screen max-w-full bg-gradient-to-r from-red-800 via-orange-600 to-yellow-400">
       {/* bg-hero bg-gradient-to-r from-orange-500 to-yellow-500 bg-gradient-to-r from-orange-400 via-indigo-600 to-yellow-300*/}
       {/* <div className="flex flex-col items-center justify-center py-8 px-4 text-center mx-auto max-w-screen-xl lg:py-16 lg:px-12"> */}
 
       <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-0 lg:grid-cols-12">
-        <div className="mr-auto place-self-center lg:col-span-7">
+        <div  className="mr-auto place-self-center lg:col-span-7">
           <h1 className="max-w-2xl mb-4 text-2xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-7xl text-white font-futura">
             NCYM 2024
           </h1>

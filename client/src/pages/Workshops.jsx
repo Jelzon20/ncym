@@ -18,7 +18,6 @@ export default function Workshops() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(currentUser.isRegistered);
 
     if (currentUser.isAccepted && currentUser.isRegistered) {
       navigate("/workshops");
@@ -38,7 +37,6 @@ export default function Workshops() {
           headers: { "Content-Type": "application/json" },
         });
         const data = await getReg.json();
-        console.log(data);
         if (data.success === false) {
           return dispatch(getRegistrationFailure(data.message));
         }
@@ -55,7 +53,9 @@ export default function Workshops() {
     <div className="flex flex-col items-center justify-center text-center mx-auto lg:py-8 max-w-screen-xl">
       <div>
       <img src={ComingSoon} alt="astronaut image" className="" />
-       <h1 className='text-white font-medium'>Coming Soon</h1>
+      <h1 className='text-white font-bold text-3xl font-futura'>COMING SOON</h1>
+       <h1 className='text-white font-medium'>Follow <a href='https://www.facebook.com/archpaloyouth?mibextid=YMEMSu' className='text-indigo-950 font-medium'> Archdiocese of Palo Commission on Youth </a> on Facebook to learn more!</h1>
+
       </div>
     </div>
   </section>

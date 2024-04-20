@@ -293,7 +293,7 @@ export default function DashProfile() {
       setOpenConfirmModal(false);
       toast.error("Please wait for files to upload");
       return;
-    } 
+    }
 
     if (Object.keys(profileFormData).length === 0) {
       setOpenConfirmModal(false);
@@ -323,7 +323,7 @@ export default function DashProfile() {
         dispatch(updateRegFailure(data.message));
         toast.error(data.message);
         setOpenConfirmModal(false);
-        
+
       } else {
         dispatch(updateRegSuccess(data));
         toast.success("User profile updated successfully");
@@ -335,42 +335,6 @@ export default function DashProfile() {
       setOpenConfirmModal(false);
     }
   }
-
-  // const handleDeleteUser = async () => {
-  //   setShowModal(false);
-  //   try {
-  //     dispatch(deleteUserStart());
-  //     const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-  //       method: "DELETE",
-  //     });
-  //     const data = await res.json();
-  //     if (!res.ok) {
-  //       dispatch(deleteUserFailure(data.message));
-  //     } else {
-  //       dispatch(deleteUserSuccess(data));
-  //     }
-  //   } catch (error) {
-  //     dispatch(deleteUserFailure(error.message));
-  //   }
-  // };
-
-  // const handleSignout = async () => {
-  //   try {
-  //     const res = await fetch("/api/user/signout", {
-  //       method: "POST",
-  //     });
-  //     const data = await res.json();
-  //     if (!res.ok) {
-  //       console.log(data.message);
-  //     } else {
-  //       dispatch(signoutSuccess());
-  //       navigate("/sign-in");
-  //     }
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
-
   const subStr = (str) => {
     return str.substring(str.indexOf("%2F") + 3, str.lastIndexOf("?alt"));
   };
@@ -394,11 +358,7 @@ export default function DashProfile() {
         ) : (
           <></>
         )}
-        {/* {errorMessage && (
-          <Alert color="failure" icon={HiInformationCircle}>
-            <span className="font-medium">{errorMessage}</span>
-          </Alert>
-        )} */}
+       
         <h1 className="text-xl font-semibold text-gray-900 sm:text-3xl dark:text-white">
           User Settings
         </h1>
@@ -436,9 +396,8 @@ export default function DashProfile() {
                         left: 0,
                       },
                       path: {
-                        stroke: `rgba(62, 152, 199, ${
-                          imageFileUploadProgress / 100
-                        })`,
+                        stroke: `rgba(62, 152, 199, ${imageFileUploadProgress / 100
+                          })`,
                       },
                     }}
                   />
@@ -446,11 +405,10 @@ export default function DashProfile() {
                 <img
                   src={imageFileUrl || currentUser.profilePicture}
                   alt="user"
-                  className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${
-                    imageFileUploadProgress &&
+                  className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${imageFileUploadProgress &&
                     imageFileUploadProgress < 100 &&
                     "opacity-60"
-                  }`}
+                    }`}
                 />
               </div>
             </div>
@@ -490,11 +448,11 @@ export default function DashProfile() {
                 type="submit"
                 className="w-60 font-semibold bg-indigo-950 dark:bg-orange-500"
 
-                //   disabled={loading}
+
               >
-                Update Sign In
+                Update User Sign In
               </Button>
-              {/* <Button color="blue" className='w-60'>Save All</Button> */}
+
             </div>
           </form>
 
@@ -552,7 +510,6 @@ export default function DashProfile() {
                   id="dioceseOrOrg"
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.dioceseOrOrg}
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
                   <option value="Apostolic Vicariate of Bontoc-Lagawe">
@@ -760,8 +717,6 @@ export default function DashProfile() {
                   defaultValue={
                     currentRegister && currentRegister.parishOrLocalUnit
                   }
-                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-
                   required
                 />
               </div>
@@ -784,7 +739,7 @@ export default function DashProfile() {
                   id="title"
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.title}
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+
                 >
                   <option value="">Select here</option>
                   <option value="MR.">MR.</option>
@@ -807,8 +762,6 @@ export default function DashProfile() {
                   id="nickname"
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.nickname}
-                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-
                   required
                 />
               </div>
@@ -823,7 +776,6 @@ export default function DashProfile() {
                   id="firstName"
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.firstName}
-                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Juan"
                   required
                 />
@@ -839,7 +791,6 @@ export default function DashProfile() {
                   id="lastName"
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.lastName}
-                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Juan"
                   required
                 />
@@ -860,7 +811,6 @@ export default function DashProfile() {
                       value: moment(date).format("MM/DD/YYYY"),
                     })
                   }
-                  // onSelectedDateChanged={handleDateChange}
                   required
                 />
               </div>
@@ -877,7 +827,6 @@ export default function DashProfile() {
                   defaultValue={
                     currentRegister && currentRegister.contactNumber
                   }
-                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="e.g. 09951234567"
                   required
                 />
@@ -893,7 +842,6 @@ export default function DashProfile() {
                   id="address"
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.address}
-                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="e.g. California"
                   required
                 />
@@ -926,7 +874,7 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.shirtSize}
                   required
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+
                 >
                   <option value="">Select here</option>
                   <option value="X-Small">X-Small</option>
@@ -1012,7 +960,7 @@ export default function DashProfile() {
                     currentRegister && currentRegister.carrierToPalo
                   }
                   onChange={handleProfileChange}
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+
                 >
                   <option value="">Select here</option>
                   <option value="Airplane">Airplane</option>
@@ -1051,7 +999,7 @@ export default function DashProfile() {
                   id="arrivalTime"
                   defaultValue={currentRegister && currentRegister.arrivalTime}
                   onChange={handleProfileChange}
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+
                 >
                   <option value="">Select here</option>
                   <option value="00:00">00:00</option>
@@ -1093,7 +1041,7 @@ export default function DashProfile() {
                     currentRegister && currentRegister.carrierOutOfPalo
                   }
                   onChange={handleProfileChange}
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+
                 >
                   <option value="">Select here</option>
                   <option value="Airplane">Airplane</option>
@@ -1118,7 +1066,6 @@ export default function DashProfile() {
                       value: moment(date).format("MM/DD/YYYY"),
                     })
                   }
-                  // onSelectedDateChanged={handleDateChange}
                   required
                 />
               </div>
@@ -1134,7 +1081,7 @@ export default function DashProfile() {
                     currentRegister && currentRegister.departureTime
                   }
                   onChange={handleProfileChange}
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+
                 >
                   <option value="">Select here</option>
                   <option value="12:00">00:00</option>
@@ -1184,7 +1131,7 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.allergy}
                   placeholder="If yes, please provide details"
-                 
+
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -1199,7 +1146,7 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.medication}
                   placeholder="If yes, please provide details"
-                
+
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -1214,7 +1161,7 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.diet}
                   placeholder="If yes, please provide details"
-               
+
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -1230,20 +1177,10 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.disability}
                   placeholder="If yes, please provide details"
-                  
+
                 />
               </div>
             </div>
-            {/* <div className="mt-10 flex items-center justify-center">
-              <Button
-                
-                type="submit"
-                className="w-60 font-semibold bg-indigo-950 dark:bg-indigo-950"
-              //   disabled={loading}
-              >
-                Update Profile
-              </Button>
-            </div> */}
           </div>
           <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
             <h3 className="mb-4 text-xl font-semibold dark:text-white">
@@ -1268,7 +1205,7 @@ export default function DashProfile() {
                   id="waiver"
                   accept=".doc, .docx, .pdf"
                   onChange={handleWaiverFileChange}
-                 
+
                 />
                 {file ? (
                   <Progress
@@ -1297,17 +1234,11 @@ export default function DashProfile() {
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   value="Proof of Payment"
                 />
-                {/* <span>{
-                paymentFile ? (<></>) :
-                  (currentRegister && currentRegister.proofOfPayment) ? (<>{
-                    currentRegister.proofOfPayment.substring(currentRegister.proofOfPayment.indexOf("%2F") + 3, currentRegister.proofOfPayment.lastIndexOf("?alt"))
-                   }</>) : (<></>)
-                }</span> */}
                 <FileInput
                   id="payment"
                   accept="image/*"
                   onChange={handlePaymentFileChange}
-                 
+
                 />
 
                 {paymentFile ? (
@@ -1328,13 +1259,10 @@ export default function DashProfile() {
             <div className="mt-10 flex items-center justify-center">
               <Button
                 type="submit"
-                // onClick={() => setOpenConfirmModal(true)}
                 className="w-60 bg-indigo-950 dark:bg-orange-500"
-                //   disabled={loading}
               >
-                Update Profile
+                Update Registration
               </Button>
-              {/* <Button color="blue" className='w-60'>Save All</Button> */}
             </div>
             <Modal
               dismissible

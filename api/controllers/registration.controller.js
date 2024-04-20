@@ -61,24 +61,6 @@ export const register = async (req, res, next) => {
   const newRegistration = new Registration({
     user: req.user.id,
     ...req.body,
-    // dioceseOrOrg,
-    // parishOrLocalUnit,
-    // title,
-    // nickname,
-    // firstName,
-    // lastName,
-    // birthday,
-    // contactNumber,
-    // shirtSize,
-    // roleInMinistry,
-    // address,
-    // emerContactPerson,
-    // emerRelation,
-    // emerContactNumber,
-    // allergy,
-    // medication,
-    // diet,
-    // disability,
   });
   try {
     await newRegistration.save();
@@ -134,8 +116,7 @@ export const getRegs   = async (req, res, next) => {
 
 export const getMyReg = async (req, res, next) => {
   try {
-    // console.log(req.params.regId);
-    // const user = await User.findById(req.user.id);
+   
     const registration = await Registration.findOne({user: req.user.id}).populate('user', ['email', 'profilePicture', 'isAdmin', 'isRegistered', 'isAccepted', 'isActive']);
     if (!registration){
       return next(errorHandler(404, 'Registration not found'));
@@ -151,8 +132,7 @@ export const getMyReg = async (req, res, next) => {
 export const getRegistration = async (req, res, next) => {
 
   try {
-    // console.log(req.params.regId);
-    // const user = await User.findById(req.user.id);
+    
     const registration = await Registration.findOne({_id: req.params.regId}).populate('user', ['email', 'profilePicture', 'isAdmin', 'isRegistered', 'isAccepted', 'isActive']);
     if (!registration){
       return next(errorHandler(404, 'Registration not found'));

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useState, useRef  } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -75,15 +75,11 @@ export default function Registration() {
     }
   };
 
-  
-
   useEffect(() => {
     if (file) {
       uploadWaiverFile();
     }
   }, [file]);
-
-  
 
   const uploadWaiverFile = async () => {
     setFileUploading(true);
@@ -156,8 +152,8 @@ export default function Registration() {
         setFileUploadError(
           "Could not upload file (File must be less than 2MB)"
         );
-        toast.error(error.message);
-        waiverRef.current.value = null;
+        toast.error("Could not upload file (File must be less than 2MB)");
+        paymentRef.current.value = null;
         setPaymentFileUploadProgress(null);
         setPaymentFile(null);
         setPaymentFileUrl(null);
@@ -198,8 +194,39 @@ export default function Registration() {
     setFormData({ ...formData, departureDate: date.value });
   };
 
+
   const handleChange = (e) => {
+    const { id } = e.target;
+    const { value } = e.target;
+    if (
+      id === 'emerContactPerson' ||
+      id === 'emerRelation' ||
+      id === 'nickname' ||
+      id === 'firstName' ||
+      id === 'lastName' ||
+      id === 'roleInMinistry') {
+
+      const re = /^[a-zA-Z ]*$/;
+      if (!re.test(value)) {
+        e.target.value = "";
+        toast.error("Field only accepts letters");
+        return;
+      } else {
+        setFormData({ ...formData, id: value.trim() });
+      }
+
+    } else if (id === 'emerContactNumber' || id === 'contactNumber') {
+      var number = Number(value)
+      if (Number.isNaN(number)) {
+        e.target.value = "";
+        toast.error("Field only accepts numbers");
+      } else {
+
+        setFormData({ ...formData, id: value.trim() });
+      }
+    }
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
+
   };
 
   const handleSubmit = async (e) => {
@@ -219,10 +246,6 @@ export default function Registration() {
       !formData.shirtSize ||
       !formData.roleInMinistry ||
       !formData.address ||
-      // !formData.allergy ||
-      // !formData.medication ||
-      // !formData.diet ||
-      // !formData.disability ||
       !formData.arrivalDate ||
       !formData.arrivalTime ||
       !formData.carrierOutOfPalo ||
@@ -232,24 +255,17 @@ export default function Registration() {
       !formData.waiver ||
       !formData.proofOfPayment
     ) {
-      
+
       dispatch(registerFailure("Please fill all the required fields"));
       toast.error("Please fill all the required fields");
-      // setOpenConfirmModal(false);
       return;
     } else {
       setOpenConfirmModal(true);
-
     }
-    
-
-    // navigate("/dashboard?tab=profile");
-
-    
   };
 
   const confirmSubmit = async () => {
-try {
+    try {
       dispatch(registerStart());
       const res = await fetch("/api/reg/register", {
         method: "POST",
@@ -293,20 +309,16 @@ try {
       dispatch(registerFailure(error.message));
       toast.error(error.message)
     }
-  } 
+  }
+
+
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="max-w-max mx-auto grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
+      <div className="max-w-max mx-auto grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 bg-gradient-to-r from-red-800 via-orange-600 to-yellow-400 dark:bg-gray-900">
         <div className="mb-4 col-span-full xl:mb-2">
           <Toaster richColors position="top-center" expand={true} />
-          {/* {error && (
-            <Alert color="failure" icon={HiInformationCircle}>
-              <span className="font-medium">{error}</span>
-            </Alert>
-          )} */}
-
-          <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+          <h1 className="text-xl font-semibold sm:text-2xl text-white">
             Registration
           </h1>
         </div>
@@ -325,12 +337,12 @@ try {
                 />
                 {!formData.dioceseOrOrg ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
               </div>
-              
+
               <Select
                 id="dioceseOrOrg"
                 onChange={handleChange}
                 required
-                // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500  w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
               >
                 <option value="">Select here</option>
                 <option value="Apostolic Vicariate of Bontoc-Lagawe">
@@ -496,16 +508,20 @@ try {
               </Select>
             </div>
             <div className="mb-6">
-              <Label
-                htmlFor="parishOrLocalUnit"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                value="Parish/Local Unit"
-              />
+              <div>
+                <Label
+                  htmlFor="parishOrLocalUnit"
+                  className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  value="Parish/Local Unit"
+                />
+                {!formData.parishOrLocalUnit ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+              </div>
               <TextInput
                 type="text"
                 id="parishOrLocalUnit"
+                // onKeyDown={event => onKeyDown(event)}
                 onChange={handleChange}
-                // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500  w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 // placeholder="Contact Person"
                 required
               />
@@ -517,47 +533,53 @@ try {
                 Contact Person (In case of emergency)
               </h3>
               <div className="mb-4">
-                <Label
-                  htmlFor="settings-language"
-                  className="block my-4 mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Contact Person"
-                />
+                <div>
+                  <Label
+                    htmlFor="settings-language"
+                    className=" my-4 mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Contact Person"
+                  />
+                  {!formData.emerContactPerson ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <TextInput
                   type="text"
                   id="emerContactPerson"
                   onChange={handleChange}
-                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  // placeholder="Contact Person"
+
                   required
                 />
               </div>
               <div className="mb-4">
-                <Label
-                  htmlFor="settings-language"
-                  className="block my-4 mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Contact Number"
-                />
+                <div>
+                  <Label
+                    htmlFor="settings-language"
+                    className=" my-4 mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Contact Number"
+                  />
+                  {!formData.emerContactNumber ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <TextInput
                   type="text"
                   id="emerContactNumber"
                   onChange={handleChange}
-                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  // placeholder="Contact Person"
+
                   required
                 />
               </div>
               <div className="mb-4">
-                <Label
-                  htmlFor="settings-language"
-                  className="block my-4 mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Relation to you"
-                />
+                <div>
+                  <Label
+                    htmlFor="settings-language"
+                    className=" my-4 mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Relation to you"
+                  />
+                  {!formData.emerRelation ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <TextInput
                   type="text"
                   id="emerRelation"
                   onChange={handleChange}
-                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  // placeholder="Contact Person"
+
                   required
                 />
               </div>
@@ -572,16 +594,18 @@ try {
 
             <div className="grid grid-cols-6 gap-6">
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="title"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Title"
-                />
+                <div>
+                  <Label
+                    htmlFor="title"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Title"
+                  />
+                  {!formData.title ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <Select
                   id="title"
                   onChange={handleChange}
                   required
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
                   <option value="MR.">MR.</option>
@@ -594,56 +618,65 @@ try {
                 </Select>
               </div>
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="nickname"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Nickname"
-                />
+                <div>
+                  <Label
+                    htmlFor="nickname"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Nickname"
+                  />
+                  {!formData.nickname ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <TextInput
                   type="text"
                   id="nickname"
                   onChange={handleChange}
-                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  // placeholder="Jel"
+
                   required
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="firstName"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="First Name"
-                />
+                <div>
+                  <Label
+                    htmlFor="firstName"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="First Name"
+                  />
+                  {!formData.firstName ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <TextInput
                   type="text"
                   id="firstName"
                   onChange={handleChange}
-                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Juan"
                   required
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="lastName"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Last Name"
-                />
+                <div>
+                  <Label
+                    htmlFor="lastName"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Last Name"
+                  />
+                  {!formData.lastName ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <TextInput
                   type="text"
                   id="lastName"
                   onChange={handleChange}
-                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Dela Cruz"
                   required
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="birthday"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Birthday"
-                />
+                <div>
+                  <Label
+                    htmlFor="birthday"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Birthday"
+                  />
+                  {!formData.birthday ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <Datepicker
                   id="birthday"
                   onSelectedDateChanged={(date) =>
@@ -651,47 +684,52 @@ try {
                       value: moment(date).format("MM/DD/YYYY"),
                     })
                   }
-                  // onSelectedDateChanged={handleDateChange}
                   required
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="contactNumber"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Contact Number"
-                />
+                <div>
+                  <Label
+                    htmlFor="contactNumber"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Contact Number"
+                  />
+                  {!formData.contactNumber ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <TextInput
-                  type="number"
+                  type="text"
                   id="contactNumber"
                   onChange={handleChange}
-                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="e.g. 09951234567"
                   required
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="address"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Complete Home Address"
-                />
+                <div>
+                  <Label
+                    htmlFor="address"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Complete Home Address"
+                  />
+                  {!formData.address ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <TextInput
                   type="text"
                   id="address"
                   onChange={handleChange}
-                  // className=" text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-
                   required
                 />
               </div>
 
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="roleInMinistry"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Role In Ministry"
-                />
+                <div>
+                  <Label
+                    htmlFor="roleInMinistry"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Role In Ministry"
+                  />
+                  {!formData.roleInMinistry ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <TextInput
                   type="text"
                   id="roleInMinistry"
@@ -700,16 +738,18 @@ try {
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="shirtSize"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Shirt Size"
-                />
+                <div>
+                  <Label
+                    htmlFor="shirtSize"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Shirt Size"
+                  />
+                  {!formData.shirtSize ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <Select
                   id="shirtSize"
                   onChange={handleChange}
                   required
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
                   <option value="X-Small">X-Small</option>
@@ -730,21 +770,21 @@ try {
             <div className="grid grid-cols-9 gap-9">
               <div className="col-span-6 sm:col-span-3">
                 <div>
-                <Label
-                  htmlFor="CarrierToPalo"
-                  className="mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Carrier to Palo"
-                />
-                {!formData.carrierToPalo ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  <Label
+                    htmlFor="CarrierToPalo"
+                    className="mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Carrier to Palo"
+                  />
+                  {!formData.carrierToPalo ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
                 </div>
-                
+
 
                 <Select
                   id="carrierToPalo"
                   onChange={handleChange}
                   required
-                  // className={!formData.carrierToPalo ? (requiredField) : (<></>)}
-                 
+                // className={!formData.carrierToPalo ? (requiredField) : (<></>)}
+
                 >
                   <option value="">Select here</option>
                   <option value="Airplane">Airplane</option>
@@ -752,14 +792,17 @@ try {
                   <option value="Public Bus">Public Bus</option>
                   <option value="Private Vehicle">Private Vehicle</option>
                 </Select>
-                
+
               </div>
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="arrivalDate"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Date of Arrival"
-                />
+                <div>
+                  <Label
+                    htmlFor="arrivalDate"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Date of Arrival"
+                  />
+                  {!formData.arrivalDate ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <Datepicker
                   id="arrivalDate"
                   onSelectedDateChanged={(date) =>
@@ -767,21 +810,22 @@ try {
                       value: moment(date).format("MM/DD/YYYY"),
                     })
                   }
-                  // onSelectedDateChanged={handleDateChange}
                   required
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="arrivalTime"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Estimated Time of Arrival"
-                />
+                <div>
+                  <Label
+                    htmlFor="arrivalTime"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Estimated Time of Arrival"
+                  />
+                  {!formData.arrivalTime ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <Select
                   id="arrivalTime"
                   onChange={handleChange}
                   required
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
                   <option value="00:00">00:00</option>
@@ -811,17 +855,18 @@ try {
                 </Select>
               </div>
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="carrierOutToPalo"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Carrier out of Palo"
-                />
-
+                <div>
+                  <Label
+                    htmlFor="carrierOutToPalo"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Carrier out of Palo"
+                  />
+                  {!formData.carrierOutOfPalo ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <Select
                   id="carrierOutOfPalo"
                   onChange={handleChange}
                   required
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
                   <option value="Airplane">Airplane</option>
@@ -831,11 +876,14 @@ try {
                 </Select>
               </div>
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="departuredate"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Date of Departure"
-                />
+                <div>
+                  <Label
+                    htmlFor="departuredate"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Date of Departure"
+                  />
+                  {!formData.departureDate ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <Datepicker
                   id="departureDate"
                   onSelectedDateChanged={(date) =>
@@ -843,21 +891,22 @@ try {
                       value: moment(date).format("MM/DD/YYYY"),
                     })
                   }
-                  // onSelectedDateChanged={handleDateChange}
                   required
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="departureTime"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Estimated Time of Departure"
-                />
+                <div>
+                  <Label
+                    htmlFor="departureTime"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Estimated Time of Departure"
+                  />
+                  {!formData.departureTime ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <Select
                   id="departureTime"
                   onChange={handleChange}
                   required
-                  // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select here</option>
                   <option value="00:00">00:00</option>
@@ -897,7 +946,7 @@ try {
               <div className="col-span-6 sm:col-span-3">
                 <Label
                   htmlFor="allergy"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   value="Allergy: Have you ever suffered from any allergy? (e.g. medicine, food, etc.)"
                 />
 
@@ -911,7 +960,7 @@ try {
               <div className="col-span-6 sm:col-span-3">
                 <Label
                   htmlFor="medication"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   value="Are you on regular medication?"
                 />
                 <TextInput
@@ -924,7 +973,7 @@ try {
               <div className="col-span-6 sm:col-span-3">
                 <Label
                   htmlFor="diet"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   value="Do you have a special diet? (e.g. vegetarian, meat, fish, salt, etc.)"
                 />
                 <TextInput
@@ -937,7 +986,7 @@ try {
               <div className="col-span-6 sm:col-span-3">
                 <Label
                   htmlFor="disability"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   value="Are you a PWD who will require mobility assistance?"
                 />
 
@@ -958,12 +1007,14 @@ try {
 
             <div className="grid grid-cols-6 gap-6">
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="allergy"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Full Accomplished Autorization and Waiver Form"
-                />
-
+                <div>
+                  <Label
+                    htmlFor="allergy"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Full Accomplished Autorization and Waiver Form"
+                  />
+                  {!formData.waiver ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <FileInput
                   id="waiver"
                   ref={waiverRef}
@@ -986,14 +1037,17 @@ try {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-3">
-                <Label
-                  htmlFor="medication"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  value="Proof of Payment"
-                />
+                <div>
+                  <Label
+                    htmlFor="medication"
+                    className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    value="Proof of Payment"
+                  />
+                  {!formData.proofOfPayment ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                </div>
                 <FileInput
                   ref={paymentRef}
-                  id="payment"
+                  id="proofOfPayment"
                   accept="image/*"
                   onChange={handlePaymentFileChange}
                   required
@@ -1017,13 +1071,11 @@ try {
             <div className="mt-10 flex items-center justify-center">
               <Button
                 type="submit"
-                // onClick={() => setOpenConfirmModal(true)}
-                className="w-60 bg-indigo-950 dark:bg-indigo-950"
-                //   disabled={loading}
+                className="w-60 bg-indigo-950 dark:bg-orange-600"
               >
                 Save all
               </Button>
-              {/* <Button color="blue" className='w-60'>Save All</Button> */}
+
             </div>
             <Modal
               dismissible

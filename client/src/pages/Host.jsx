@@ -15,7 +15,6 @@ export default function Host() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(currentUser.isRegistered);
 
     if (currentUser.isAccepted && currentUser.isRegistered) {
       navigate("/host");
@@ -35,7 +34,6 @@ export default function Host() {
           headers: { "Content-Type": "application/json" },
         });
         const data = await getReg.json();
-        console.log(data);
         if (data.success === false) {
           return dispatch(getRegistrationFailure(data.message));
         }

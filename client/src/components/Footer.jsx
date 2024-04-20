@@ -1,10 +1,10 @@
 import { Footer } from 'flowbite-react';
 import { Link } from 'react-router-dom';
-import { BsFacebook, BsInstagram, BsTwitter, BsGithub, BsDribbble } from 'react-icons/bs';
+import { BsFacebook } from 'react-icons/bs';
 import webLogo from '../assets/webLogo.png'
 export default function FooterCom() {
   return (
-    <Footer container className='border border-t-8 border-teal-500'>
+    <Footer container className='border border-t-8 border-indigo-950'>
       <div className='w-full max-w-7xl mx-auto'>
         <div className='flex justify-between w-full items-center sm:flex flex-col md:grid-cols-1'>
           <div className='mt-5'>

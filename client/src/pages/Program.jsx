@@ -22,7 +22,6 @@ export default function Program() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(currentUser.isRegistered);
 
     if (currentUser.isAccepted && currentUser.isRegistered) {
       navigate("/program");
@@ -42,7 +41,6 @@ export default function Program() {
           headers: { "Content-Type": "application/json" },
         });
         const data = await getReg.json();
-        console.log(data);
         if (data.success === false) {
           return dispatch(getRegistrationFailure(data.message));
         }
