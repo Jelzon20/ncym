@@ -206,7 +206,7 @@ export default function Registration() {
       id === 'lastName' ||
       id === 'roleInMinistry') {
 
-      const re = /^[a-zA-Z ]*$/;
+      const re = /^[a-zA-Z \.]*$/;
       if (!re.test(value)) {
         e.target.value = "";
         toast.error("Field only accepts letters");

@@ -277,6 +277,10 @@ export default function Tanstack() {
     setFileNameDate(moment(date).format('MM/DD/YYYY'));
   }, [users]);
 
+  const subStr = (str) => {
+    return str.substring(str.indexOf("%2F") + 3, str.lastIndexOf("?alt"));
+  };
+
   return (
     <div className="p-2 max-w-full mx-auto text-white fill-gray-400">
       <Toaster richColors position="top-center" expand={true} />
@@ -400,7 +404,7 @@ export default function Tanstack() {
                       defaultValue={
                         reg && reg.firstName
                       }
-                      required
+                      disabled
                     />
                   </div>
                   <div className="col-span-6 sm:col-span-3">
@@ -416,7 +420,7 @@ export default function Tanstack() {
                       defaultValue={
                         reg && reg.lastName
                       }
-                      required
+                      disabled
                     />
                   </div>
                   <div className="col-span-6 sm:col-span-3">
@@ -432,7 +436,7 @@ export default function Tanstack() {
                       defaultValue={
                         reg && reg.dioceseOrOrg
                       }
-                      required
+                      disabled
                     />
                   </div>
                   <div className="col-span-6 sm:col-span-3">
@@ -448,7 +452,7 @@ export default function Tanstack() {
                       defaultValue={
                         reg && reg.parishOrLocalUnit
                       }
-                      required
+                      disabled  
                     />
                   </div>
                 </div>
@@ -491,6 +495,20 @@ export default function Tanstack() {
                       value={`Role in Ministry: ` + (reg && reg.roleInMinistry)}
                     />
                   </div>
+                  <div>
+                    <Label
+                      className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                      value={"Waiver: "}
+                    />
+                    <a href = {reg && reg.waiver} className='text-sm text-blue-500' target='_blank'>{subStr(reg.waiver)}</a>
+                  </div>
+                  <div>
+                    <Label
+                      className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                      value={"Waiver: "}
+                    />
+                    <a href = {reg && reg.proofOfPayment} className='text-sm text-blue-500' target='_blank'>{subStr(reg.proofOfPayment)}</a>
+                  </div>
                 </div>
 
                 <div>
@@ -508,13 +526,7 @@ export default function Tanstack() {
                 </Button>
               </div>
             </div>
-
-
-
           )}
-
-
-
         </Modal.Body>
       </Modal>
       {/* pagination */}
