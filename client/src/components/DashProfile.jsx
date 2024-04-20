@@ -339,7 +339,7 @@ export default function DashProfile() {
     return str.substring(str.indexOf("%2F") + 3, str.lastIndexOf("?alt"));
   };
   return (
-    <div className="max-w-max mx-auto grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
+    <div className="max-w-max mx-auto grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 bg-gradient-to-r from-red-800 via-orange-600 to-yellow-400 dark:bg-gray-900">
       <div className="mb-4 col-span-full xl:mb-2">
         <Toaster richColors position="top-center" expand={true} />
         {currentUser && !currentUser.isAccepted && currentUser.isRegistered ? (
@@ -359,7 +359,7 @@ export default function DashProfile() {
           <></>
         )}
        
-        <h1 className="text-xl font-semibold text-gray-900 sm:text-3xl dark:text-white">
+        <h1 className="text-xl font-semibold text-white sm:text-3xl dark:text-white">
           User Settings
         </h1>
       </div>
