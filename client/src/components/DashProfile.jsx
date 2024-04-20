@@ -1226,7 +1226,7 @@ export default function DashProfile() {
             <div className="grid grid-cols-6 gap-6">
               <div className="col-span-6 sm:col-span-3">
                 {!file ? (
-                  <li>{currentRegister && subStr(currentRegister.waiver)}</li>
+                   <li className="truncate">{currentRegister && subStr(currentRegister.waiver)}</li>
                 ) : (
                   <></>
                 )}
@@ -1258,11 +1258,13 @@ export default function DashProfile() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-3">
+                
                 {!paymentFile ? (
-                  <li>
+                 
+                  <li className="truncate">
                     {currentRegister && subStr(currentRegister.proofOfPayment)}
                   </li>
-                ) : (
+                  ) : (
                   <></>
                 )}
                 <Label

@@ -500,17 +500,17 @@ export default function Tanstack() {
                       className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
                       value={"Waiver: "}
                     />
-                    <a href = {reg && reg.waiver} className='text-sm text-blue-500' target='_blank'>{subStr(reg.waiver)}</a>
+                    <a href = {reg && reg.waiver} className='text-sm text-blue-500 truncate' target='_blank'>{subStr(reg.waiver)}</a>
                   </div>
                   <div>
                     <Label
                       className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
                       value={"Waiver: "}
                     />
-                    <a href = {reg && reg.proofOfPayment} className='text-sm text-blue-500' target='_blank'>{subStr(reg.proofOfPayment)}</a>
+                    <a href = {reg && reg.proofOfPayment} className='text-sm text-blue-500 truncate' target='_blank'>{subStr(reg.proofOfPayment)}</a>
                   </div>
                 </div>
-
+                      
                 <div>
                   <QRCode size={120} value={reg && reg.user._id} className="self-center" />
                 </div>
