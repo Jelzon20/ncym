@@ -58,9 +58,6 @@ export default function Registration() {
 
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
-  const requiredField = "ring-2 ring-red-500";
-
-
   const waiverRef = useRef(null);
   const paymentRef = useRef(null);
 

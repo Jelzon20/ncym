@@ -79,6 +79,16 @@ export default function DashProfile() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  useEffect(() => {
+
+    if (currentUser.isRegistered) {
+      navigate("/dashboard?tab=profile");
+      window.location.hash = '#dashProf'
+    } else {
+      navigate("/registration");
+    }
+  }, [currentUser]);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -339,17 +349,17 @@ export default function DashProfile() {
     return str.substring(str.indexOf("%2F") + 3, str.lastIndexOf("?alt"));
   };
   return (
-    <div className="max-w-max mx-auto grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 bg-gradient-to-r from-red-800 via-orange-600 to-yellow-400 dark:bg-gray-900">
+    <div id="dashProf" className="max-w-max mx-auto grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 bg-gradient-to-r from-red-800 via-orange-600 to-yellow-400 dark:bg-gray-900">
       <div className="mb-4 col-span-full xl:mb-2">
         <Toaster richColors position="top-center" expand={true} />
         {currentUser && !currentUser.isAccepted && currentUser.isRegistered ? (
           <span>
-            <Toast color="error" className="mt-5 max-w-full bg-green-200">
+            <Toast color="error" className="mt-5 max-w-full mb-5 bg-green-200">
               <div className="inline-flex shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
                 <HiCheck className="h-5 w-5" />
               </div>
-              <div className="ml-3 text-sm font-normal">
-                Thank you for filling-out registration form. The administrator
+              <div className="ml-3 text-sm font-normal text-green-700">
+                Thank you for filling-out registration form ka-lakbay! The administrator
                 will review your account.
               </div>
               <Toast.Toggle />
@@ -510,6 +520,8 @@ export default function DashProfile() {
                   id="dioceseOrOrg"
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.dioceseOrOrg}
+                  disabled = {currentUser.isAccepted}
+                  required
                 >
                   <option value="">Select here</option>
                   <option value="Apostolic Vicariate of Bontoc-Lagawe">
@@ -718,6 +730,7 @@ export default function DashProfile() {
                     currentRegister && currentRegister.parishOrLocalUnit
                   }
                   required
+                  disabled = {currentUser.isAccepted}
                 />
               </div>
             </div>
@@ -739,6 +752,8 @@ export default function DashProfile() {
                   id="title"
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.title}
+                  disabled = {currentUser.isAccepted}
+                  required
 
                 >
                   <option value="">Select here</option>
@@ -762,6 +777,7 @@ export default function DashProfile() {
                   id="nickname"
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.nickname}
+                  disabled = {currentUser.isAccepted}
                   required
                 />
               </div>
@@ -777,6 +793,7 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.firstName}
                   placeholder="Juan"
+                  disabled = {currentUser.isAccepted}
                   required
                 />
               </div>
@@ -792,6 +809,7 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.lastName}
                   placeholder="Juan"
+                  disabled = {currentUser.isAccepted}
                   required
                 />
               </div>
@@ -811,6 +829,7 @@ export default function DashProfile() {
                       value: moment(date).format("MM/DD/YYYY"),
                     })
                   }
+                  disabled = {currentUser.isAccepted}
                   required
                 />
               </div>
@@ -828,6 +847,7 @@ export default function DashProfile() {
                     currentRegister && currentRegister.contactNumber
                   }
                   placeholder="e.g. 09951234567"
+                  disabled = {currentUser.isAccepted}
                   required
                 />
               </div>
@@ -843,6 +863,7 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.address}
                   placeholder="e.g. California"
+                  disabled = {currentUser.isAccepted}
                   required
                 />
               </div>
@@ -860,6 +881,7 @@ export default function DashProfile() {
                   defaultValue={
                     currentRegister && currentRegister.roleInMinistry
                   }
+                  disabled = {currentUser.isAccepted}
                   required
                 />
               </div>
@@ -873,6 +895,7 @@ export default function DashProfile() {
                   id="shirtSize"
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.shirtSize}
+                  disabled = {currentUser.isAccepted}
                   required
 
                 >
@@ -906,6 +929,7 @@ export default function DashProfile() {
                   defaultValue={
                     currentRegister && currentRegister.emerContactPerson
                   }
+                  disabled = {currentUser.isAccepted}
                   required
                 />
               </div>
@@ -922,6 +946,7 @@ export default function DashProfile() {
                   defaultValue={
                     currentRegister && currentRegister.emerContactNumber
                   }
+                  disabled = {currentUser.isAccepted}
                   required
                 />
               </div>
@@ -936,6 +961,7 @@ export default function DashProfile() {
                   id="emerRelation"
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.emerRelation}
+                  disabled = {currentUser.isAccepted}
                   required
                 />
               </div>
@@ -960,6 +986,8 @@ export default function DashProfile() {
                     currentRegister && currentRegister.carrierToPalo
                   }
                   onChange={handleProfileChange}
+                  disabled = {currentUser.isAccepted}
+                  required
 
                 >
                   <option value="">Select here</option>
@@ -986,6 +1014,7 @@ export default function DashProfile() {
                     })
                   }
                   // onSelectedDateChanged={handleDateChange}
+                  disabled = {currentUser.isAccepted}
                   required
                 />
               </div>
@@ -999,7 +1028,8 @@ export default function DashProfile() {
                   id="arrivalTime"
                   defaultValue={currentRegister && currentRegister.arrivalTime}
                   onChange={handleProfileChange}
-
+                  disabled = {currentUser.isAccepted}
+                  required
                 >
                   <option value="">Select here</option>
                   <option value="00:00">00:00</option>
@@ -1041,7 +1071,8 @@ export default function DashProfile() {
                     currentRegister && currentRegister.carrierOutOfPalo
                   }
                   onChange={handleProfileChange}
-
+                  disabled = {currentUser.isAccepted}
+                  required
                 >
                   <option value="">Select here</option>
                   <option value="Airplane">Airplane</option>
@@ -1066,6 +1097,7 @@ export default function DashProfile() {
                       value: moment(date).format("MM/DD/YYYY"),
                     })
                   }
+                  disabled = {currentUser.isAccepted}
                   required
                 />
               </div>
@@ -1081,7 +1113,8 @@ export default function DashProfile() {
                     currentRegister && currentRegister.departureTime
                   }
                   onChange={handleProfileChange}
-
+                  disabled = {currentUser.isAccepted}
+                  required
                 >
                   <option value="">Select here</option>
                   <option value="12:00">00:00</option>
@@ -1131,6 +1164,7 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.allergy}
                   placeholder="If yes, please provide details"
+                  disabled = {currentUser.isAccepted}
 
                 />
               </div>
@@ -1146,6 +1180,8 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.medication}
                   placeholder="If yes, please provide details"
+                  disabled = {currentUser.isAccepted}
+                  
 
                 />
               </div>
@@ -1161,7 +1197,7 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.diet}
                   placeholder="If yes, please provide details"
-
+                  disabled = {currentUser.isAccepted}
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -1177,7 +1213,7 @@ export default function DashProfile() {
                   onChange={handleProfileChange}
                   defaultValue={currentRegister && currentRegister.disability}
                   placeholder="If yes, please provide details"
-
+                  disabled = {currentUser.isAccepted}
                 />
               </div>
             </div>
@@ -1205,7 +1241,7 @@ export default function DashProfile() {
                   id="waiver"
                   accept=".doc, .docx, .pdf"
                   onChange={handleWaiverFileChange}
-
+                  disabled = {currentUser.isAccepted}
                 />
                 {file ? (
                   <Progress
@@ -1238,7 +1274,7 @@ export default function DashProfile() {
                   id="payment"
                   accept="image/*"
                   onChange={handlePaymentFileChange}
-
+                  disabled = {currentUser.isAccepted}
                 />
 
                 {paymentFile ? (
@@ -1257,12 +1293,13 @@ export default function DashProfile() {
               </div>
             </div>
             <div className="mt-10 flex items-center justify-center">
-              <Button
+              {!currentUser.isAccepted ? (<Button
                 type="submit"
                 className="w-60 bg-indigo-950 dark:bg-orange-500"
               >
                 Update Registration
-              </Button>
+              </Button>): (<span className="text-red-500"> Registration form cannot be resubmitted once the user is accepted.</span>)}
+              
             </div>
             <Modal
               dismissible
