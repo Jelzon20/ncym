@@ -6,7 +6,7 @@ import { errorHandler } from "../utils/error.js";
 
 export const register = async (req, res, next) => {
 
-  const { dioceseOrOrg, parishOrLocalUnit, title, nickname, firstName, lastName, birthday, contactNumber, shirtSize, roleInMinistry, address, emerContactPerson, emerRelation, emerContactNumber, allergy, medication, diet, disability, arrivalDate, carrierOutOfPalo, arrivalTime, carrierToPalo, departureDate, departureTime, waiver, proofOfPayment } = req.body;
+  const { dioceseOrOrg, parishOrLocalUnit, title, nickname, firstName, middleName, lastName, birthday, contactNumber, shirtSize, roleInMinistry, address, emerContactPerson, emerRelation, emerContactNumber, allergy, medication, diet, disability, arrivalDate, carrierOutOfPalo, arrivalTime, carrierToPalo, departureDate, departureTime, waiver, proofOfPayment } = req.body;
 
   if (
     !dioceseOrOrg ||
@@ -14,6 +14,7 @@ export const register = async (req, res, next) => {
     !title ||
     !nickname ||
     !firstName ||
+    !middleName ||
     !lastName ||
     !birthday ||
     !contactNumber ||
@@ -36,6 +37,7 @@ export const register = async (req, res, next) => {
     title === "" ||
     nickname === "" ||
     firstName === "" ||
+    middleName === "" ||
     lastName === "" ||
     birthday === "" ||
     contactNumber === "" ||
@@ -160,6 +162,7 @@ export const updateReg = async (req, res, next) => {
           parishOrLocalUnit: req.body.parishOrLocalUnit,
           title: req.body.title,
           firstName: req.body.firstName,
+          middleName: req.body.middleName,
           lastName: req.body.lastName,
           nickname: req.body.nickname,
           birthday: req.body.birthday,

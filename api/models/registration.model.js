@@ -20,6 +20,9 @@ const registrationSchema = new mongoose.Schema(
     firstName: {
       type: String,
     },
+    middleName: {
+      type: String,
+    },
     lastName: {
       type: String,
     },

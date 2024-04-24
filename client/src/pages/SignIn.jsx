@@ -84,7 +84,7 @@ export default function SignIn() {
         <div className='flex-1'>
           <h1 className='text-gray-800 font-bold text-3xl mb-5"'>Maupay nga adlaw,</h1>
           <h1 className='text-gray-800 font-bold text-3xl mb-5"'>ka-lakbay!</h1>
-          <p className='mb-7 mt-1'>Welcom Back</p>
+          <p className='mb-7 mt-1'>Welcome Back</p>
           <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div>
               <Label value='Your email' htmlFor='email' className='font-semibold'/>
@@ -123,12 +123,11 @@ export default function SignIn() {
             <OAuth /> 
           </form>
           <div className='flex gap-2 text-sm mt-5'>
-            <span>Dont Have an account?</span>
+            <span>Don't Have an account?</span>
             <Link to='/sign-up' className='text-indigo-950'>
               Sign Up
             </Link>
           </div>
-          
         </div>
       </div>
     </div>
