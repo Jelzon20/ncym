@@ -14,7 +14,6 @@ export const register = async (req, res, next) => {
     !title ||
     !nickname ||
     !firstName ||
-    !middleName ||
     !lastName ||
     !birthday ||
     !contactNumber ||
@@ -37,7 +36,6 @@ export const register = async (req, res, next) => {
     title === "" ||
     nickname === "" ||
     firstName === "" ||
-    middleName === "" ||
     lastName === "" ||
     birthday === "" ||
     contactNumber === "" ||

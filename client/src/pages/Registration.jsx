@@ -656,13 +656,12 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Middle Name"
                   />
-                  {!formData.middleName ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {/* {!formData.middleName ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)} */}
                 </div>
                 <TextInput
                   type="text"
                   id="middleName"
                   onChange={handleChange}
-                  required
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
