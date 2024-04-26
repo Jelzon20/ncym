@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import userRoutes from './routes/user.route.js'; // this is user-defined
 import authRoutes from './routes/auth.route.js';
 import registerRoutes from './routes/registration.route.js'
+import workshopRoutes from './routes/workshop.route.js'
 import cookieParser from 'cookie-parser';
 import path from 'path';
 
@@ -33,6 +34,7 @@ app.listen(3000, () => {
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/reg', registerRoutes);
+app.use('/api/workshop', workshopRoutes);
 
 app.use(express.static(path.join(__dirname, 'client/dist')));
 

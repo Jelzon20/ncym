@@ -32,6 +32,16 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    workshop: {
+      capacity_based: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Capacity_based'
+      },
+      issue_based: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Issue_based'
+      }
+    },
   },
   { timestamps: true }
 );

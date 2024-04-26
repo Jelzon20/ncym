@@ -15,6 +15,7 @@ import PrivateRoute from './components/PrivateRoutes'
 import { useSelector} from 'react-redux';
 import Registration from './pages/Registration'
 import Accomodation from './pages/Accomodation'
+import WorkshopSub from './pages/WorkshopSub'
 
 
 
@@ -45,6 +46,7 @@ export default function App() {
           <Route path='/evaluation' element={<Evaluations />} />
           <Route path='/host' element={<Host />} />
           <Route path='/accomodation' element={<Accomodation />} />
+          <Route path='/workshopSub' element={<WorkshopSub />} />
         </Route>
         
       </Routes>
