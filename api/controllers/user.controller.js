@@ -2,10 +2,53 @@ import bcryptjs from 'bcryptjs';
 import { errorHandler } from '../utils/error.js';
 import User from '../models/user.model.js';
 import Registration from '../models/registration.model.js';
+import Workshop from '../models/workshop.model.js';
 
 export const test = (req, res) => {
   res.json({ message: 'API is working'});
 }
+
+export const enrollUser = async (req, res, next) => {
+  let notEmptyField;
+  const {
+    capacity_based,
+    issue_based
+  } = req.body;
+
+
+  // Build socialFields object
+  const workshop = { capacity_based, issue_based };
+
+  for (const [key, value] of Object.entries(workshop)) {
+    if (value && value.length > 0){
+      workshop[key] = value;
+      if(value !== undefined) {
+        notEmptyField = value;
+      }
+    }
+    
+    
+  }
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.userId,
+      {
+        $set: {
+         workshop: workshop
+        },
+      },
+      { new: true }
+    );
+
+    await Workshop.findByIdAndUpdate(
+      notEmptyField, { $inc: { slots: -1 } }, { new: true }
+    );
+    const { password, ...rest } = updatedUser._doc;
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const updateUser = async (req, res, next) => {
  
@@ -126,3 +169,4 @@ export const getUser = async (req, res, next) => {
     next(error);
   }
 };
+

@@ -1,13 +1,17 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Tabs, Card, Button } from "flowbite-react";
+import { Tabs, Card, Button, Modal } from "flowbite-react";
 import { HiOutlineChatAlt2, HiDatabase } from "react-icons/hi";
-import { MdDashboard } from "react-icons/md";
+import  ViewWorkshopModal  from '../components/ViewWorkshopModal';
+import { Toaster, toast } from "sonner";
 
 export default function WorkshopSub() {
   const { currentUser } = useSelector((state) => state.user);
   const [workshops, setWorkshops] = useState([]);
+  const [dataViewWorkshop, setDataViewWorkshop] = useState([]);
+
+  const [openModal, setOpenModal] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -16,7 +20,6 @@ export default function WorkshopSub() {
           const res = await fetch(`/api/workshop/getWorkshops`);
           const data = await res.json();
           if (res.ok) {
-            console.log(data);
             setWorkshops(data.workshops);
 
           }
@@ -29,10 +32,35 @@ export default function WorkshopSub() {
       }
     }, [currentUser._id]);
 
-  console.log(Tabs);
+    const handleClose = () => {
+      setOpenModal(false);
+      rerender();
+  };
+
+  const handleOpen = async (workshop) => {
+    setDataViewWorkshop(workshop);
+    setOpenModal(true);
+  };
+
+  const rerender = async () => {
+    try {
+      const res = await fetch(`/api/workshop/getWorkshops`);
+      const data = await res.json();
+      if (res.ok) {
+        setWorkshops(data.workshops);
+
+      }
+    } catch (error) {
+      toast.error(data.message)
+    }
+  }
+
+  
+
   return (
     <section className="min-h-screen max-w-full bg-gradient-to-r from-red-800 via-orange-600 to-yellow-400">
       <div className="grid max-w-screen-xl px-4 py-8 mx-auto ">
+      <Toaster richColors position="top-center" expand={true} />
         <Tabs
           aria-label="Tabs with icons"
           style="underline"
@@ -41,16 +69,20 @@ export default function WorkshopSub() {
           <Tabs.Item active title="Issue-Based" icon={HiOutlineChatAlt2}>
           {workshops && workshops.map((workshop) => (
           <Card className="max-w-sm" key={workshop._id}>
-             
+             <span className="text-sm font-normal tracking-tight text-gray-900 dark:text-white">
+               {workshop && workshop.workshopCategory}
+             </span>
              <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-               Noteworthy technology acquisitions 2021
+               {workshop && workshop.title} 
              </h5>
-             <p className="font-normal text-gray-700 dark:text-gray-400">
-               Here are the biggest enterprise technology acquisitions of 2021
-               so far, in reverse chronological order.
-             </p>
-             <Button>
-               Read more
+             
+             <span className="font-normal line-clamp-5 text-gray-700 dark:text-gray-400" >
+             {workshop && workshop.description}
+             </span>
+            <Button onClick={(e) => handleOpen(workshop)}>
+            
+              
+               Learn More
                <svg
                  className="-mr-1 ml-2 h-4 w-4"
                  fill="currentColor"
@@ -66,6 +98,7 @@ export default function WorkshopSub() {
              </Button>
            </Card>))}
             
+           
           </Tabs.Item>
           <Tabs.Item title="Capacity-Based" icon={HiDatabase}>
             This is{" "}
@@ -77,6 +110,7 @@ export default function WorkshopSub() {
             visibility and styling.
           </Tabs.Item>
         </Tabs>
+        <ViewWorkshopModal isOpen={openModal} onClose={handleClose} workshopId={dataViewWorkshop._id}/>
       </div>
     </section>
   );

@@ -23,7 +23,6 @@ export default function App() {
 
   const { currentUser } = useSelector((state) => state.user);
 
-
   return (
     <BrowserRouter>
       {currentUser && (

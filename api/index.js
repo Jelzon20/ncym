@@ -11,7 +11,8 @@ import path from 'path';
 dotenv.config();
 
 mongoose
-  .connect(process.env.MONGO)
+  // .connect(process.env.MONGO)
+  .connect("mongodb+srv://ncym2024:ncym2024@ncym.qpus42v.mongodb.net/ncym?retryWrites=true&w=majority&appName=ncym")
   .then(() => {
     console.log("MongoDB is connected");
   }).catch((err) => {

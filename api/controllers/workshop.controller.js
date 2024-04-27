@@ -62,4 +62,21 @@ export const test = (req, res) => {
     }
   };
 
+  export const getWorkshop = async (req, res, next) => {
+
+    try {
+      
+      const workshop = await Workshop.findOne();
+      if (!workshop){
+        return next(errorHandler(404, 'Workshop not found'));
+      }
+      const { ...rest } = workshop._doc;
+      res.status(200).json(rest);
+        
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
 
