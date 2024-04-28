@@ -10,9 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@faker-js/faker": "^8.4.1",
     "@reduxjs/toolkit": "^2.2.2",
-    "@tailwindcss/line-clamp": "^0.4.4",
     "@tanstack/react-table": "^8.15.3",
     "firebase": "^10.10.0",
     "flowbite-react": "^0.7.5",
@@ -40,8 +38,5 @@
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.1",
     "vite": "^5.2.0"
-  },
-  "overrides": {
-    "react-error-overlay": "6.0.9"
   }
 }
