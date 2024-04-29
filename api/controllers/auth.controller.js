@@ -38,7 +38,9 @@ export const signin = async (req, res, next) => {
     next(errorHandler(400, 'All fields are required'));
   }
   try {
-    const validUser = await User.findOne({ email });
+    const validUser = await User.findOne({ email })
+    .populate('capacity_based', ['title'])
+    .populate('issue_based', ['title'])
     if (!validUser){
       return next(errorHandler(404, 'User not Found'));
     }
@@ -70,7 +72,9 @@ export const signin = async (req, res, next) => {
 export const google = async (req, res, next) => {
   const { email, googlePhotoUrl } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email })
+    .populate('capacity_based', ['title'])
+    .populate('issue_based', ['title'])
     if (user) {
       const token = jwt.sign(
         { id: user._id, isAdmin: user.isAdmin },

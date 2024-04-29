@@ -15,8 +15,9 @@ const workshopSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    paricipants: {
-        type: [String]
+    participants : {
+         type : Array,
+        default : [] 
       },
     slots: {
         type: Number,

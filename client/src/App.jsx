@@ -41,7 +41,7 @@ export default function App() {
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/messages' element={<Messages />} />
           <Route path='/program' element={<Program />} />
-          <Route path='/workshops' element={<Workshops />} />
+          <Route path='/workshops' element={<WorkshopSub />} />
           <Route path='/evaluation' element={<Evaluations />} />
           <Route path='/host' element={<Host />} />
           <Route path='/accomodation' element={<Accomodation />} />

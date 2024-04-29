@@ -475,6 +475,7 @@ export default function DashProfile() {
               Present this QR to record attendance.
             </span>
           </div>
+          
           <Modal
             show={showModal}
             onClose={() => setShowModal(false)}
@@ -500,6 +501,46 @@ export default function DashProfile() {
               </div>
             </Modal.Body>
           </Modal>
+        </div>
+        <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+          
+            <h3 className="mb-4 text-xl font-semibold dark:text-white">
+              Workshops
+            </h3>
+            {currentUser.issue_based ? (<div className="mb-4">
+              <Label
+                htmlFor="email"
+                className="block mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                value="Capacity-Based"
+              />
+              <TextInput
+                type="text"
+                defaultValue={currentUser && currentUser.issue_based.title}
+                id="capacity_based"
+                disabled
+              />
+            </div>) : (<p> No enrolled issue-based workshop</p>)}
+            {currentUser.capacity_based ? (<div className="mb-6">
+              <Label
+                htmlFor="password"
+                className="block mb-2 text-sm font-semibold text-gray-900 dark:text-white"
+                value="Issue-Based"
+              />
+              <TextInput
+                type="text"
+                value={currentUser && currentUser.capacity_based.title}
+                id="password"
+                disabled
+              />
+            </div>) : (<p> No enrolled capacity-based workshop</p>)}
+            <div className="mt-10 flex items-center justify-center">
+              <Button
+                onClick={(e) => {navigate('/workshops')}}
+                className="w-60 font-semibold bg-indigo-950 dark:bg-orange-500"
+              >
+                View Workshops
+              </Button>
+            </div>
         </div>
       </div>
       <div className="col-span-2">

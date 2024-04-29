@@ -45,9 +45,6 @@ export const test = (req, res) => {
   export const getWorkshops = async (req, res, next) => {
     try {
       const workshops = await Workshop.find()
-        // .sort({ createdAt: sortDirection })
-        // .skip(startIndex)
-        // .limit(limit);
   
       const workshopsMap = workshops.map((workshop) => {
         const { ...rest } = workshop._doc;
@@ -66,7 +63,7 @@ export const test = (req, res) => {
 
     try {
       
-      const workshop = await Workshop.findOne();
+      const workshop = await Workshop.findById(req.params.workshopId);
       if (!workshop){
         return next(errorHandler(404, 'Workshop not found'));
       }

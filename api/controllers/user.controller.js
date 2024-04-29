@@ -26,22 +26,27 @@ export const enrollUser = async (req, res, next) => {
         notEmptyField = value;
       }
     }
-    
-    
   }
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.userId,
       {
         $set: {
-         workshop: workshop
+         ...req.body
         },
       },
       { new: true }
-    );
+    ).populate('capacity_based', ['title'])
+    .populate('issue_based', ['title']);
 
     await Workshop.findByIdAndUpdate(
-      notEmptyField, { $inc: { slots: -1 } }, { new: true }
+      notEmptyField,
+      {
+        $push: {
+         participants: req.params.userId
+        },
+        $inc: { slots: -1 }
+      },
     );
     const { password, ...rest } = updatedUser._doc;
     res.status(200).json(rest);

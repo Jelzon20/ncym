@@ -70,17 +70,17 @@ export default function DashSidebar() {
               Profile
             </Sidebar.Item>
           </Link>
-          {/* {currentUser.isAdmin && (
-            <Link to='/dashboard?tab=posts'>
+          {currentUser.isAdmin && (
+            <Link to='/dashboard?tab=workshops'>
               <Sidebar.Item
-                active={tab === 'posts'}
+                active={tab === 'workshops'}
                 icon={HiDocumentText}
                 as='div'
               >
-                Posts
+                Workshops
               </Sidebar.Item>
             </Link>
-          )} */}
+          )}
           {currentUser.isAdmin && (
             <>
               <Link to='/dashboard?tab=users'>
