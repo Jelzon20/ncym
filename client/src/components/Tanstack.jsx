@@ -80,6 +80,10 @@ export default function Tanstack() {
       cell: (info) => <span className='mr-10'>{info.getValue()}</span>,
       header: "Last Name",
     }),
+    columnHelper.accessor("createdAt", {
+      cell: (info) => <span className='mr-10'>{moment(info.getValue()).format('MM/DD/YYYY hh:mm')}</span>,
+      header: "Registration Date",
+    }),
     columnHelper.accessor(users => users.user.isAdmin, {
       cell: (info) => (
         (info.getValue() === true) ? (
