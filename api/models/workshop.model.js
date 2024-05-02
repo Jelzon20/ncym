@@ -16,7 +16,7 @@ const workshopSchema = new mongoose.Schema(
       required: true,
     },
     participants : {
-         type : Array,
+         type : [mongoose.Schema.Types.ObjectId],
         default : [] 
       },
     slots: {

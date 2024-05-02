@@ -1,3 +1,4 @@
+import userSlice from "../../client/src/redux/user/userSlice.js";
 import Registration from "../models/registration.model.js";
 import User from "../models/user.model.js";
 import Workshop from "../models/workshop.model.js";
@@ -36,6 +37,32 @@ export const test = (req, res) => {
     try {
       await newWorkshop.save();
       res.json("New workshop added");
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  export const getParticipants = async (req, res, next) => {
+    // res.json({ message: 'API Participant is working'});
+    try {
+      const participants = await Workshop.aggregate([
+        {
+          $lookup: {
+            from: "registrations", 
+            localField: "participants",
+            foreignField: "user",
+            as: "user_details"
+          }
+        }
+      ]);
+      
+
+      res.status(200).json({
+        participants: participants
+      });
+
+      
+      
     } catch (error) {
       next(error);
     }

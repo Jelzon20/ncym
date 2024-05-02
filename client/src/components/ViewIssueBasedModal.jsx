@@ -12,6 +12,7 @@ import { Toaster, toast } from "sonner";
 export default function ViewIssueBasedModal({workshop, isOpen, onClose}) {
   
   const { currentUser } = useSelector((state) => state.user);
+  const { currentRegister } = useSelector((state) => state.register);
     const [formData, setFormData] = useState({});
 
     const dispatch = useDispatch();
@@ -59,6 +60,7 @@ export default function ViewIssueBasedModal({workshop, isOpen, onClose}) {
             toast.error(error.message)
           }
     }
+    
   return (
     
     <Modal
