@@ -3,6 +3,7 @@ import Registration from "../models/registration.model.js";
 import User from "../models/user.model.js";
 import Workshop from "../models/workshop.model.js";
 import { errorHandler } from "../utils/error.js";
+import mongoose from "mongoose";
 
 export const test = (req, res) => {
     res.json({ message: 'API is working'});
@@ -45,7 +46,9 @@ export const test = (req, res) => {
   export const getParticipants = async (req, res, next) => {
     // res.json({ message: 'API Participant is working'});
     try {
+
       const participants = await Workshop.aggregate([
+        {$match: { _id: new mongoose.Types.ObjectId(req.params.workshopId) }},
         {
           $lookup: {
             from: "registrations", 
@@ -53,14 +56,24 @@ export const test = (req, res) => {
             foreignField: "user",
             as: "user_details"
           }
-        }
+        },
       ]);
+
+
+          // $lookup: {
+          //   from: "registrations", 
+          //   localField: "participants",
+          //   foreignField: "user",
+          //   as: "user_details"
+          // },
+          
+        // },
+      
       
 
       res.status(200).json({
         participants: participants
       });
-
       
       
     } catch (error) {

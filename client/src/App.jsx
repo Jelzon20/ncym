@@ -45,7 +45,7 @@ export default function App() {
           <Route path='/evaluation' element={<Evaluations />} />
           <Route path='/host' element={<Host />} />
           <Route path='/accomodation' element={<Accomodation />} />
-          <Route path='/workshopSub' element={<WorkshopSub />} />
+          {/* <Route path='/workshopSub' element={<WorkshopSub />} /> */}
         </Route>
         
       </Routes>

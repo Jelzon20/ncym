@@ -9,7 +9,7 @@ router.get('/test', test);
 
 router.post('/addWorkshop', verifyToken, addWorkshop);
 router.get('/getWorkshops', verifyToken, getWorkshops);
-router.get('/getParticipants', verifyToken, getParticipants);
+router.get('/getParticipants/:workshopId', verifyToken, getParticipants);
  
 
 // router.put('/update/:userId', verifyToken, updateUser);
