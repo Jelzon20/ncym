@@ -12,12 +12,16 @@ import {
 } from '../redux/user/userSlice';
 
 import OAuth from '../components/OAuth';
+import moment from 'moment'
+
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
   const { loading, error: errorMessage, currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
@@ -52,6 +56,8 @@ export default function SignIn() {
     }
   };
 
+  
+
   return (
     <div className='min-h-screen mt-20'>
       <Toaster richColors position="top-center" expand={true} />
@@ -80,7 +86,6 @@ export default function SignIn() {
         </div>
         
         {/* right */}
-
         <div className='flex-1'>
           <h1 className='text-gray-800 font-bold text-3xl mb-5"'>Maupay nga adlaw,</h1>
           <h1 className='text-gray-800 font-bold text-3xl mb-5"'>ka-lakbay!</h1>

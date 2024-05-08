@@ -37,6 +37,7 @@ export default function DashSidebar() {
         console.log(data.message);
       } else {
         dispatch(signoutSuccess());
+        localStorage.removeItem('expiresIn'); 
         dispatch(clearRegSuccess())
         navigate('/sign-in');
       }

@@ -16,13 +16,75 @@ import { useSelector} from 'react-redux';
 import Registration from './pages/Registration'
 import Accomodation from './pages/Accomodation'
 import WorkshopSub from './pages/WorkshopSub'
-
-
+import { useEffect, useState } from 'react'
+import {
+  signoutSuccess
+} from './redux/user/userSlice';
+import { useDispatch } from 'react-redux';
+import { clearRegSuccess } from './redux/register/registerSlice';
 
 export default function App() {
+  
 
   const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch()
 
+  const handleSignout = async () => {
+    try {
+      const res = await fetch('/api/user/signout', {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
+        dispatch(clearRegSuccess())
+        window.location.href = "/sign-in";
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  const checkForInactivity = () => {
+    const expireTime = localStorage.getItem('expiresIn');
+   if (expireTime < Date.now()) {
+    handleSignout();
+   }
+  }
+
+  const updateExpireTime = () => {
+    const expireTime = Date.now() + 100000;
+    localStorage.setItem('expiresIn', expireTime);
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      checkForInactivity();
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    }
+  }, []);
+
+  useEffect(() => {
+    updateExpireTime();
+
+    window.addEventListener('click', updateExpireTime);
+    window.addEventListener('keypress', updateExpireTime);
+    window.addEventListener('scroll', updateExpireTime);
+    window.addEventListener('mousemove', updateExpireTime);
+
+    return () => {
+      window.addEventListener('click', updateExpireTime);
+      window.addEventListener('keypress', updateExpireTime);
+      window.addEventListener('scroll', updateExpireTime);
+      window.addEventListener('mousemove', updateExpireTime);
+    }
+  }, []);
+
+  // checkForInactivity();
   return (
     <BrowserRouter>
       {currentUser && (

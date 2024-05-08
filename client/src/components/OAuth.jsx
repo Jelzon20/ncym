@@ -5,12 +5,14 @@ import { app } from '../firebase';
 import { useDispatch } from 'react-redux';
 import { signInSuccess } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
-
+import moment from 'moment';
 export default function OAuth() {
+    const expireTime = Date.now() + 100000;
     const auth = getAuth(app)
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const handleGoogleClick = async () =>{
+       
         const provider = new GoogleAuthProvider()
         provider.setCustomParameters({ prompt: 'select_account' })
         try {
@@ -26,7 +28,8 @@ export default function OAuth() {
                 })
             const data = await res.json()
             if (res.ok){
-                dispatch(signInSuccess(data))
+                localStorage.setItem('expiresIn', expireTime);
+                dispatch(signInSuccess(data));
                 navigate('/')
             }
         } catch (error) {

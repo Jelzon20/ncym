@@ -26,6 +26,7 @@ export default function Header() {
         console.log(data.message);
       } else {
         dispatch(signoutSuccess());
+        localStorage.removeItem('expiresIn');
         dispatch(clearRegSuccess())
         navigate('/sign-in');
       }
