@@ -17,8 +17,9 @@ export default function FooterCom() {
           <div className='flex flex-col text-center'>
            
             <p className='font-bold text-sm md:text-lg'>Follow us on facebook to learn more!</p>
-            <p><a href='https://www.facebook.com/archpaloyouth?mibextid=YMEMSu' className='text-blue-600 text-sm md:text-lg'>Archdiocese of Palo Commission on Youth</a></p>
             <p><a href='https://www.facebook.com/CBCPECY' className='text-blue-600 text-sm md:text-lg'>Catholic Bishops’ Conference of the Philippines - Episcopal Commission on Youth</a></p>
+            <p><a href='https://www.facebook.com/archpaloyouth?mibextid=YMEMSu' className='text-blue-600 text-sm md:text-lg'>Archdiocese of Palo Commission on Youth</a></p>
+            
             </div>
           
         </div>
