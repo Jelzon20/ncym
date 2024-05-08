@@ -16,6 +16,7 @@ import moment from 'moment'
 
 
 export default function SignIn() {
+  const expireTime = Date.now() + 3600000;
   const [formData, setFormData] = useState({});
   const { loading, error: errorMessage, currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -42,10 +43,12 @@ export default function SignIn() {
       const data = await res.json();
       if (data.success === false) {
         dispatch(signInFailure(data.message));
+        
         toast.error(data.message)
       }
 
       if (res.ok) {
+        localStorage.setItem('expiresIn', expireTime);
         dispatch(signInSuccess(data));
         toast.success("Sign in successful")
         navigate('/');

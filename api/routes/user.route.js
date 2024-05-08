@@ -1,5 +1,5 @@
 import express from 'express';
-import { test, updateUser, deleteUser, signout, getUsers, getUser, enrollUser } from '../controllers/user.controller.js';
+import { test, updateUser, deleteUser, signout, getUsers, getUser, enrollUser, sendEmail } from '../controllers/user.controller.js';
 import { verifyToken } from '../utils/verifyUser.js';
 
 const router = express.Router();
@@ -11,5 +11,6 @@ router.post('/signout', signout);
 router.get('/getusers', verifyToken, getUsers);
 router.get('/:userId', getUser);
 router.put('/enroll/:userId', enrollUser);
+router.post('/sendEmail/:email', sendEmail);
 
 export default router;

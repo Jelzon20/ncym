@@ -40,7 +40,12 @@ export default function App() {
       } else {
         dispatch(signoutSuccess());
         dispatch(clearRegSuccess())
-        window.location.href = "/sign-in";
+        if(currentUser == null) {
+          window.location.href = "/sign-in";
+        } else{
+          console.log('currentUser is still present')
+        }
+        
       }
     } catch (error) {
       console.log(error.message);
@@ -54,7 +59,7 @@ export default function App() {
   }
 
   const updateExpireTime = () => {
-    const expireTime = Date.now() + 100000;
+    const expireTime = Date.now() + 3600000;
     localStorage.setItem('expiresIn', expireTime);
   }
 

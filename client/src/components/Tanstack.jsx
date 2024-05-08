@@ -46,6 +46,7 @@ export default function Tanstack() {
   const columnHelper = createColumnHelper();
   const [show, setShow] = useState(true);
   const [fileNameDate, setFileNameDate] = useState('');
+  const [email, setEmail] = useState('');
 
   const columns = [
 
@@ -244,12 +245,20 @@ export default function Tanstack() {
       const data = await res.json();
       if (res.ok) {
         setReg(data);
+        setEmail(data.user.email);
+        }
 
-      }
     } catch (error) {
       toast.error(error.message)
     }
   };
+
+  const sendEmail = async (email_address) => {
+    fetch(`/api/user/sendEmail/${email_address}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json"},
+    });
+  }
 
   const handleUpdateUser = async (userId) => {
 
@@ -266,9 +275,10 @@ export default function Tanstack() {
       } else {
         dispatch(updateOtherUserSuccess(data));
         toast.success('User has been accepted');
+        sendEmail(email);
         setShowProfModal(false)
+        
         rerender();
-
       }
 
     } catch (error) {

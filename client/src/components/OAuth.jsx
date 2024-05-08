@@ -7,7 +7,7 @@ import { signInSuccess } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 export default function OAuth() {
-    const expireTime = Date.now() + 100000;
+    const expireTime = Date.now() + 3600000;
     const auth = getAuth(app)
     const dispatch = useDispatch()
     const navigate = useNavigate()
