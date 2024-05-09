@@ -52,7 +52,8 @@ export default function Registration() {
 
   const [paymentFile, setPaymentFile] = useState(null);
   const [paymentFileUrl, setPaymentFileUrl] = useState(null);
-  const [paymentFileUploadProgress, setPaymentFileUploadProgress] = useState(null);
+  const [paymentFileUploadProgress, setPaymentFileUploadProgress] =
+    useState(null);
   const [paymentFileUploadError, setPaymentFileUploadError] = useState(null);
   const [paymentFileUploading, setPaymentFileUploading] = useState(false);
 
@@ -173,7 +174,6 @@ export default function Registration() {
   }, [currentUser]);
 
   useEffect(() => {
-
     if (currentUser.isRegistered) {
       navigate("/dashboard?tab=profile");
     }
@@ -191,19 +191,18 @@ export default function Registration() {
     setFormData({ ...formData, departureDate: date.value });
   };
 
-
   const handleChange = (e) => {
     const { id } = e.target;
     const { value } = e.target;
     if (
-      id === 'emerContactPerson' ||
-      id === 'emerRelation' ||
-      id === 'nickname' ||
-      id === 'firstName' ||
-      id === 'middleName' ||
-      id === 'lastName' ||
-      id === 'roleInMinistry') {
-
+      id === "emerContactPerson" ||
+      id === "emerRelation" ||
+      id === "nickname" ||
+      id === "firstName" ||
+      id === "middleName" ||
+      id === "lastName" ||
+      id === "roleInMinistry"
+    ) {
       const re = /^[a-zA-Z \.]*$/;
       if (!re.test(value)) {
         e.target.value = "";
@@ -212,19 +211,16 @@ export default function Registration() {
       } else {
         setFormData({ ...formData, id: value.trim() });
       }
-
-    } else if (id === 'emerContactNumber' || id === 'contactNumber') {
-      var number = Number(value)
+    } else if (id === "emerContactNumber" || id === "contactNumber") {
+      var number = Number(value);
       if (Number.isNaN(number)) {
         e.target.value = "";
         toast.error("Field only accepts numbers");
       } else {
-
         setFormData({ ...formData, id: value.trim() });
       }
     }
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
-
   };
 
   const handleSubmit = async (e) => {
@@ -253,7 +249,6 @@ export default function Registration() {
       !formData.waiver ||
       !formData.proofOfPayment
     ) {
-
       dispatch(registerFailure("Please fill all the required fields"));
       toast.error("Please fill all the required fields");
       return;
@@ -274,12 +269,12 @@ export default function Registration() {
       if (data.success === false) {
         setOpenConfirmModal(false);
         dispatch(registerFailure(data.message));
-        toast.error(data.message)
+        toast.error(data.message);
       }
 
       if (res.ok) {
         dispatch(registerSuccess(data));
-        toast.success('Successful regisration.')
+        toast.success("Successful regisration.");
 
         try {
           dispatch(updateStart());
@@ -292,24 +287,22 @@ export default function Registration() {
           if (data.success === false) {
             setOpenConfirmModal(false);
             dispatch(updateFailure(data.message));
-            toast.error(data.message)
+            toast.error(data.message);
           }
           dispatch(updateSuccess(data));
           navigate("/dashboard?tab=profile");
         } catch (error) {
           setOpenConfirmModal(false);
           dispatch(updateFailure(error.message));
-          toast.error(error.message)
+          toast.error(error.message);
         }
       }
     } catch (error) {
       setOpenConfirmModal(false);
       dispatch(registerFailure(error.message));
-      toast.error(error.message)
+      toast.error(error.message);
     }
-  }
-
-
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -333,14 +326,18 @@ export default function Registration() {
                   className="mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   value="Diocese/Organization"
                 />
-                {!formData.dioceseOrOrg ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                {!formData.dioceseOrOrg ? (
+                  <span className="text-sm text-red-600 ml-2">Required</span>
+                ) : (
+                  <></>
+                )}
               </div>
 
               <Select
                 id="dioceseOrOrg"
                 onChange={handleChange}
                 required
-              // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500  w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                // className="bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500  w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
               >
                 <option value="">Select here</option>
                 <option value="Apostolic Vicariate of Bontoc-Lagawe">
@@ -403,6 +400,34 @@ export default function Registration() {
                 </option>
                 <option value="Archdiocese of Zamboanga">
                   Archdiocese of Zamboanga
+                </option>
+                <option value="Canossian Youth in the Philippines">
+                  Canossian Youth in the Philippines
+                </option>
+                <option value="Carmel Youth Philippines">
+                  Carmel Youth Philippines
+                </option>
+                <option value="Carmelite Missionaries Youth">
+                  Carmelite Missionaries Youth
+                </option>
+                <option value="CFC- Singles for Christ">
+                  CFC- Singles for Christ
+                </option>
+                <option value="CFC-Youth for Christ">
+                  CFC-Youth for Christ
+                </option>
+                <option value="Chiro Youth Movement">
+                  Chiro Youth Movement
+                </option>
+                <option value="Christian Life Community in the Philippines">
+                  Christian Life Community in the Philippines
+                </option>
+                <option value="Christ's Youth in Action">
+                  Christ's Youth in Action
+                </option>
+                <option value="Columbian Squires">Columbian Squires</option>
+                <option value="Daughters of St. Paul">
+                  Daughters of St. Paul
                 </option>
                 <option value="Diocese of Alaminos">Diocese of Alaminos</option>
                 <option value="Diocese of Antipolo">Diocese of Antipolo</option>
@@ -490,8 +515,32 @@ export default function Registration() {
                 <option value="Diocese of Tarlac">Diocese of Tarlac</option>
                 <option value="Diocese of Urdaneta">Diocese of Urdaneta</option>
                 <option value="Diocese of Virac">Diocese of Virac</option>
+                <option value="ELIM Singles">ELIM Singles</option>
+                <option value="ELIM Youth">ELIM Youth</option>
+                <option value="Eucharistic Youth Movement">
+                  Eucharistic Youth Movement
+                </option>
+                <option value="Filipino - Chinese Catholic Youth">
+                  Filipino - Chinese Catholic Youth
+                </option>
+                <option value="Immaculate Conception Academy-Greenhills">
+                  Immaculate Conception Academy-Greenhills
+                </option>
+                <option value="IT Youth">IT Youth</option>
+                <option value="Joseph Marello Youth">
+                  Joseph Marello Youth
+                </option>
+                <option value="Mary Help of Christians Crusade">
+                  Mary Help of Christians Crusade
+                </option>
                 <option value="Military Ordinariate of the Philippines">
                   Military Ordinariate of the Philippines
+                </option>
+                <option value="Missionary Families of Christ - Singles">
+                  Missionary Families of Christ - Singles
+                </option>
+                <option value="Missionary Families of Christ - Youth">
+                  Missionary Families of Christ - Youth
                 </option>
                 <option value="Prelature of Batanes">
                   Prelature of Batanes
@@ -503,6 +552,27 @@ export default function Registration() {
                   Prelature of Isabela
                 </option>
                 <option value="Prelature of Marawi">Prelature of Marawi</option>
+                <option value="Recollect Augustinian Youth">
+                  Recollect Augustinian Youth
+                </option>
+                <option value="Redemptorist Youth Ministry">
+                  Redemptorist Youth Ministry
+                </option>
+                <option value="Salesian Youth Movement">
+                  Salesian Youth Movement
+                </option>
+                <option value="Singles for Christ">Singles for Christ</option>
+                <option value="Student Catholic Action of the Philippines">
+                  Student Catholic Action of the Philippines
+                </option>
+                <option value="The Lord's Flock">The Lord's Flock</option>
+                <option value="Young Franciscan Advocates">
+                  Young Franciscan Advocates
+                </option>
+                <option value="Youth for Christ">Youth for Christ</option>
+                <option value="Youth for Mary and Christ">
+                  Youth for Mary and Christ
+                </option>
               </Select>
             </div>
             <div className="mb-6">
@@ -512,7 +582,11 @@ export default function Registration() {
                   className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   value="Parish/Local Unit"
                 />
-                {!formData.parishOrLocalUnit ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                {!formData.parishOrLocalUnit ? (
+                  <span className="text-sm text-red-600 ml-2">Required</span>
+                ) : (
+                  <></>
+                )}
               </div>
               <TextInput
                 type="text"
@@ -537,13 +611,16 @@ export default function Registration() {
                     className=" my-4 mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Contact Person"
                   />
-                  {!formData.emerContactPerson ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.emerContactPerson ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <TextInput
                   type="text"
                   id="emerContactPerson"
                   onChange={handleChange}
-
                   required
                 />
               </div>
@@ -554,13 +631,16 @@ export default function Registration() {
                     className=" my-4 mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Contact Number"
                   />
-                  {!formData.emerContactNumber ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.emerContactNumber ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <TextInput
                   type="text"
                   id="emerContactNumber"
                   onChange={handleChange}
-
                   required
                 />
               </div>
@@ -571,13 +651,16 @@ export default function Registration() {
                     className=" my-4 mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Relation to you"
                   />
-                  {!formData.emerRelation ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.emerRelation ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <TextInput
                   type="text"
                   id="emerRelation"
                   onChange={handleChange}
-
                   required
                 />
               </div>
@@ -598,13 +681,13 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Title"
                   />
-                  {!formData.title ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.title ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
-                <Select
-                  id="title"
-                  onChange={handleChange}
-                  required
-                >
+                <Select id="title" onChange={handleChange} required>
                   <option value="">Select here</option>
                   <option value="MR.">MR.</option>
                   <option value="MS.">MS.</option>
@@ -622,13 +705,16 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Nickname"
                   />
-                  {!formData.nickname ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.nickname ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <TextInput
                   type="text"
                   id="nickname"
                   onChange={handleChange}
-
                   required
                 />
               </div>
@@ -639,7 +725,11 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="First Name"
                   />
-                  {!formData.firstName ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.firstName ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <TextInput
                   type="text"
@@ -671,7 +761,11 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Last Name"
                   />
-                  {!formData.lastName ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.lastName ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <TextInput
                   type="text"
@@ -688,7 +782,11 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Birthday"
                   />
-                  {!formData.birthday ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.birthday ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <Datepicker
                   id="birthday"
@@ -707,7 +805,11 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Contact Number"
                   />
-                  {!formData.contactNumber ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.contactNumber ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <TextInput
                   type="text"
@@ -724,7 +826,11 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Complete Home Address"
                   />
-                  {!formData.address ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.address ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <TextInput
                   type="text"
@@ -741,7 +847,11 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Role In Ministry"
                   />
-                  {!formData.roleInMinistry ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.roleInMinistry ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <TextInput
                   type="text"
@@ -757,13 +867,13 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Shirt Size"
                   />
-                  {!formData.shirtSize ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.shirtSize ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
-                <Select
-                  id="shirtSize"
-                  onChange={handleChange}
-                  required
-                >
+                <Select id="shirtSize" onChange={handleChange} required>
                   <option value="">Select here</option>
                   <option value="X-Small">X-Small</option>
                   <option value="Small">Small</option>
@@ -791,16 +901,18 @@ export default function Registration() {
                     className="mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Carrier to Palo"
                   />
-                  {!formData.carrierToPalo ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.carrierToPalo ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
-
 
                 <Select
                   id="carrierToPalo"
                   onChange={handleChange}
                   required
-                // className={!formData.carrierToPalo ? (requiredField) : (<></>)}
-
+                  // className={!formData.carrierToPalo ? (requiredField) : (<></>)}
                 >
                   <option value="">Select here</option>
                   <option value="Airplane">Airplane</option>
@@ -808,7 +920,6 @@ export default function Registration() {
                   <option value="Public Bus">Public Bus</option>
                   <option value="Private Vehicle">Private Vehicle</option>
                 </Select>
-
               </div>
               <div className="col-span-6 sm:col-span-3">
                 <div>
@@ -817,7 +928,11 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Date of Arrival"
                   />
-                  {!formData.arrivalDate ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.arrivalDate ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <Datepicker
                   id="arrivalDate"
@@ -836,13 +951,13 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Estimated Time of Arrival"
                   />
-                  {!formData.arrivalTime ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.arrivalTime ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
-                <Select
-                  id="arrivalTime"
-                  onChange={handleChange}
-                  required
-                >
+                <Select id="arrivalTime" onChange={handleChange} required>
                   <option value="">Select here</option>
                   <option value="12:00 AM">12:00 AM</option>
                   <option value="1:00 AM">1:00 AM</option>
@@ -877,13 +992,13 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Carrier out of Palo"
                   />
-                  {!formData.carrierOutOfPalo ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.carrierOutOfPalo ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
-                <Select
-                  id="carrierOutOfPalo"
-                  onChange={handleChange}
-                  required
-                >
+                <Select id="carrierOutOfPalo" onChange={handleChange} required>
                   <option value="">Select here</option>
                   <option value="Airplane">Airplane</option>
                   <option value="Boat">Boat</option>
@@ -898,7 +1013,11 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Date of Departure"
                   />
-                  {!formData.departureDate ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.departureDate ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <Datepicker
                   id="departureDate"
@@ -917,13 +1036,13 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Estimated Time of Departure"
                   />
-                  {!formData.departureTime ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.departureTime ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
-                <Select
-                  id="departureTime"
-                  onChange={handleChange}
-                  required
-                >
+                <Select id="departureTime" onChange={handleChange} required>
                   <option value="">Select here</option>
                   <option value="12:00 AM">12:00 AM</option>
                   <option value="1:00 AM">1:00 AM</option>
@@ -1029,7 +1148,11 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Full Accomplished Autorization and Waiver Form"
                   />
-                  {!formData.waiver ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.waiver ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <FileInput
                   id="waiver"
@@ -1059,7 +1182,11 @@ export default function Registration() {
                     className=" mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     value="Proof of Payment"
                   />
-                  {!formData.proofOfPayment ? (<span className="text-sm text-red-600 ml-2">Required</span>) : (<></>)}
+                  {!formData.proofOfPayment ? (
+                    <span className="text-sm text-red-600 ml-2">Required</span>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <FileInput
                   ref={paymentRef}
@@ -1091,7 +1218,6 @@ export default function Registration() {
               >
                 Save all
               </Button>
-
             </div>
             <Modal
               dismissible

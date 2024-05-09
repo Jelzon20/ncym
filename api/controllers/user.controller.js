@@ -4,6 +4,7 @@ import User from '../models/user.model.js';
 import Registration from '../models/registration.model.js';
 import Workshop from '../models/workshop.model.js';
 import nodemailer from 'nodemailer';
+import path from 'path';
 
 export const test = (req, res) => {
   res.json({ message: 'API is working'});
@@ -188,8 +189,8 @@ var transporter = nodemailer.createTransport({
   host: "smtp.ethereal.email",
   port: 587,
   auth: {
-    user: 'ja.holasca2@gmail.com',
-    pass: 'lrdq ojqt zddl alxm'
+    user: 'ncym2020rcap@gmail.com',
+    pass: 'tbci zirl cjyu rkca'
   }
 });
 
@@ -197,7 +198,12 @@ var mailOptions = {
   from: 'ncym2020rcap@gmail.com',
   to: to_email,
   subject: 'Registration Verification - NCYM 2024',
-  html: "<p>Greetings, fellow servants of the Lord! <br> <br> We are delighted to inform you of your full acceptance as a participant in the National Conference of Youth Ministers 2024, scheduled to be held in the Archdiocese of Palo from July 17-21, 2024. <br> <br> Furthermore, we kindly request your enrollment in one issue-based mini-conference and one capacity-based workshop among those provided for NCYM 2024. <br> <br> For any further inquiries, please do not hesitate to reach out to us using the contact details provided below. <br> <br> On behalf of the NCYM 2024 Organizing Team, we extend our heartfelt gratitude and eagerly anticipate meeting you and the young people accompanying you in Palo soon. May God bless us all in our mission for the youth! <br> <br> Sincerely yours in Christ, <br> <br> NCYM 2024 Organizing Team <br> <br> SANGKAY: See you Leyte, It's GR8 here!</p>"
+  html: `<p>Greetings, fellow servants of the Lord! <br> <br> We are delighted to inform you of your full acceptance as a participant in the National Conference of Youth Ministers 2024, scheduled to be held in the Archdiocese of Palo from July 17-21, 2024. <br> <br> Furthermore, we kindly request your enrollment in one issue-based mini-conference and one capacity-based workshop among those provided for NCYM 2024. <br> <br> For any further inquiries, please do not hesitate to reach out to us using the contact details provided below. <br> <br> On behalf of the NCYM 2024 Organizing Team, we extend our heartfelt gratitude and eagerly anticipate meeting you and the young people accompanying you in Palo soon. May God bless us all in our mission for the youth! <br> <br> Sincerely yours in Christ, <br> <br> NCYM 2024 Organizing Team <br> <br> SANGKAY: See you Leyte, It's GR8 here!</p> <br> <br> <img src = "cid:myImg" style="width:400px;height:400px;"/>`,
+  attachments: [{
+        filename: 'webLogo.png',
+        path: __dirname + '/api/images/webLogo.png',
+        cid: 'myImg'
+      }]
 };
 
 transporter.sendMail(mailOptions, (error, info) => {
