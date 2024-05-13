@@ -59,6 +59,8 @@ export default function Registration() {
 
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const waiverRef = useRef(null);
   const paymentRef = useRef(null);
 
@@ -258,6 +260,7 @@ export default function Registration() {
   };
 
   const confirmSubmit = async () => {
+    setIsLoading(true);
     try {
       dispatch(registerStart());
       const res = await fetch("/api/reg/register", {
@@ -296,6 +299,8 @@ export default function Registration() {
           dispatch(updateFailure(error.message));
           toast.error(error.message);
         }
+
+        setIsLoading(false);
       }
     } catch (error) {
       setOpenConfirmModal(false);
@@ -1220,9 +1225,9 @@ export default function Registration() {
               </Button>
             </div>
             <Modal
-              dismissible
+              // dismissible
               show={openConfirmModal}
-              onClose={() => setOpenConfirmModal(false)}
+              // onClose={() => setOpenConfirmModal(false)}
             >
               <Modal.Header>Terms of Service</Modal.Header>
               <Modal.Body>
@@ -1238,8 +1243,8 @@ export default function Registration() {
                 </div>
               </Modal.Body>
               <Modal.Footer>
-                <Button onClick={confirmSubmit}>I accept</Button>
-                <Button color="gray" onClick={() => setOpenConfirmModal(false)}>
+                <Button onClick={confirmSubmit} disabled={isLoading}>I accept</Button>
+                <Button color="gray" onClick={() => setOpenConfirmModal(false)} disabled={isLoading}>
                   Decline
                 </Button>
               </Modal.Footer>

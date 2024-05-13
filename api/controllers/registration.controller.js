@@ -76,15 +76,8 @@ export const getRegs   = async (req, res, next) => {
     return next(errorHandler(403, 'You are not allowed to see all users'));
   }
   try {
-    const startIndex = parseInt(req.query.startIndex) || 0;
-    const limit = parseInt(req.query.limit) || 9;
-    const sortDirection = req.query.sort === 'asc' ? 1 : -1;
 
     const regs = await Registration.find().populate('user', ['email', 'profilePicture', 'isAdmin', 'isRegistered', 'isAccepted', 'isActive'])
-      .sort({ createdAt: sortDirection })
-      .skip(startIndex)
-      .limit(limit);
-
     const registrations = regs.map((reg) => {
       const { ...rest } = reg._doc;
       return rest;

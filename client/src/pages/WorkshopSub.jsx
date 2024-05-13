@@ -6,6 +6,7 @@ import { HiOutlineChatAlt2, HiDatabase } from "react-icons/hi";
 import  ViewIssueBasedModal  from '../components/ViewIssueBasedModal';
 import ViewCapacityBasedModal from '../components/ViewCapacityBasedModal';
 import { Toaster, toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export default function WorkshopSub() {
   const { currentUser } = useSelector((state) => state.user);
@@ -20,6 +21,19 @@ export default function WorkshopSub() {
   const [openCapacityModal, setOpenCapacityModal] = useState(false);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+
+    if (currentUser.isAccepted && currentUser.isRegistered) {
+      navigate("/");
+      window.location.hash = '#hero'
+    } else if (currentUser.isRegistered) {
+      navigate("/dashboard?tab=profile");
+    } else {
+      navigate("/registration");
+    }
+  }, [currentUser]);
 
   useEffect(() => {
       const fetchWorkshops = async () => {
