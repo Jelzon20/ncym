@@ -12,6 +12,7 @@ import { Toaster, toast } from "sonner";
 export default function ViewCapacityBasedModal({capacityWorkshop, isOpen, onClose}) {
   
   const { currentUser } = useSelector((state) => state.user);
+  const [isLoading, setIsLoading] = useState(false);
     // const [formData, setFormData] = useState({});
 
     const dispatch = useDispatch();
@@ -35,6 +36,7 @@ export default function ViewCapacityBasedModal({capacityWorkshop, isOpen, onClos
     //   }, [capacityWorkshop]);
 
     const handleCapacityEnroll = async (data) => {
+      setIsLoading(true);
         try {
             dispatch(updateStart());
             const enroll = await fetch(`/api/user/enroll/${currentUser._id}`, {
@@ -52,6 +54,7 @@ export default function ViewCapacityBasedModal({capacityWorkshop, isOpen, onClos
             setTimeout(() => {
               onClose();
             }, 2000);
+            setIsLoading(false);
           } catch (error) {
            
             dispatch(updateFailure(error.message));
@@ -83,7 +86,7 @@ export default function ViewCapacityBasedModal({capacityWorkshop, isOpen, onClos
           </div>
         </Modal.Body>
         <Modal.Footer>
-          {capacityWorkshop.slots <= 0 || currentUser.capacity_based != null ? (<></>) :(<Button onClick={(e) => {handleCapacityEnroll(capacityWorkshop)}}>Enroll</Button>)}
+          {capacityWorkshop.slots <= 0 || currentUser.capacity_based != null ? (<></>) :(<Button onClick={(e) => {handleCapacityEnroll(capacityWorkshop)}} disabled={isLoading}>Enroll</Button>)}
           <Button color="gray" onClick={onClose}>
             Close
           </Button>

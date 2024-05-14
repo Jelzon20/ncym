@@ -12,6 +12,7 @@ import { Toaster, toast } from "sonner";
 export default function ViewIssueBasedModal({workshop, isOpen, onClose}) {
   
   const { currentUser } = useSelector((state) => state.user);
+  const [isLoading, setIsLoading] = useState(false);
   const { currentRegister } = useSelector((state) => state.register);
     const [formData, setFormData] = useState({});
 
@@ -36,6 +37,7 @@ export default function ViewIssueBasedModal({workshop, isOpen, onClose}) {
     //   }, [workshop]);
 
     const handleEnroll = async (data) => {
+      setIsLoading(true);
         try {
             dispatch(updateStart());
             const enroll = await fetch(`/api/user/enroll/${currentUser._id}`, {
@@ -54,6 +56,7 @@ export default function ViewIssueBasedModal({workshop, isOpen, onClose}) {
               onClose();
               // setWorkshop({});
             }, 2000);
+            setIsLoading(false);
           } catch (error) {
            
             dispatch(updateFailure(error.message));
@@ -86,7 +89,7 @@ export default function ViewIssueBasedModal({workshop, isOpen, onClose}) {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          {workshop.slots <= 0 || currentUser.issue_based != null ? (<></>) :(<Button onClick={(e) => {handleEnroll(workshop)}}>Enroll</Button>)}
+          {workshop.slots <= 0 || currentUser.issue_based != null ? (<></>) :(<Button onClick={(e) => {handleEnroll(workshop)}} disabled={isLoading}>Enroll</Button>)}
           <Button color="gray" onClick={onClose}>
             Close
           </Button>
