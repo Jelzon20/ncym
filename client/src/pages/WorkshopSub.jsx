@@ -7,6 +7,7 @@ import  ViewIssueBasedModal  from '../components/ViewIssueBasedModal';
 import ViewCapacityBasedModal from '../components/ViewCapacityBasedModal';
 import { Toaster, toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import webLogo from "../assets/webLogo.png";
 
 export default function WorkshopSub() {
   const { currentUser } = useSelector((state) => state.user);
@@ -26,8 +27,7 @@ export default function WorkshopSub() {
   useEffect(() => {
 
     if (currentUser.isAccepted && currentUser.isRegistered) {
-      navigate("/");
-      window.location.hash = '#hero'
+      navigate("/workshops");
     } else if (currentUser.isRegistered) {
       navigate("/dashboard?tab=profile");
     } else {
@@ -125,7 +125,8 @@ const handleCapacityOpen = async (capacityBased) => {
           <Tabs.Item active title="Issue-Based" icon={HiOutlineChatAlt2}>
             <div className="flex flex-wrap gap-4">
           {issueBasedWorkshops.map((issueWorkshop) => (
-          <Card className="max-w-sm" key={issueWorkshop._id}>
+          <Card className="max-w-sm" key={issueWorkshop._id}
+          imgSrc={webLogo}>
              <span className="text-sm font-normal tracking-tight text-gray-900 dark:text-white">
                {issueWorkshop && issueWorkshop.workshopCategory}
              </span>
