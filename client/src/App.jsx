@@ -7,7 +7,6 @@ import Dashboard from './pages/Dashboard'
 import Messages from './pages/Messages'
 import Header from './components/Header'
 import Program from './pages/Program'
-import Workshops from './pages/Workshops'
 import Evaluations from './pages/Evaluations'
 import Host from './pages/Host'
 import FooterCom from './components/Footer'
@@ -16,17 +15,21 @@ import { useSelector} from 'react-redux';
 import Registration from './pages/Registration'
 import Accomodation from './pages/Accomodation'
 import WorkshopSub from './pages/WorkshopSub'
+import VolunteerSignIn from './pages/VolunteerSignIn'
 import { useEffect, useState } from 'react'
 import {
   signoutSuccess
 } from './redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { clearRegSuccess } from './redux/register/registerSlice';
+import HomeVolunteer from './pages/HomeVolunteer'
+import Cookies from "js-cookie";
 
 export default function App() {
   
 
   const { currentUser } = useSelector((state) => state.user);
+  const { currentVolunteer } = useSelector((state) => state.volunteer);
   const dispatch = useDispatch()
 
   const handleSignout = async () => {
@@ -89,15 +92,18 @@ export default function App() {
     }
   }, []);
 
+
+
   // checkForInactivity();
   return (
     <BrowserRouter>
-      {currentUser && (
+      {(currentUser || currentVolunteer) ? (
          <Header />
-      )
+      ) : (<></>)
       }
 
       <Routes>
+      <Route path='/volunteer' element={<VolunteerSignIn />} />
         <Route path='/sign-in' element={<SignIn />} />
         <Route path='/sign-up' element={<SignUp />} />
 
@@ -114,11 +120,13 @@ export default function App() {
           <Route path='/accomodation' element={<Accomodation />} />
           {/* <Route path='/workshopSub' element={<WorkshopSub />} /> */}
         </Route>
+        <Route path='/volunteerHome' element={<HomeVolunteer />} />
+         
         
       </Routes>
-      {currentUser && (
+      {(currentUser || currentVolunteer) ? (
          <FooterCom />
-      )
+      ) : (<></>)
       }
 
 

@@ -294,6 +294,7 @@ export default function Tanstack() {
   const subStr = (str) => {
     return str.substring(str.indexOf("%2F") + 3, str.lastIndexOf("?alt"));
   };
+  
 
   return (
     <div className="p-2 max-w-full mx-auto text-white fill-gray-400">
@@ -477,7 +478,7 @@ export default function Tanstack() {
               <div className="grid place-items-center border max-w-full h-10 bg-indigo-950">
 
               </div>
-              <div className='mt-8 flex w-full justify-between '>
+              <div className='mt-8 flex justify-between'>
                 <div className="flex flex-col items-start">
                   <div>
                     <Label
@@ -514,14 +515,14 @@ export default function Tanstack() {
                       className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
                       value={"Waiver: "}
                     />
-                    <a href = {reg && reg.waiver} className='text-sm text-blue-500 truncate' target='_blank'>{subStr(reg.waiver)}</a>
+                    <a href = {reg && reg.waiver} className='text-sm text-blue-500' target='_blank'>{subStr(reg.waiver)}</a>
                   </div>
-                  <div>
+                  <div className='truncate'>
                     <Label
                       className="mb-2 text-sm font-semibold text-gray-900 dark:text-white"
-                      value={"Waiver: "}
+                      value={"Proof of Payment: "}
                     />
-                    <a href = {reg && reg.proofOfPayment} className='text-sm text-blue-500 truncate' target='_blank'>{subStr(reg.proofOfPayment)}</a>
+                    <a href = {reg && reg.proofOfPayment} className='text-sm text-blue-500' target='_blank'>{subStr(reg.proofOfPayment)}</a>
                   </div>
                 </div>
                       

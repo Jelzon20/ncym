@@ -128,12 +128,15 @@ const handleCapacityOpen = async (capacityBased) => {
           <Card className="max-w-sm" key={issueWorkshop._id}
           imgSrc={webLogo}>
              <span className="text-sm font-normal tracking-tight text-gray-900 dark:text-white">
-               {issueWorkshop && issueWorkshop.workshopCategory}
+               {issueWorkshop && issueWorkshop.workshopCategory} 
              </span>
+            
              <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-               {issueWorkshop && issueWorkshop.title} 
+             {issueWorkshop && issueWorkshop.title} 
              </h5>
-             
+             <span className="text-md font-bold tracking-tight text-gray-900 dark:text-white">
+             {issueWorkshop && issueWorkshop.wCode}
+             </span>  
              <span className="font-normal line-clamp-5 text-gray-700 dark:text-gray-400" >
              {issueWorkshop && issueWorkshop.description}
              </span>
@@ -163,13 +166,17 @@ const handleCapacityOpen = async (capacityBased) => {
           <Tabs.Item title="Capacity-Based" icon={HiDatabase}>
           <div className="flex flex-wrap gap-4">
           {capacityBasedWorkshops.map((capacityWorkshop) => (
-          <Card className="max-w-sm" key={capacityWorkshop._id}>
+          <Card className="max-w-sm" key={capacityWorkshop._id} imgSrc={webLogo}>
+            
              <span className="text-sm font-normal tracking-tight text-gray-900 dark:text-white">
                {capacityWorkshop && capacityWorkshop.workshopCategory}
              </span>
              <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                {capacityWorkshop && capacityWorkshop.title} 
              </h5>
+             <span className="text-md font-bold tracking-tight text-gray-900 dark:text-white">
+             {capacityWorkshop && capacityWorkshop.wCode}
+             </span>  
              
              <span className="font-normal line-clamp-5 text-gray-700 dark:text-gray-400" >
              {capacityWorkshop && capacityWorkshop.description}
