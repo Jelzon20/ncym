@@ -18,6 +18,37 @@ export default function Header() {
   const { currentVolunteer } = useSelector((state) => state.volunteer);
   const { theme } = useSelector((state) => state.theme);
 
+  const [hasToken, setHasToken] = useState(true);
+   
+
+    useEffect(()=> {
+      handleCheckToken();
+      console.log(hasToken);
+    });
+  
+    const handleCheckToken = async () => {
+      try {
+        const res = await fetch('/api/auth/checkAuth', {
+          method: 'GET',
+        });
+        const data = await res.json();
+        
+        // console.log("DATAAAAAAAAAAAAA" + data)
+        if (data) {
+          setHasToken(data.hasToken)
+        } else {
+          setHasToken(data.hasToken)
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+    
+    useEffect(()=> {
+      if(!hasToken){
+        handleSignout();
+      }
+    });
   const handleSignout = async () => {
     try {
       const res = await fetch('/api/user/signout', {

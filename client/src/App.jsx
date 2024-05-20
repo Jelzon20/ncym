@@ -24,12 +24,14 @@ import { useDispatch } from 'react-redux';
 import { clearRegSuccess } from './redux/register/registerSlice';
 import HomeVolunteer from './pages/HomeVolunteer'
 import Cookies from "js-cookie";
+import { current } from '@reduxjs/toolkit'
 
 export default function App() {
   
 
   const { currentUser } = useSelector((state) => state.user);
   const { currentVolunteer } = useSelector((state) => state.volunteer);
+  
   const dispatch = useDispatch()
 
   const handleSignout = async () => {
@@ -93,6 +95,9 @@ export default function App() {
   }, []);
 
 
+
+
+  
 
   // checkForInactivity();
   return (

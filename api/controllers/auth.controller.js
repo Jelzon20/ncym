@@ -3,6 +3,15 @@ import bcryptjs from 'bcryptjs';
 import { errorHandler } from "../utils/error.js";
 import jwt from 'jsonwebtoken';
 
+export const checkAuth = (req, res, next) => {
+  const token = req.cookies.access_token;
+  if(token) {
+      res.json({hasToken: true});
+  }else{
+    res.json({hasToken: false});
+  }
+    
+};
 
 export const signup = async (req, res, next) => {
   const { firstname, lastname, email, password } = req.body;
@@ -61,7 +70,7 @@ export const signin = async (req, res, next) => {
     res
     .status(200)
     .cookie('access_token', token, {
-      httpOnly: false,
+      httpOnly: true,
     })
     .json(rest);
   } catch (error) {

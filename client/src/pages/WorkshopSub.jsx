@@ -56,6 +56,8 @@ export default function WorkshopSub() {
 
             setCapacityBasedWorkshops(cbWorkshop);
             setIssueBasedWorkshops(ibWorkshop);
+          } else {
+            toast.error(data.message);
           }
 
         } catch (error) {
