@@ -9,6 +9,7 @@ import { clearRegSuccess } from '../redux/register/registerSlice';
 import Cookies from "js-cookie";
 
 export default function PrivateRoute() {
+  const { currentUser } = useSelector((state) => state.user);
     const dispatch = useDispatch()
 
 
@@ -16,7 +17,7 @@ export default function PrivateRoute() {
 
   const handleSignout = async () => {
     try {
-      const res = await fetch('/api/user/signout', {
+      const res = await fetch('/api/user/sign out', {
         method: 'POST',
       });
       const data = await res.json();
@@ -36,12 +37,18 @@ export default function PrivateRoute() {
   };
     // Get a cookie
   useEffect(() => {
-    if(!accessToken){
-      handleSignout()
-    }
-    
-  },[])
-  const { currentUser } = useSelector((state) => state.user);
+    // setTimeout(() => {
+    //   if(!accessToken){
+    //     setTimeout(() => {
+    //       handleSignout();
+    //     }, 2000);
+        
+    //   }
+    // }, 5000);
+    // console.log(accessToken)
+  });
+
+  
 
   return currentUser ? <Outlet /> : <Navigate to='/sign-in' />;
 
