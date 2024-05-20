@@ -320,6 +320,17 @@ export default function Registration() {
         </div>
         {/* <!-- Right Content --> */}
         <div className="col-span-full xl:col-auto">
+        <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+            <div className="flow-root">
+              <h3 className="text-xl font-semibold dark:text-white">
+                NCYM 2024 Palo Teaser 1
+              </h3>
+              <div className="mt-2 mb-2">
+                <iframe className="w-full aspect-video" src="https://www.youtube.com/embed/tDSiR1EzYtw?" allow="autoplay" allowFullScreen="allowFullScreen"></iframe>
+              </div>
+             
+            </div>
+          </div>
           <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
             <h3 className="mb-4 text-xl font-semibold dark:text-white">
               Origin
