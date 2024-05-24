@@ -5,6 +5,7 @@ import userRoutes from './routes/user.route.js'; // this is user-defined
 import authRoutes from './routes/auth.route.js';
 import registerRoutes from './routes/registration.route.js'
 import volunteerRoutes from './routes/volunteer.route.js'
+import sessionRoutes from './routes/session.route.js'
 import workshopRoutes from './routes/workshop.route.js'
 import cookieParser from 'cookie-parser';
 import path from 'path';
@@ -39,6 +40,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/reg', registerRoutes);
 app.use('/api/workshop', workshopRoutes);
 app.use('/api/volunteer', volunteerRoutes);
+app.use('/api/session', sessionRoutes);
 
 app.use(express.static(path.join(__dirname, 'client/dist')));
 

@@ -47,6 +47,7 @@ export default function Header() {
     useEffect(()=> {
       if(!hasToken){
         handleSignout();
+        handleVolunteerSignout();
       }
     });
   const handleSignout = async () => {
@@ -181,7 +182,7 @@ export default function Header() {
           <Link to='/volunteerHome'>Home</Link>
         </Navbar.Link>
         <Navbar.Link className='font-semibold' active={path === '/program'} as={'div'}>
-          <Link to='/program'>Attendance Monitoring</Link>
+          <Link to='/volunteerAtt'>Attendance Monitoring</Link>
         </Navbar.Link>
         
       </Navbar.Collapse>)}

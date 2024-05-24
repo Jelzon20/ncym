@@ -23,6 +23,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { clearRegSuccess } from './redux/register/registerSlice';
 import HomeVolunteer from './pages/HomeVolunteer'
+import VolunteerAttendance from './pages/VolunteerAttendance'
 import Cookies from "js-cookie";
 import { current } from '@reduxjs/toolkit'
 
@@ -126,6 +127,7 @@ export default function App() {
           {/* <Route path='/workshopSub' element={<WorkshopSub />} /> */}
         </Route>
         <Route path='/volunteerHome' element={<HomeVolunteer />} />
+        <Route path='/volunteerAtt' element={<VolunteerAttendance />} />
          
         
       </Routes>

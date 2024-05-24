@@ -247,9 +247,7 @@ export default function Registration() {
       !formData.carrierOutOfPalo ||
       !formData.carrierToPalo ||
       !formData.departureDate ||
-      !formData.departureTime ||
-      !formData.waiver ||
-      !formData.proofOfPayment
+      !formData.departureTime
     ) {
       dispatch(registerFailure("Please fill all the required fields"));
       toast.error("Please fill all the required fields");
@@ -1175,7 +1173,6 @@ export default function Registration() {
                   ref={waiverRef}
                   accept=".doc, .docx, .pdf, image/*"
                   onChange={handleWaiverFileChange}
-                  required
                 />
                 {file ? (
                   <Progress
@@ -1209,7 +1206,6 @@ export default function Registration() {
                   id="proofOfPayment"
                   accept="image/*"
                   onChange={handlePaymentFileChange}
-                  required
                 />
 
                 {paymentFile ? (
