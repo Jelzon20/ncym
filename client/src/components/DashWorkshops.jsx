@@ -49,6 +49,7 @@ export default function DashWorkshops() {
   const [globalFilter, setGlobalFilter] = useState("");
   const [issueBasedWorkshops, setIssueBasedWorkshops] = useState([]);
   const [capacityBasedWorkshops, setCapacityBasedWorkshops] = useState([]);
+  const [workshopCode, setWorkshopcode] = useState('');
   const [workshop, setWorkshop] = useState('');
   const [fileNameDate, setFileNameDate] = useState('');
   const columnHelper = createColumnHelper();
@@ -104,7 +105,7 @@ export default function DashWorkshops() {
     }
   }, [currentUser._id]);
 
-  const handleChange = async (e) => {
+  const handleIssueChange = async (e) => {
     // setWorkshop( e.target.name );
     const workshopId = e.target.value;
     if(!workshopId){
@@ -116,7 +117,8 @@ export default function DashWorkshops() {
             const data = await res.json();
             if (res.ok) {
               setWorkshop(data.participants[0].title);
-              setParticipants(data.participants[0].user_details)
+              setParticipants(data.participants[0].user_details);
+              setWorkshopcode(data.participants[0].wCode);
             }
           } catch (error) {
             toast.error(data.message);
@@ -137,6 +139,7 @@ export default function DashWorkshops() {
             if (res.ok) {
               setWorkshop(data.participants[0].title);
               setParticipants(data.participants[0].user_details)
+              setWorkshopcode(data.participants[0].wCode);
             }
           } catch (error) {
             toast.error(data.message);
@@ -163,6 +166,7 @@ export default function DashWorkshops() {
     setFileNameDate(moment(date).format('MM/DD/YYYY'));
   }, [participants]);
 
+
   return (
     <section className="bg-gradient-to-r from-red-800 via-orange-600 to-yellow-400 dark:bg-gray-900 w-full">
     <div className="px-4 py-8 mx-auto">
@@ -179,10 +183,10 @@ export default function DashWorkshops() {
                 <Label value="Select Workshop" />
               </div>
 
-              <Select id="issue" onChange={handleChange} required>
+              <Select id="issue" onChange={handleIssueChange} required>
               <option value="">Select Workshop</option>
                 {issueBasedWorkshops.map((option) => (
-                  <option value={option._id}>{option.title}</option>
+                  <option key={option._id} value={option._id}>{option.title}</option>
                 ))}
               </Select>
             </div>
@@ -199,8 +203,8 @@ export default function DashWorkshops() {
                     
                 </div>
                 <DownloadBtn
-                    data={data}
-                    fileName={fileNameDate +  " - " + workshop + " - participants"}
+                    data={participants}
+                    fileName={fileNameDate + " - " + workshopCode + ": " + workshop + " - participants"}
                 />
                 
                 </div>
@@ -256,7 +260,7 @@ export default function DashWorkshops() {
               <Select id="capacity" onChange={handleCapacityChange} required>
               <option value="">Select Workshop</option>
                 {capacityBasedWorkshops.map((option) => (
-                  <option value={option._id}>{option.title}</option>
+                  <option key={option._id} value={option._id}>{option.title}</option>
                 ))}
               </Select>
             </div>
@@ -273,8 +277,8 @@ export default function DashWorkshops() {
                     
                 </div>
                 <DownloadBtn
-                    data={data}
-                    fileName={fileNameDate +  " - " + workshop + " - participants"}
+                    data={participants}
+                    fileName={fileNameDate + " - " + workshopCode + ": " + workshop + " - participants"}
                 />
                 
                 </div>

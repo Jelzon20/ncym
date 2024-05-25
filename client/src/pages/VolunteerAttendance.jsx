@@ -1,10 +1,13 @@
 import React, { useEffect, useState} from 'react'
 import { Label, Select } from "flowbite-react";
+import { Html5QrcodeScanner } from 'html5-qrcode';
 
 
 export default function HomeVolunteer() {
     const [sessions, setSessions] = useState([]);
     const [formData, setFormData] = useState([]);
+    const [scanResult, setScanResult] = useState(null);
+const [manualSerialNumber, setManualSerialNumber] = useState('');
     useEffect(  () => {
         async function getSessions() {
             try {
@@ -29,6 +32,36 @@ export default function HomeVolunteer() {
         setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
         
       };
+
+      useEffect(() => {
+        const scanner = new Html5QrcodeScanner('reader', {
+          qrbox: {
+            width: 250,
+            height: 250,
+          },
+          fps: 5,
+        });
+    
+        let isScanning = true;
+    
+        scanner.render(success, error);
+    
+        function success(result) {
+          if (isScanning) {
+            scanner.clear();
+            setScanResult(result);
+            isScanning = false; // Set isScanning to false to stop further scanning
+          }
+        }
+    
+        function error(err) {
+          console.warn(err);
+        }
+      }, []);
+    
+      function handleManualSerialNumberChange(event) {
+        setManualSerialNumber(event.target.value);
+      }
   return (
     <section id="hero" className=" dark:bg-gray-900 min-h-screen max-w-full bg-gradient-to-r from-red-800 via-orange-600 to-yellow-400">
       {/* bg-hero bg-gradient-to-r from-orange-500 to-yellow-500 bg-gradient-to-r from-orange-400 via-indigo-600 to-yellow-300*/}
@@ -45,7 +78,22 @@ export default function HomeVolunteer() {
                   <option key={s._id} value={s._id}>{s.title}</option>
                 ))}
               </Select>
+
+              <h1>QR Scanning Code</h1>
+      {scanResult ? (
+        <div>
+          <p>Success: {scanResult}</p>
+          <p>Serial Number: {scanResult}</p>
+        </div>
+      ) : (
+        <div>
+          <div id="reader"></div>
+          
+        </div>
+      )}
     </div>
+
+    
       </div>
 
       

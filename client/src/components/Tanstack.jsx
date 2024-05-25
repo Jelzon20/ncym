@@ -30,7 +30,6 @@ import moment from "moment/moment.js";
 export default function Tanstack() {
   const { currentUser } = useSelector((state) => state.user);
   const [users, setUsers] = useState([]);
-  const [toExport, setToExport] = useState([]);
   const [reg, setReg] = useState([]);
   const [data] = useState(() => [...users]);
   const [globalFilter, setGlobalFilter] = useState("");

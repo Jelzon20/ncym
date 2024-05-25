@@ -16,7 +16,7 @@ const DownloadBtn = ({ data = [], fileName }) => {
       <DownloadIcon />
       Download
     </button>
-  );
+  );  
 };
 
 export default DownloadBtn;
