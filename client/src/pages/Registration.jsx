@@ -544,6 +544,9 @@ export default function Registration() {
                 <option value="Joseph Marello Youth">
                   Joseph Marello Youth
                 </option>
+                <option value="Live Pure Movement">
+                Live Pure Movement
+                </option>
                 <option value="Mary Help of Christians Crusade">
                   Mary Help of Christians Crusade
                 </option>
