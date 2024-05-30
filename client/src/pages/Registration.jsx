@@ -579,6 +579,7 @@ export default function Registration() {
                   Salesian Youth Movement
                 </option>
                 <option value="Singles for Christ">Singles for Christ</option>
+                <option value="Sisters of the Presentation of Mary">Sisters of the Presentation of Mary</option>
                 <option value="Student Catholic Action of the Philippines">
                   Student Catholic Action of the Philippines
                 </option>
