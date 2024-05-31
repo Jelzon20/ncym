@@ -1,6 +1,7 @@
 import React, { useEffect, useState} from 'react'
 import { Label, Select } from "flowbite-react";
 import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Toaster, toast } from "sonner";
 
 
 export default function HomeVolunteer() {
@@ -36,8 +37,8 @@ const [manualSerialNumber, setManualSerialNumber] = useState('');
       useEffect(() => {
         const scanner = new Html5QrcodeScanner('reader', {
           qrbox: {
-            width: 250,
-            height: 250,
+            width: 500,
+            height: 500,
           },
           fps: 5,
         });
@@ -59,28 +60,27 @@ const [manualSerialNumber, setManualSerialNumber] = useState('');
         }
       }, []);
     
-      function handleManualSerialNumberChange(event) {
-        setManualSerialNumber(event.target.value);
-      }
   return (
-    <section id="hero" className=" dark:bg-gray-900 min-h-screen max-w-full bg-gradient-to-r from-red-800 via-orange-600 to-yellow-400">
-      {/* bg-hero bg-gradient-to-r from-orange-500 to-yellow-500 bg-gradient-to-r from-orange-400 via-indigo-600 to-yellow-300*/}
-      {/* <div className="flex flex-col items-center justify-center py-8 px-4 text-center mx-auto max-w-screen-xl lg:py-16 lg:px-12"> */}
+   
+    <section className="min-h-screen max-w-full bg-gradient-to-r  from-red-800 via-orange-600 to-yellow-400">
+      <div className="flex max-w-screen-xl px-4 justify-center items-center py-8 mx-auto">
+      <Toaster richColors position="top-center" expand={true} />
+        
 
-      <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-0 lg:grid-cols-12">
-      <div className="w-max bg-white">
+      <div class="w-sm flex flex-row gap-4 p-6 bg-white rounded-lg dark:bg-gray-800 ">
       <div className="mb-2 block">
         <Label htmlFor="countries" value="Select session" />
-      </div>
-      <Select id="session" onChange={handleChange} required>
+      
+       <Select id="session" onChange={handleChange} required>
               <option value="">Select Workshop</option>
                 {sessions.map((s) => (
                   <option key={s._id} value={s._id}>{s.title}</option>
                 ))}
               </Select>
-
-              <h1>QR Scanning Code</h1>
-      {scanResult ? (
+        </div>
+        <div>
+         <h1>QR Scanning Code</h1>
+       {scanResult ? (
         <div>
           <p>Success: {scanResult}</p>
           <p>Serial Number: {scanResult}</p>
@@ -91,12 +91,13 @@ const [manualSerialNumber, setManualSerialNumber] = useState('');
           
         </div>
       )}
-    </div>
-
-    
+        </div>
       </div>
-
       
+
+
+       
+      </div>
     </section>
   )
 }

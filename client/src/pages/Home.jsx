@@ -11,6 +11,7 @@ import {
 import p1 from "../assets/p1.png";
 import p2 from "../assets/p2.png";
 import p3 from "../assets/p3.png";
+import ncym_prayer from "../assets/ncym_prayer.jpg";
 
 import p5 from "../assets/p5.png";
 import p6 from "../assets/p6.png";
@@ -106,6 +107,7 @@ export default function Home() {
           {/* <img src={p4} alt="p2" className="shadow-2xl" /> */}
           <img src={p5} alt="p1" className="shadow-2xl" />
           <img src={p6} alt="p2" className="shadow-2xl" />
+          <img src={ncym_prayer} alt="p2" className="shadow-2xl" />
         </div>
       </div>
     </section>
