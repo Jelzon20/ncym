@@ -540,6 +540,9 @@ export default function Registration() {
                 <option value="Immaculate Conception Academy-Greenhills">
                   Immaculate Conception Academy-Greenhills
                 </option>
+                <option value="Inter-Franciscan Commission on Youth Philippines">
+                Inter-Franciscan Commission on Youth Philippines
+                </option>
                 <option value="IT Youth">IT Youth</option>
                 <option value="Joseph Marello Youth">
                   Joseph Marello Youth
