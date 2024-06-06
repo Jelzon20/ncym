@@ -197,7 +197,7 @@ export default function HomeVolunteer() {
               </Select>
             </div>
 
-        <div>
+        <div className='text-center'>
          <h1>QR Scanning Code</h1>
        {scanResult && (
         <div>
@@ -205,7 +205,7 @@ export default function HomeVolunteer() {
           
         </div>  
       )}
-        <div>
+        <div className='text-center'>
           
           <div className='w-72 h-72' id="reader"></div>
           
@@ -215,12 +215,7 @@ export default function HomeVolunteer() {
         </div>
       </div>
 
-      <div className="w-3/5 flex flex-col md:flex-row gap-4 p-6 bg-white rounded-lg dark:bg-gray-800 ">
-       
-
-        
-      
-
+      <div className="w-full flex flex-col sm:w-3/5 md:flex-row gap-4 p-6 bg-white rounded-lg dark:bg-gray-800 hidden lg:block">
       <div className="p-2 w-full text-white fill-gray-400">
                 <div className="flex justify-between mb-2">
                 <div className="w-full flex items-center gap-1">
