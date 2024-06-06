@@ -201,13 +201,13 @@ export default function HomeVolunteer() {
          <h1>QR Scanning Code</h1>
        {scanResult && (
         <div>
-          <p>User ID: {scanResult}</p>
+          <p>User ID: <b>{scanResult}</b></p>
           
         </div>  
       )}
-        <div className='text-center'>
+        <div>
           
-          <div className='w-72 h-72' id="reader"></div>
+          <div className='w-80 h-80 mx-auto' id="reader"></div>
           
         </div>
      
