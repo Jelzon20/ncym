@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/test', test);
 router.post('/addSession', addSession);
 router.get('/getSessions', getSessions);
-router.post('/addAttendance/:sessionTitle', addAttendance);
+router.post('/addAttendance', addAttendance);
 router.get('/getAttendance/:sessionId', getAttendance);
 
 

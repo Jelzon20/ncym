@@ -138,6 +138,24 @@ export const getRegistration = async (req, res, next) => {
   }
 };
 
+
+export const getRegistrationByVolunteer = async (req, res, next) => {
+
+  try {
+    
+    const registration = await Registration.findOne({user: req.params.userId}).populate('user', ['email', 'profilePicture', 'isAdmin', 'isRegistered', 'isAccepted', 'isActive']);
+    if (!registration){
+      return next(errorHandler(404, 'Registration not found'));
+    }
+    const { ...rest } = registration._doc;
+    res.status(200).json(rest);
+      
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 export const updateReg = async (req, res, next) => {
 
   if ((req.user.id !== req.params.userId) || req.params.isAdmin == true)  {
