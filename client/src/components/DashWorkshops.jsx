@@ -64,6 +64,10 @@ export default function DashWorkshops() {
       cell: (info) => <span className='mr-10'>{info.getValue()}</span>,
       header: "Parish",
     }),
+    columnHelper.accessor(participants => participants.roleInMinistry , {
+      cell: (info) => <span className='mr-10'>{info.getValue()}</span>,
+      header: "Role in Ministry",
+    }),
     columnHelper.accessor(participants => participants.firstName , {
       cell: (info) => <span className='mr-10'>{info.getValue()}</span>,
       header: "First Name",
@@ -74,8 +78,6 @@ export default function DashWorkshops() {
       }),
   ];
 
-
-  
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -104,6 +106,8 @@ export default function DashWorkshops() {
       fetchUsers();
     }
   }, [currentUser._id]);
+
+  console.log(participants);
 
   const handleIssueChange = async (e) => {
     // setWorkshop( e.target.name );
@@ -159,8 +163,6 @@ export default function DashWorkshops() {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  
-  
   useEffect(() => {
     const date = new Date();
     setFileNameDate(moment(date).format('MM/DD/YYYY'));
@@ -249,6 +251,60 @@ export default function DashWorkshops() {
             )}
             </tbody>
         </table>
+        {/* pagination */}
+      <div className="flex items-center justify-end mt-2 gap-2 text-gray-900 dark:text-white">
+        <button
+          onClick={() => {
+            table.previousPage();
+          }}
+          disabled={!table.getCanPreviousPage()}
+          className="p-1 border border-gray-300 px-2 disabled:opacity-30"
+        >
+          {"<"}
+        </button>
+        <button
+          onClick={() => {
+            table.nextPage();
+          }}
+          disabled={!table.getCanNextPage()}
+          className="p-1 border dark:border-gray-300 px-2 disabled:opacity-30"
+        >
+          {">"}
+        </button>
+
+        <span className="flex items-center gap-1">
+          <div>Page</div>
+          <strong>
+            {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount()}
+          </strong>
+        </span>
+        <span className="flex items-center gap-1">
+          | Go to page:
+          <input
+            type="number"
+            defaultValue={table.getState().pagination.pageIndex + 1}
+            onChange={(e) => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0;
+              table.setPageIndex(page);
+            }}
+            className="border p-1 rounded w-16 bg-transparent"
+          />
+        </span>
+        <select
+          value={table.getState().pagination.pageSize}
+          onChange={(e) => {
+            table.setPageSize(Number(e.target.value));
+          }}
+          className="p-2 bg-transparent"
+        >
+          {[10, 20, 30, 50].map((pageSize) => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
+      </div>
             </div>
           </Tabs.Item>
           <Tabs.Item title="Capacity-Based" icon={HiDatabase}>
@@ -323,6 +379,60 @@ export default function DashWorkshops() {
             )}
             </tbody>
         </table>
+        {/* pagination */}
+      <div className="flex items-center justify-end mt-2 gap-2 text-gray-900 dark:text-white">
+        <button
+          onClick={() => {
+            table.previousPage();
+          }}
+          disabled={!table.getCanPreviousPage()}
+          className="p-1 border border-gray-300 px-2 disabled:opacity-30"
+        >
+          {"<"}
+        </button>
+        <button
+          onClick={() => {
+            table.nextPage();
+          }}
+          disabled={!table.getCanNextPage()}
+          className="p-1 border dark:border-gray-300 px-2 disabled:opacity-30"
+        >
+          {">"}
+        </button>
+
+        <span className="flex items-center gap-1">
+          <div>Page</div>
+          <strong>
+            {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount()}
+          </strong>
+        </span>
+        <span className="flex items-center gap-1">
+          | Go to page:
+          <input
+            type="number"
+            defaultValue={table.getState().pagination.pageIndex + 1}
+            onChange={(e) => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0;
+              table.setPageIndex(page);
+            }}
+            className="border p-1 rounded w-16 bg-transparent"
+          />
+        </span>
+        <select
+          value={table.getState().pagination.pageSize}
+          onChange={(e) => {
+            table.setPageSize(Number(e.target.value));
+          }}
+          className="p-2 bg-transparent"
+        >
+          {[10, 20, 30, 50].map((pageSize) => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
+      </div>
             </div>
           </Tabs.Item>
         </Tabs>

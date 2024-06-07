@@ -59,7 +59,6 @@ export const test = (req, res) => {
         },
       ]);
 
-
           // $lookup: {
           //   from: "registrations", 
           //   localField: "participants",

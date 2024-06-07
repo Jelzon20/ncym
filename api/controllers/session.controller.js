@@ -49,8 +49,15 @@ export const addAttendance = async (req, res, next) => {
     if (!user) {
       return next(errorHandler(404, "User not found"));
     }
+
+  const checkDuplicateAttendance = await Session.find({_id: session}); 
+  const attendeesArray = checkDuplicateAttendance[0].attendees;
+  if(attendeesArray.includes(userId)) {
+    return next(errorHandler(400, "User has record in this session"));
+  }
+         
     await Session.findByIdAndUpdate(session, {
-      $push: {
+      $push: {  
         attendees: userId,
       },
     });

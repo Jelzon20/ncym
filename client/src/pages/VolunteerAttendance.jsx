@@ -4,7 +4,7 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 import { Toaster, toast } from "sonner";
 import DownloadBtn from "../components/DownloadBtn";
 import DebouncedInput from "../components/DebouncedInput.jsx";
-import { SearchIcon } from "../Icons/icons";
+import { RefreshIcon, SearchIcon } from "../Icons/icons";
 import {
   createColumnHelper,
   flexRender,
@@ -14,14 +14,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import moment from "moment/moment.js";
+import { compare } from 'bcryptjs';
 
 
 export default function HomeVolunteer() {
     const [sessions, setSessions] = useState([]);
     const [scanResult, setScanResult] = useState(null);
     const [session, setSession] = useState('');
-    const [openModal, setOpenModal] = useState(false);
-    const [attendeesArray, setAttendeesArray] = useState([]);
     const [attendance, setAttendance] = useState([]);
     const [data] = useState(() => [...attendance]);
     const [fileNameDate, setFileNameDate] = useState('');
@@ -66,34 +65,41 @@ export default function HomeVolunteer() {
         getSessions();
        
     },[])
+    const getAttendance = async () => {
+      if(session) {
+        try {
+          const res = await fetch(`/api/session/getAttendance/${session}`);
+          const data = await res.json();
+          if (res.ok) {
+            setAttendance(data.attendance[0].user_details);
+            }
+        } catch (error) {
+          toast.error(error.message)
+        }
+      } else{
+        toast.error("No Session set.");
+      }
+      
+    }
 
+    
+useEffect(() => {
+  if(session) {
+    getAttendance();
+  }
+}, [session])
+
+    
 
     const handleSessionChange = async (e) => {
       // setWorkshop( e.target.name );
       const sessionId = e.target.value;
       setSession(sessionId)
-      setScanResult(null)
+      setScanResult(null);
+      // getAttendance();
     };
 
-    useEffect(() => {
-      
-      if (session) {
-        getAttendance();
-      }
-     }, [session]);
-
-     const getAttendance = async () => {
-      try {
-        const res = await fetch(`/api/session/getAttendance/${session}`);
-        const data = await res.json();
-        if (res.ok) {
-          setAttendeesArray(data.attendance[0].attendees);
-          setAttendance(data.attendance[0].user_details);
-          }
-      } catch (error) {
-        toast.error(error.message)
-      }
-    }
+    
 
       useEffect(() => {
           const scanner = new Html5QrcodeScanner('reader', {
@@ -103,55 +109,52 @@ export default function HomeVolunteer() {
             },
             fps: 5,
           });
-      
-          let isScanning = true;
+
+          let shouldPauseVideo = true;
+          let showPausedBanner = false;
+
           scanner.render(success, error);
-        
+
            async function success(result) {
-            if (isScanning) {
-              scanner.clear();
-              setScanResult(result);
+     
+              // setScanResult(result);
+  
+              addAttendance(result);
+              scanner.pause(shouldPauseVideo, showPausedBanner);
+              // 
+              setTimeout(() => {
 
-              isScanning = false; // Set isScanning to false to stop further scanning
+                scanner.resume(shouldPauseVideo);
 
-              // checkDuplicate(result);
-              if (attendeesArray) {
-                const compareResult = attendeesArray.includes(result);
-                  if(compareResult) {
-                    toast.error('User is already recorded for this session.');
-                    return;
-                  } else {
-                    try {
-                      const res = await fetch(`/api/session/addAttendance`, {
-                        method: 'POST',
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({session: session, userId: result}),
-                      });
-                      const data = await res.json();
-          
-                      if (res.ok) {
-                        toast.success(data.message);
-                        setScanResult(null)
-                        getAttendance();  
-                        }else{
-                          toast.error(data.message)
-                          setScanResult(null)
-                        }
-                  
-                    } catch (error) {
-                      console.log(error.message);
-                    }
-                  }
-              }
-              
-              
-              
-            }
+              }, 2000);
+            
           }
           function error(err) {
             console.warn(err);
           }
       });
+
+      const addAttendance = async (result) => {
+        try {
+          const res = await fetch(`/api/session/addAttendance`, {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({session: session, userId: result}),
+          });
+          const data = await res.json();
+
+          if (res.ok) {
+            toast.success(data.message);
+            
+            } else {
+              toast.error(data.message)
+              
+            }
+
+        } catch (error) {
+          console.log(error.message);
+        }
+      }
 
 
       const table = useReactTable({
@@ -178,9 +181,9 @@ export default function HomeVolunteer() {
   return (
    
     <section className="min-h-screen max-w-full bg-gradient-to-r  from-red-800 via-orange-600 to-yellow-400">
-      <div className="flex flex-col md:flex-row max-w-screen-xl px-4 gap-6  py-8 mx-auto">
+      <div className="flex flex-col md:flex-row w-full px-4 gap-2 py-8 mx-auto justify-center">
       <Toaster richColors position="top-center" expand={true} />
-      <div className="w-sm flex flex-col md:flex-row gap-4 p-6 bg-white rounded-lg dark:bg-gray-800 ">
+      <div className="w-md flex flex-col md:flex-row gap-4 p-6 bg-white rounded-lg dark:bg-gray-800 ">
        
 
         
@@ -199,23 +202,24 @@ export default function HomeVolunteer() {
 
         <div className='text-center'>
          <h1>QR Scanning Code</h1>
-       {scanResult && (
+       {/* {scanResult ? (
         <div>
           <p>User ID: <b>{scanResult}</b></p>
-          
         </div>  
-      )}
-        <div>
+      ) : (<div>
           
-          <div className='w-80 h-80 mx-auto' id="reader"></div>
-          
-        </div>
+        <div className='w-80 h-80 mx-auto' id="reader"></div>
+        
+      </div>)} */}
+
+        <div className='w-80 h-80 mx-auto' id="reader"></div>
+        
      
 
         </div>
       </div>
 
-      <div className="w-full flex flex-col sm:w-3/5 md:flex-row gap-4 p-6 bg-white rounded-lg dark:bg-gray-800 hidden lg:block">
+      <div className="w-full flex-col sm:w-3/5 md:flex-row gap-4 p-6 bg-white rounded-lg dark:bg-gray-800 hidden lg:block">
       <div className="p-2 w-full text-white fill-gray-400">
                 <div className="flex justify-between mb-2">
                 <div className="w-full flex items-center gap-1">
@@ -228,6 +232,7 @@ export default function HomeVolunteer() {
                     />
                     
                 </div>
+                <Button className='download-btn hover:text-white mx-4' onClick={() => getAttendance()}> Refresh</Button>
                 <DownloadBtn
                     data={attendance}
                     fileName={fileNameDate + " - " + attendance.title + " - participants"}
@@ -275,6 +280,60 @@ export default function HomeVolunteer() {
             )}
             </tbody>
         </table>
+        {/* pagination */}
+      <div className="flex items-center justify-end mt-2 gap-2 text-gray-900 dark:text-white">
+        <button
+          onClick={() => {
+            table.previousPage();
+          }}
+          disabled={!table.getCanPreviousPage()}
+          className="p-1 border border-gray-300 px-2 disabled:opacity-30"
+        >
+          {"<"}
+        </button>
+        <button
+          onClick={() => {
+            table.nextPage();
+          }}
+          disabled={!table.getCanNextPage()}
+          className="p-1 border dark:border-gray-300 px-2 disabled:opacity-30"
+        >
+          {">"}
+        </button>
+
+        <span className="flex items-center gap-1">
+          <div>Page</div>
+          <strong>
+            {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount()}
+          </strong>
+        </span>
+        <span className="flex items-center gap-1">
+          | Go to page:
+          <input
+            type="number"
+            defaultValue={table.getState().pagination.pageIndex + 1}
+            onChange={(e) => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0;
+              table.setPageIndex(page);
+            }}
+            className="border p-1 rounded w-16 bg-transparent"
+          />
+        </span>
+        <select
+          value={table.getState().pagination.pageSize}
+          onChange={(e) => {
+            table.setPageSize(Number(e.target.value));
+          }}
+          className="p-2 bg-transparent"
+        >
+          {[10, 20, 30, 50].map((pageSize) => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
+      </div>
             </div>
       </div>
 
