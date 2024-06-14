@@ -4,7 +4,7 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 import { Toaster, toast } from "sonner";
 import DownloadBtn from "../components/DownloadBtn";
 import DebouncedInput from "../components/DebouncedInput.jsx";
-import { RefreshIcon, SearchIcon } from "../Icons/icons";
+import {SearchIcon } from "../Icons/icons";
 import {
   createColumnHelper,
   flexRender,

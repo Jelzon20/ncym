@@ -50,7 +50,7 @@ export const addAttendance = async (req, res, next) => {
       return next(errorHandler(404, "User not found"));
     }
 
-  const checkDuplicateAttendance = await Session.find({_id: session}); 
+  const checkDuplicateAttendance = await Session.find({_id: new mongoose.Types.ObjectId(session)}); 
   const attendeesArray = checkDuplicateAttendance[0].attendees;
   if(attendeesArray.includes(userId)) {
     return next(errorHandler(400, "User has record in this session"));
