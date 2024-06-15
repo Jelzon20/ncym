@@ -578,6 +578,9 @@ export default function Registration() {
                 <option value="Redemptorist Youth Ministry">
                   Redemptorist Youth Ministry
                 </option>
+                <option value="Rogationist of the Heart of Jesus">
+                Rogationist of the Heart of Jesus
+                </option>
                 <option value="Salesian Youth Movement">
                   Salesian Youth Movement
                 </option>
