@@ -8,7 +8,8 @@ import { getAnalytics } from "firebase/analytics";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "ncym-2a580.firebaseapp.com",
+  authDomain: "ncym-2a580.firebaseapp.com", 
+  // authDomain: "ncym-2024.onrender.com",
   projectId: "ncym-2a580",
   storageBucket: "ncym-2a580.appspot.com",
   messagingSenderId: "805396829790",

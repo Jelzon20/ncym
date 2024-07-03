@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from 'react'
 import { Label, Select, Button, Modal, } from "flowbite-react";
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5QrcodeScanner, Html5Qrcode } from 'html5-qrcode';
 import { Toaster, toast } from "sonner";
 import DownloadBtn from "../components/DownloadBtn";
 import DebouncedInput from "../components/DebouncedInput.jsx";
@@ -14,13 +14,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import moment from "moment/moment.js";
-import { compare } from 'bcryptjs';
 
 
 export default function HomeVolunteer() {
     const [sessions, setSessions] = useState([]);
     const [scanResult, setScanResult] = useState(null);
     const [session, setSession] = useState('');
+    const [sessionTitle, setSessionTitle] = useState('');
     const [attendance, setAttendance] = useState([]);
     const [data] = useState(() => [...attendance]);
     const [fileNameDate, setFileNameDate] = useState('');
@@ -65,6 +65,12 @@ export default function HomeVolunteer() {
         getSessions();
        
     },[])
+
+
+    
+    
+
+
     const getAttendance = async () => {
       if(session) {
         try {
@@ -96,13 +102,19 @@ useEffect(() => {
       const sessionId = e.target.value;
       setSession(sessionId)
       setScanResult(null);
+      setSessionTitle(e.target.options[e.target.selectedIndex].text);
+      
       // getAttendance();
     };
+
+    console.log('OUTSIDE LOG' + session)
 
     
 
       useEffect(() => {
-          const scanner = new Html5QrcodeScanner('reader', {
+
+        function renderCamera() {
+          const scanner = new Html5QrcodeScanner('qrcodeId', {
             qrbox: {
               width: 1200,
               height: 1200,
@@ -120,6 +132,7 @@ useEffect(() => {
               // setScanResult(result);
   
               addAttendance(result);
+        
               scanner.pause(shouldPauseVideo, showPausedBanner);
               // 
               setTimeout(() => {
@@ -129,10 +142,54 @@ useEffect(() => {
               }, 2000);
             
           }
+        
+          
           function error(err) {
             console.warn(err);
           }
-      });
+        }
+          
+
+          if(session != '') {
+            console.log("SESSION SET")
+            renderCamera();
+          } else {
+            toast.error('Session ID is not set');
+          }
+          return () => {
+                    // Anything in here is fired on component unmount.
+                    console.log('UNMOUNT');
+                };
+            },[session]);
+
+    //   useEffect(() => {
+    //     // Anything in here is fired on component mount.
+    //     if(!html5QrCode?.getState()){
+    //         html5QrCode = new Html5Qrcode('qrcodeId');
+    //         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+    //             /* handle success */
+    //             console.log('USEEFFECT LOG' + session);
+    //             // addAttendance(decodedText);
+    //             console.log(decodedText);
+                
+    //         };
+    //         const config = { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.777778};
+
+    //         // If you want to prefer back camera
+    //         html5QrCode.start(
+    //             { facingMode: "environment" },
+    //             config,
+    //             qrCodeSuccessCallback
+    //         );
+    //     }
+
+    //     return () => {
+    //         // Anything in here is fired on component unmount.
+    //         console.log('UNMOUNT');
+    //     };
+    // }, []);
+
+    
 
       const addAttendance = async (result) => {
         try {
@@ -212,13 +269,12 @@ useEffect(() => {
         
       </div>)} */}
 
-        <div className='w-80 h-80 mx-auto' id="reader"></div>
-        
+        {/* <div className='w-80 h-80 mx-auto' id="reader"></div> */}
+        <div  className='w-80 h-80 mx-auto' id='qrcodeId'></div>
      
 
         </div>
       </div>
-
       <div className="w-full flex-col sm:w-3/5 md:flex-row gap-4 p-6 bg-white rounded-lg dark:bg-gray-800 hidden lg:block">
       <div className="p-2 w-full text-white fill-gray-400">
                 <div className="flex justify-between mb-2">
@@ -235,7 +291,7 @@ useEffect(() => {
                 <Button className='download-btn hover:text-white mx-4' onClick={() => getAttendance()}> Refresh</Button>
                 <DownloadBtn
                     data={attendance}
-                    fileName={fileNameDate + " - " + attendance.title + " - participants"}
+                    fileName={fileNameDate + " - " + sessionTitle + " - participants"}
                 />
                 
                 </div>
@@ -336,15 +392,7 @@ useEffect(() => {
       </div>
             </div>
       </div>
-
-
-
       
-      
-      
-
-
-       
       </div>
       
     </section>
